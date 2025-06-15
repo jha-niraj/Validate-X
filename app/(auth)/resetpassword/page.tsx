@@ -1,19 +1,18 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
+import { useState, useEffect, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Globe, ArrowLeft, Eye, EyeOff, CheckCircle, AlertCircle, Shield } from "lucide-react"
+import { ArrowLeft, Eye, EyeOff, CheckCircle, AlertCircle, Shield } from "lucide-react"
 import { validateResetToken, resetPassword } from "@/actions/auth.action"
 import { toast } from "sonner"
 
-export default function ResetPasswordPage() {
+function ResetPassword() {
     const searchParams = useSearchParams()
-    const router = useRouter()
 
     const [token, setToken] = useState<string | null>(null)
     const [newPassword, setNewPassword] = useState("")
@@ -295,5 +294,13 @@ export default function ResetPasswordPage() {
                 </form>
             </Card>
         </div>
+    )
+}
+
+export default function ResetPasswordPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ResetPassword />
+        </Suspense>
     )
 }

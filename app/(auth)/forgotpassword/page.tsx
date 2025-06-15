@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
                                 Check Your Email
                             </CardTitle>
                             <CardDescription className="text-gray-600 mt-2">
-                                We've sent password reset instructions to <strong>{email}</strong>
+                                We&apos;ve sent password reset instructions to <strong>{email}</strong>
                             </CardDescription>
                         </div>
                     </CardHeader>
@@ -70,7 +70,7 @@ export default function ForgotPasswordPage() {
                                 <Mail className="w-5 h-5 text-teal-600 mt-0.5" />
                                 <div className="text-sm text-teal-800">
                                     <p className="font-medium mb-1">Check your email</p>
-                                    <p>If an account with that email exists, you'll receive a password reset link within a few minutes.</p>
+                                    <p>If an account with that email exists, you&apos;ll receive a password reset link within a few minutes.</p>
                                 </div>
                             </div>
                         </div>
@@ -82,7 +82,7 @@ export default function ForgotPasswordPage() {
                                     <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
                                     <div className="text-sm text-yellow-800">
                                         <p className="font-medium mb-1">Development Mode</p>
-                                        <p className="mb-2">Since email is not configured, here's your reset link:</p>
+                                        <p className="mb-2">Since email is not configured, here&apos;s your reset link:</p>
                                         <Link
                                             href={resetUrl}
                                             className="text-teal-600 hover:text-teal-700 underline break-all"
@@ -96,7 +96,7 @@ export default function ForgotPasswordPage() {
                     </CardContent>
                     <CardFooter className="flex flex-col space-y-4">
                         <div className="text-center text-sm text-gray-600">
-                            Didn't receive an email? Check your spam folder or{" "}
+                            Didn&apos;t receive an email? Check your spam folder or{" "}
                             <button
                                 onClick={() => {
                                     setIsSubmitted(false)
@@ -137,7 +137,7 @@ export default function ForgotPasswordPage() {
                             Reset your password
                         </CardTitle>
                         <CardDescription className="text-gray-600 mt-2">
-                            Enter your email address and we'll send you a link to reset your password
+                            Enter your email address and we&apos;ll send you a link to reset your password
                         </CardDescription>
                     </div>
                 </CardHeader>

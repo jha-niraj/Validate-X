@@ -4,17 +4,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Calendar, Compass, History, LogOut, Plus, Star } from "lucide-react";
+import { LogOut} from "lucide-react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { useTheme } from "next-themes";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 
 export function Navbar() {
     const [sheetOpen, setSheetOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
-    const { theme } = useTheme()
     const router = useRouter()
     const { data: session, status } = useSession();
 
