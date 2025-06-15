@@ -112,7 +112,7 @@ export default function SignIn() {
     return (
         <AuthLayout
             title="Welcome back"
-            subtitle="Sign in to continue your language learning journey"
+            subtitle="Sign in to continue"
             floating={floatingElements}
         >
             <form onSubmit={handleSubmit} className="space-y-4">

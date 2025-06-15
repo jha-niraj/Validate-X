@@ -24,7 +24,7 @@ export function AuthLayout({ children, title, subtitle, floating }: AuthLayoutPr
                         <Globe className="w-6 h-6 text-white" />
                     </div>
                     <span className="text-xl font-bold bg-gradient-to-r from-teal-600 to-emerald-700 bg-clip-text text-transparent">
-                        HimalSpeak
+                        NextAuth Starter Kit
                     </span>
                 </Link>
             </div>

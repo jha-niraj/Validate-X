@@ -143,7 +143,7 @@ export default function SignUp() {
     return (
         <AuthLayout
             title="Create your account"
-            subtitle="Join thousands of language learners today"
+            subtitle="Join thousands of developers exploring this kit"
             floating={floatingElements}
         >
             <form onSubmit={handleSubmit} className="space-y-4">

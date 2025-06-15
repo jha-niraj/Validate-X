@@ -80,7 +80,7 @@ export default function Waiting() {
     return (
         <AuthLayout
             title="Setting up your account"
-            subtitle="Please wait while we prepare your language learning journey"
+            subtitle="Please wait while we prepare your account"
             floating={floatingElements}
         >
             <div className="flex flex-col items-center justify-center py-8 space-y-8">
