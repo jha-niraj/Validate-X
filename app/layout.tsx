@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-providers";
 import { Navbar } from "@/components/(landingpage)/landingnavbar";
 import { Toaster } from "@/components/ui/sonner";
+import { Providers } from "./providers/providers";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -16,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "M.P. Solutions",
+	title: "Next Starter Kit",
 	description: "All medicine info at one place",
 };
 
@@ -30,16 +31,18 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
-				>
-					<Toaster />
-					<Navbar />
-					{children}
-				</ThemeProvider>
+				<Providers>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="system"
+						enableSystem
+						disableTransitionOnChange
+					>
+						<Toaster />
+						<Navbar />
+						{children}
+					</ThemeProvider>
+				</Providers>
 			</body>
 		</html>
 	);

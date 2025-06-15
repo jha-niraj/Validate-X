@@ -11,21 +11,6 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 
-interface Route {
-    path: string;
-    name: string;
-    icon: React.ReactNode;
-    status: string;
-}
-
-const routes: Route[] = [
-    { path: "explore", name: "Explore", icon: <Compass />, status: "active" },
-    { path: "calendar", name: "Calendar", icon: <Calendar />, status: "coming" },
-    { path: "saved", name: "Saved", icon: <Star />, status: "coming" },
-    { path: "history", name: "History", icon: <History />, status: "coming" },
-    { path: "create", name: "Create Event", icon: <Plus />, status: "coming" },
-];
-
 export function Navbar() {
     const [sheetOpen, setSheetOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
@@ -42,23 +27,14 @@ export function Navbar() {
         return () => window.removeEventListener("scroll", handleScroll)
     }, [])
 
-    const handleNavigation = (path: string, status: string) => {
-        if (status === "coming") {
-            toast("Feature is currently under development, please explore the events page.");
-        } else {
-            router.push(`/${path}`);
-        }
-        setSheetOpen(false);
-    };
-
     const sidebarContent = (
         <div className="flex flex-col h-full">
             <div className="flex h-[100px] w-full items-center justify-center p-[20px]">
                 <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
                     <div className="relative h-[50px] w-[160px]">
                         <Image
-                            src={theme === "dark" ? "/logo/whitelogo.svg" : "/logo/logo.png"}
-                            alt="EventEye Logo"
+                            src="/next.svg"
+                            alt="NextAuth Starter Kit"
                             fill
                             className="object-contain dark:text-white"
                             priority
@@ -67,23 +43,6 @@ export function Navbar() {
                 </Link>
             </div>
             <div className="mb-4 h-px bg-gray-200 dark:bg-gray-700" />
-            <div className="flex flex-col flex-grow px-4 py-2 space-y-6">
-                {
-                    routes.map((route, index) => (
-                        <button
-                            key={index}
-                            onClick={() => handleNavigation(route.path, route.status)}
-                            className="flex w-full items-center rounded-lg px-4 py-2.5 text-sm font-medium text-gray-600 
-                        transition-all hover:bg-gray-100 dark:text-white dark:hover:bg-gray-800 cursor-pointer group"
-                        >
-                            <div className="h-5 w-5 stroke-2 mr-3 transition-transform group-hover:-translate-x-0.5">
-                                {route.icon}
-                            </div>
-                            <span>{route.name}</span>
-                        </button>
-                    ))
-                }
-            </div>
             <div className="px-4 mt-auto">
                 <button
                     onClick={() => signOut()}
@@ -103,24 +62,12 @@ export function Navbar() {
                 <div className="flex items-center justify-between h-16">
                     <Link href="/" className="flex items-center space-x-2">
                         <Image
-                            src={theme === "dark" ? "/logo/logo.png" : "/logo/whitelogo.svg"}
+                            src="/next.svg"
                             alt="Icon"
                             width={32}
                             height={32}
                         />
-                        <h1 className="text-xl font-semibold">EventEye</h1>
                     </Link>
-
-                    <div className="hidden md:flex items-center space-x-10">
-                        {
-                            ["explore", "features", "testimonials", "pricing", "faqs"].map((item) => (
-                                <Link key={item} href={item === "explore" ? `/${item}` : `#${item}`} className="text-md font-semibold hover:bg-gray-500 rounded-xl p-3 transition-all duration-300">
-                                    {item.charAt(0).toUpperCase() + item.slice(1)}
-                                </Link>
-                            ))
-                        }
-                    </div>
-
                     <div className="flex items-center justify-center space-x-4">
                         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                             <SheetContent side="right" className="w-[300px] p-0">

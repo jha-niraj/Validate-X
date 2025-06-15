@@ -23,6 +23,9 @@ model User {
     roleExplicitlyChosen Boolean   @default(false)
 	createdAt            DateTime  @default(now())
 
+    // Password reset
+    resetToken           String?   @unique
+    resetTokenExpiry     DateTime?
 
     accounts              Account[]
 

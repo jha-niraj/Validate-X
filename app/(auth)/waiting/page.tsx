@@ -1,38 +1,129 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { MailCheck } from "lucide-react"
+"use client"
 
-export default function WaitingPage() {
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { AuthLayout } from "@/components/authlayout"
+import { CheckCircle, Globe, BookOpen, Mic } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Progress } from "@/components/ui/progress"
+
+export default function Waiting() {
+    const [progress, setProgress] = useState(0)
+    const [currentStep, setCurrentStep] = useState(0)
+    const router = useRouter()
+
+    const steps = [
+        "Setting up your account...",
+        "Preparing your learning environment...",
+        "Customizing your experience...",
+        "Almost there...",
+    ]
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (progress < 100) {
+                setProgress((prev) => {
+                    const newProgress = prev + 1
+
+                    // Update step based on progress
+                    if (newProgress > 75) setCurrentStep(3)
+                    else if (newProgress > 50) setCurrentStep(2)
+                    else if (newProgress > 25) setCurrentStep(1)
+
+                    return newProgress
+                })
+            } else {
+                // Redirect when complete
+                router.push("/onboarding")
+            }
+        }, 50)
+
+        return () => clearTimeout(timer)
+    }, [progress, router])
+
+    const floatingElements = [
+        <motion.div
+            key="floating-1"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="absolute top-1/4 left-1/4 animate-float"
+        >
+            <div className="w-16 h-16 bg-gradient-to-br from-teal-400/20 to-emerald-500/20 rounded-full flex items-center justify-center">
+                <Globe className="w-8 h-8 text-teal-500" />
+            </div>
+        </motion.div>,
+        <motion.div
+            key="floating-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="absolute top-1/3 right-1/4 animate-float-delayed"
+        >
+            <div className="w-12 h-12 bg-gradient-to-br from-emerald-400/20 to-teal-500/20 rounded-full flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-emerald-500" />
+            </div>
+        </motion.div>,
+        <motion.div
+            key="floating-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.8 }}
+            className="absolute bottom-1/3 left-1/5 animate-float-slow"
+        >
+            <div className="w-10 h-10 bg-gradient-to-br from-teal-400/20 to-emerald-500/20 rounded-full flex items-center justify-center">
+                <Mic className="w-5 h-5 text-teal-500" />
+            </div>
+        </motion.div>,
+    ]
+
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-            <Card className="w-full max-w-md text-center">
-                <CardHeader className="space-y-1">
-                    <div className="flex justify-center">
-                        <div className="rounded-full bg-primary/10 p-3">
-                            <MailCheck className="h-10 w-10 text-primary" />
-                        </div>
+        <AuthLayout
+            title="Setting up your account"
+            subtitle="Please wait while we prepare your language learning journey"
+            floating={floatingElements}
+        >
+            <div className="flex flex-col items-center justify-center py-8 space-y-8">
+                <div className="relative w-32 h-32">
+                    {
+                        progress < 100 ? (
+                            <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                                className="w-full h-full"
+                            >
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="w-24 h-24 rounded-full border-4 border-teal-200"></div>
+                                </div>
+                                <div className="absolute top-0 left-1/2 -ml-2 w-4 h-4 rounded-full bg-gradient-to-r from-teal-500 to-emerald-600"></div>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                                className="w-full h-full bg-gradient-to-br from-teal-500 to-emerald-600 rounded-full flex items-center justify-center"
+                            >
+                                <CheckCircle className="w-16 h-16 text-white" />
+                            </motion.div>
+                        )
+                    }
+                </div>
+                <div className="w-full space-y-4">
+                    <div className="flex justify-between text-sm text-gray-600">
+                        <span>{progress}% complete</span>
+                        <span>{progress < 100 ? "Please wait..." : "Complete!"}</span>
                     </div>
-                    <CardTitle className="text-2xl font-bold tracking-tight mt-4">Check your email</CardTitle>
-                    <CardDescription>We&apos;ve sent a verification link to your email address</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <p className="text-sm text-muted-foreground">
-                        Please check your email and click on the verification link to continue. If you don&apos;t see the email,
-                        check your spam folder.
-                    </p>
-                </CardContent>
-                <CardFooter className="flex flex-col space-y-4">
-                    <Button className="w-full" variant="outline">
-                        Resend verification email
-                    </Button>
-                    <div className="text-center text-sm">
-                        <Link href="/auth/signin" className="font-medium text-primary hover:underline">
-                            Back to sign in
-                        </Link>
-                    </div>
-                </CardFooter>
-            </Card>
-        </div>
+                    <Progress
+                        value={progress}
+                        className="h-2 bg-teal-100 bg-gradient-to-r from-teal-500 to-emerald-600"
+                    />
+                </div>
+                <div className="text-center">
+                    <p className="text-teal-600 font-medium">{steps[currentStep]}</p>
+                    <p className="text-sm text-gray-500 mt-2">This may take a few moments</p>
+                </div>
+            </div>
+        </AuthLayout>
     )
 }
