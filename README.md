@@ -20,13 +20,13 @@ A clean, reliable starting point for integrating Next.js authentication with Pri
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-github-username/next-auth-kit.git
-   cd next-auth-kit
+   git clone https://github.com/jha-niraj/NextJS-starter-auth
+   cd NextJS-starter-auth
    ```
 
 2. **Install dependencies**
    ```bash
-   npm install
+   npm install(use --legacy-peer-deps if fails)
    # or
    yarn install
    # or
@@ -40,9 +40,12 @@ A clean, reliable starting point for integrating Next.js authentication with Pri
    
    Edit `.env.local` with your configuration:
    ```env
-   NEXTAUTH_URL=http://localhost:3000
-   NEXTAUTH_SECRET=your-secret-key
-   DATABASE_URL="your-database-connection-string"
+      DATABASE_URL="postgresql://user:password@localhost:5432/mydatabase or the neon one"
+      NEXTAUTH_URL="http://localhost:3000 or your production URL"
+      NEXTAUTH_SECRET="your-secret-key"
+      NEXT_GOOGLE_CLIENT_ID="your-google-client-id"
+      NEXT_GOOGLE_CLIENT_SECRET="your-google-client-secret"
+      RESEND_API_KEY="your-resend-api-key"
    ```
 
 4. **Set up the database**
@@ -100,15 +103,11 @@ datasource db {
 
 ### Authentication Providers
 
-Configure your authentication providers in `pages/api/auth/[...nextauth].js` or add new ones as needed.
+Configure your authentication providers in `app/api/auth/[...nextauth].js` or add new ones as needed.
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## ⭐ Support
 
@@ -116,4 +115,4 @@ If this project helped you, please consider giving it a star on GitHub!
 
 ---
 
-**Built with ❤️ by [Niraj Jha](https://github.com/your-github-username)**
+**Built with ❤️ by [Niraj Jha](https://github.com/jha-niraj)**
