@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next Auth Kit
 
-## Getting Started
+A clean, reliable starting point for integrating Next.js authentication with Prisma. This kit eliminates the complexity and common pitfalls when combining `next-auth` with `prisma`, providing developers with a streamlined setup for rapid development.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **🚀 Fast Integration** - Streamlined setup process for rapid development
+- **🔧 Dependency Free** - Eliminates common integration headaches
+- **🛡️ Prisma Ready** - Seamless database integration included
+- **⭐ Production Ready** - Battle-tested and reliable foundation
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm, yarn, or pnpm
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-github-username/next-auth-kit.git
+   cd next-auth-kit
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Edit `.env.local` with your configuration:
+   ```env
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your-secret-key
+   DATABASE_URL="your-database-connection-string"
+   ```
+
+4. **Set up the database**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+5. **Run the development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   ```
+
+6. **Open your browser**
+   
+   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
+
+## 🛠️ Tech Stack
+
+- **Framework** - Next.js 14+
+- **Authentication** - NextAuth.js
+- **Database** - Prisma ORM
+- **Styling** - Tailwind CSS
+- **Language** - TypeScript
+
+## 📝 Configuration
+
+### Database Setup
+
+This kit supports multiple database providers. Update your `schema.prisma` file according to your preferred database:
+
+```prisma
+// For PostgreSQL
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// For MySQL
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// For SQLite (development)
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Authentication Providers
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Configure your authentication providers in `pages/api/auth/[...nextauth].js` or add new ones as needed.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🤝 Contributing
 
-## Learn More
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-To learn more about Next.js, take a look at the following resources:
+## 📄 License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ⭐ Support
 
-## Deploy on Vercel
+If this project helped you, please consider giving it a star on GitHub!
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Built with ❤️ by [Niraj Jha](https://github.com/your-github-username)**
