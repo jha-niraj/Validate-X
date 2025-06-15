@@ -40,12 +40,12 @@ A clean, reliable starting point for integrating Next.js authentication with Pri
    
    Edit `.env.local` with your configuration:
    ```env
-      DATABASE_URL="postgresql://user:password@localhost:5432/mydatabase or the neon one"
-      NEXTAUTH_URL="http://localhost:3000 or your production URL"
-      NEXTAUTH_SECRET="your-secret-key"
-      NEXT_GOOGLE_CLIENT_ID="your-google-client-id"
-      NEXT_GOOGLE_CLIENT_SECRET="your-google-client-secret"
-      RESEND_API_KEY="your-resend-api-key"
+   DATABASE_URL="postgresql://user:password@localhost:5432/mydatabase or the neon one"
+   NEXTAUTH_URL="http://localhost:3000 or your production URL"
+   NEXTAUTH_SECRET="your-secret-key"
+   NEXT_GOOGLE_CLIENT_ID="your-google-client-id"
+   NEXT_GOOGLE_CLIENT_SECRET="your-google-client-secret"
+   RESEND_API_KEY="your-resend-api-key"
    ```
 
 4. **Set up the database**
