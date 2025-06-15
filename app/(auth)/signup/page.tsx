@@ -48,7 +48,6 @@ export default function SignUp() {
 
             toast.success('Account created successfully! Welcome to SpeakFluent!')
             
-            // Sign in the user after successful registration
             const signInResult = await signIn('credentials', {
                 email,
                 password,
@@ -58,7 +57,6 @@ export default function SignUp() {
             if (signInResult?.ok) {
                 router.push('/dashboard')
             } else {
-                // If auto sign-in fails, redirect to sign-in page
                 toast.info('Please sign in to continue')
                 router.push('/signin')
             }
@@ -214,7 +212,6 @@ export default function SignUp() {
                     {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
                 </Button>
             </form>
-
             <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600">
                     Already have an account?{" "}
@@ -223,7 +220,6 @@ export default function SignUp() {
                     </Link>
                 </p>
             </div>
-
             <div className="pt-6 border-t border-gray-200">
                 <p className="text-xs text-center text-gray-500 mb-4">Or continue with</p>
                 <div className="grid grid-cols-1 gap-4">

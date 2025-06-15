@@ -74,9 +74,8 @@ export default function ForgotPasswordPage() {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Development only - show reset URL */}
-                        {resetUrl && process.env.NODE_ENV === 'development' && (
+                        {
+                        resetUrl && process.env.NODE_ENV === 'development' && (
                             <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                                 <div className="flex items-start space-x-3">
                                     <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
@@ -92,7 +91,8 @@ export default function ForgotPasswordPage() {
                                     </div>
                                 </div>
                             </div>
-                        )}
+                        )
+                        }
                     </CardContent>
                     <CardFooter className="flex flex-col space-y-4">
                         <div className="text-center text-sm text-gray-600">
@@ -121,10 +121,8 @@ export default function ForgotPasswordPage() {
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-50 px-4 py-12 sm:px-6 lg:px-8">
-            {/* Background Elements */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-teal-500/10 to-emerald-500/10 rounded-br-full"></div>
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl from-teal-500/10 to-emerald-500/10 rounded-tl-full"></div>
-
             <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl border-0 relative">
                 <CardHeader className="space-y-4">
                     <div className="flex items-center justify-center">

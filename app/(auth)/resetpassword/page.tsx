@@ -80,7 +80,6 @@ function ResetPassword() {
         }
     }
 
-    // Loading state
     if (isValidToken === null) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-50">
@@ -92,7 +91,6 @@ function ResetPassword() {
         )
     }
 
-    // Invalid token
     if (!isValidToken) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -136,7 +134,6 @@ function ResetPassword() {
         )
     }
 
-    // Success state
     if (isSuccess) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -177,13 +174,10 @@ function ResetPassword() {
         )
     }
 
-    // Main reset form
     return (
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-50 px-4 py-12 sm:px-6 lg:px-8">
-            {/* Background Elements */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-teal-500/10 to-emerald-500/10 rounded-br-full"></div>
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl from-teal-500/10 to-emerald-500/10 rounded-tl-full"></div>
-
             <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl border-0 relative">
                 <CardHeader className="space-y-4">
                     <div className="flex items-center justify-center">
@@ -224,11 +218,13 @@ function ResetPassword() {
                                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                                     onClick={() => setShowNewPassword(!showNewPassword)}
                                 >
-                                    {showNewPassword ? (
-                                        <EyeOff className="h-4 w-4 text-gray-400" />
-                                    ) : (
-                                        <Eye className="h-4 w-4 text-gray-400" />
-                                    )}
+                                    {
+                                        showNewPassword ? (
+                                            <EyeOff className="h-4 w-4 text-gray-400" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-gray-400" />
+                                        )
+                                    }
                                 </Button>
                             </div>
                         </div>
@@ -254,16 +250,16 @@ function ResetPassword() {
                                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                 >
-                                    {showConfirmPassword ? (
-                                        <EyeOff className="h-4 w-4 text-gray-400" />
-                                    ) : (
-                                        <Eye className="h-4 w-4 text-gray-400" />
-                                    )}
+                                    {
+                                        showConfirmPassword ? (
+                                            <EyeOff className="h-4 w-4 text-gray-400" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-gray-400" />
+                                        )
+                                    }
                                 </Button>
                             </div>
                         </div>
-
-                        {/* Password requirements */}
                         <div className="text-xs text-gray-500 space-y-1">
                             <p>Password requirements:</p>
                             <ul className="list-disc list-inside space-y-1 ml-2">

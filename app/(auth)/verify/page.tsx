@@ -17,7 +17,6 @@ export default function Verify() {
     const [canResend, setCanResend] = useState(false)
     const router = useRouter()
 
-    // Create refs for each input
     const inputRefs = [
         useRef<HTMLInputElement>(null),
         useRef<HTMLInputElement>(null),
@@ -41,21 +40,18 @@ export default function Verify() {
     }, [timer, canResend])
 
     const handleInputChange = (index: number, value: string) => {
-        // Only allow numbers
         if (value && !/^\d+$/.test(value)) return
 
         const newCode = [...code]
         newCode[index] = value
         setCode(newCode)
 
-        // Auto-focus next input
         if (value && index < 5) {
             inputRefs[index + 1].current?.focus()
         }
     }
 
     const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-        // Handle backspace
         if (e.key === "Backspace" && !code[index] && index > 0) {
             inputRefs[index - 1].current?.focus()
         }
@@ -65,12 +61,10 @@ export default function Verify() {
         e.preventDefault()
         const pastedData = e.clipboardData.getData("text/plain").trim()
 
-        // Check if pasted content is a 6-digit number
         if (/^\d{6}$/.test(pastedData)) {
             const digits = pastedData.split("")
             setCode(digits)
 
-            // Focus the last input
             inputRefs[5].current?.focus()
         }
     }
@@ -78,25 +72,22 @@ export default function Verify() {
     const handleResend = () => {
         setCanResend(false)
         setTimer(30)
-        // Simulate resending code
+        setCode(["", "", "", "", "", ""])
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsLoading(true)
 
-        // Check if code is complete
         if (code.join("").length !== 6) {
             setIsLoading(false)
             return
         }
 
-        // Simulate verification
         setTimeout(() => {
             setIsLoading(false)
             setIsVerified(true)
 
-            // Redirect to onboarding after showing success
             setTimeout(() => {
                 router.push("/onboarding")
             }, 2000)
@@ -146,60 +137,60 @@ export default function Verify() {
             floating={floatingElements}
         >
             {
-            isVerified ? (
-                <div className="flex flex-col items-center justify-center py-8">
-                    <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                        className="w-20 h-20 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-full flex items-center justify-center mb-6"
-                    >
-                        <CheckCircle className="w-10 h-10 text-white" />
-                    </motion.div>
-                    <p className="text-teal-600 font-medium">Your email has been verified!</p>
-                </div>
-            ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="flex justify-center space-x-2">
-                        {
-                        code.map((digit, index) => (
-                            <Input
-                                key={index}
-                                ref={inputRefs[index]}
-                                type="text"
-                                maxLength={1}
-                                value={digit}
-                                onChange={(e) => handleInputChange(index, e.target.value)}
-                                onKeyDown={(e) => handleKeyDown(index, e)}
-                                onPaste={index === 0 ? handlePaste : undefined}
-                                className="w-12 h-12 text-center text-lg font-bold rounded-xl border-teal-200 focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
-                            />
-                        ))
-                        }
-                    </div>
-                    <Button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl"
-                        disabled={isLoading || code.join("").length !== 6}
-                    >
-                        {isLoading ? "Verifying..." : "Verify Email"}
-                        {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
-                    </Button>
-                    <div className="text-center">
-                        <p className="text-sm text-gray-600 mb-2">Didn&apos;t receive the code?</p>
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={handleResend}
-                            disabled={!canResend}
-                            className="text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-xl text-sm"
+                isVerified ? (
+                    <div className="flex flex-col items-center justify-center py-8">
+                        <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                            className="w-20 h-20 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-full flex items-center justify-center mb-6"
                         >
-                            <RefreshCw className={`mr-2 h-3 w-3 ${!canResend && "animate-spin"}`} />
-                            {canResend ? "Resend Code" : `Resend in ${timer}s`}
-                        </Button>
+                            <CheckCircle className="w-10 h-10 text-white" />
+                        </motion.div>
+                        <p className="text-teal-600 font-medium">Your email has been verified!</p>
                     </div>
-                </form>
-            )
+                ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="flex justify-center space-x-2">
+                            {
+                                code.map((digit, index) => (
+                                    <Input
+                                        key={index}
+                                        ref={inputRefs[index]}
+                                        type="text"
+                                        maxLength={1}
+                                        value={digit}
+                                        onChange={(e) => handleInputChange(index, e.target.value)}
+                                        onKeyDown={(e) => handleKeyDown(index, e)}
+                                        onPaste={index === 0 ? handlePaste : undefined}
+                                        className="w-12 h-12 text-center text-lg font-bold rounded-xl border-teal-200 focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
+                                    />
+                                ))
+                            }
+                        </div>
+                        <Button
+                            type="submit"
+                            className="w-full bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl"
+                            disabled={isLoading || code.join("").length !== 6}
+                        >
+                            {isLoading ? "Verifying..." : "Verify Email"}
+                            {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
+                        </Button>
+                        <div className="text-center">
+                            <p className="text-sm text-gray-600 mb-2">Didn&apos;t receive the code?</p>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={handleResend}
+                                disabled={!canResend}
+                                className="text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-xl text-sm"
+                            >
+                                <RefreshCw className={`mr-2 h-3 w-3 ${!canResend && "animate-spin"}`} />
+                                {canResend ? "Resend Code" : `Resend in ${timer}s`}
+                            </Button>
+                        </div>
+                    </form>
+                )
             }
         </AuthLayout>
     )
