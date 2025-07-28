@@ -1,13 +1,13 @@
-# Next Auth Kit
+# ValidateX
 
-A clean, reliable starting point for integrating Next.js authentication with Prisma. This kit eliminates the complexity and common pitfalls when combining `next-auth` with `prisma`, providing developers with a streamlined setup for rapid development.
+ValidateX is a powerful form validation platform designed to simplify the creation of robust, user-friendly forms with intelligent validation rules and beautiful error handling. The platform is built using Next.js and integrates seamlessly with modern React frameworks for an enhanced developer experience.
 
 ## ✨ Features
 
-- **🚀 Fast Integration** - Streamlined setup process for rapid development
-- **🔧 Dependency Free** - Eliminates common integration headaches
-- **🛡️ Prisma Ready** - Seamless database integration included
-- **⭐ Production Ready** - Battle-tested and reliable foundation
+- **🧠 Smart Validation** - Intelligent validation rules with real-time feedback
+- **🔧 Easy Integration** - Seamless integration with modern React frameworks
+- **🎨 Customizable** - Flexible themes and customizable validation messages
+- **💡 TypeScript First** - Built with TypeScript for an enhanced developer experience
 
 ## 🚀 Quick Start
 
@@ -20,41 +20,20 @@ A clean, reliable starting point for integrating Next.js authentication with Pri
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/jha-niraj/NextJS-starter-auth
-   cd NextJS-starter-auth
+   git clone https://github.com/jha-niraj/validatex
+   cd validatex
    ```
 
 2. **Install dependencies**
    ```bash
-   npm install(use --legacy-peer-deps if fails)
+   npm install
    # or
    yarn install
    # or
    pnpm install
    ```
 
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env.local
-   ```
-   
-   Edit `.env.local` with your configuration:
-   ```env
-   DATABASE_URL="postgresql://user:password@localhost:5432/mydatabase or the neon one"
-   NEXTAUTH_URL="http://localhost:3000 or your production URL"
-   NEXTAUTH_SECRET="your-secret-key"
-   NEXT_GOOGLE_CLIENT_ID="your-google-client-id"
-   NEXT_GOOGLE_CLIENT_SECRET="your-google-client-secret"
-   RESEND_API_KEY="your-resend-api-key"
-   ```
-
-4. **Set up the database**
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
-
-5. **Run the development server**
+3. **Run the development server**
    ```bash
    npm run dev
    # or
@@ -63,47 +42,42 @@ A clean, reliable starting point for integrating Next.js authentication with Pri
    pnpm dev
    ```
 
-6. **Open your browser**
+4. **Open your browser**
    
-   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
+   Navigate to [http://localhost:3000](http://localhost:3000) to see the ValidateX landing page.
 
 ## 🛠️ Tech Stack
 
-- **Framework** - Next.js 14+
-- **Authentication** - NextAuth.js
-- **Database** - Prisma ORM
-- **Styling** - Tailwind CSS
+- **Framework** - Next.js 15+
+- **Styling** - Tailwind CSS with shadcn/ui components
 - **Language** - TypeScript
+- **UI Components** - Radix UI primitives
+- **Animations** - Framer Motion (planned)
+- **Form Handling** - React Hook Form (planned)
 
-## 📝 Configuration
+## 🎯 Current Status
 
-### Database Setup
+ValidateX is currently in early development. The current landing page includes:
 
-This kit supports multiple database providers. Update your `schema.prisma` file according to your preferred database:
+- ✅ Beautiful, responsive landing page
+- ✅ Email waitlist signup with dialog confirmation
+- ✅ Modern UI with Tailwind CSS and shadcn/ui
+- ✅ TypeScript support
+- 🔄 Form validation library (in development)
+- 🔄 Documentation site (planned)
+- 🔄 Component library (planned)
 
-```prisma
-// For PostgreSQL
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+## 📧 Join the Waitlist
 
-// For MySQL
-datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-}
+Interested in ValidateX? Visit our landing page and join the waitlist to be notified when we launch!
 
-// For SQLite (development)
-datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
-}
-```
+## 🌟 Upcoming Features
 
-### Authentication Providers
-
-Configure your authentication providers in `app/api/auth/[...nextauth].js` or add new ones as needed.
+- **Form Builder** - Visual form creation tool
+- **Validation Rules Engine** - Custom validation logic
+- **Theme System** - Customizable UI themes
+- **Integration Guides** - Step-by-step integration tutorials
+- **API Documentation** - Comprehensive API reference
 
 ## 🤝 Contributing
 
