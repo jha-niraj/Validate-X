@@ -1,12 +1,12 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { PrismaAdapter } from "@auth/prisma-adapter"
 import NextAuth from "next-auth";
 import { Role } from '@prisma/client';
+import bcrypt from "bcryptjs";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
-    adapter: PrismaAdapter(prisma),
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -36,7 +36,25 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         return null;
                     }
 
-                    const isPasswordValid = credentials.password === user.password;
+                    // Check if email is verified
+                    if (!user.emailVerified) {
+                        throw new Error("Please verify your email before signing in");
+                    }
+
+                    // For special case where password is "verified" (after OTP verification)
+                    if (credentials.password === "verified" && user.emailVerified) {
+                        return {
+                            id: user.id,
+                            email: user.email,
+                            name: user.name,
+                            image: user.image,
+                            role: user.role,
+                            roleExplicitlyChosen: user.roleExplicitlyChosen,
+                        };
+                    }
+
+                    // Regular password check
+                    const isPasswordValid = await bcrypt.compare(credentials.password as string, user.password);
 
                     if (!isPasswordValid) {
                         return null;
@@ -111,9 +129,15 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             return true;
         },
         async redirect({ url, baseUrl }) {
-            if (url.startsWith("/")) return `${baseUrl}${url}`
+            // If user is signing in and no specific redirect URL, go to dashboard
+            if (url.startsWith("/")) {
+                if (url === "/signin" || url === "/signup") {
+                    return `${baseUrl}/dashboard`
+                }
+                return `${baseUrl}${url}`
+            }
             if (new URL(url).origin === baseUrl) return url
-            return baseUrl
+            return `${baseUrl}/dashboard`
         },
     },
     pages: {

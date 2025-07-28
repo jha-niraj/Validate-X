@@ -1,19 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-providers";
-import { Navbar } from "@/components/(landingpage)/landingnavbar";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster as SonnerToaster } from "sonner";
 import { Providers } from "./providers/providers";
+import { Header } from "@/components/header";
 
-const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
-});
-
+const spaceGrotesk = Space_Grotesk({
+    subsets: ['latin'],
+    weight: ['300', '400', '500', '600', '700'],
+    display: 'swap',
+    variable: '--font-space-grotesk',
+})
 const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
-	subsets: ["latin"],
+    variable: "--font-geist-mono",
+    subsets: ["latin"],
+});
+const geistSans = Geist({
+    variable: "--font-geist-sans",
+    subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -27,9 +32,15 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html lang="en"
+			suppressHydrationWarning
+		>
+			<head>
+				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+				<link rel="icon" href="/mainlogo.ico" />
+			</head>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                className={`${geistSans.variable} ${spaceGrotesk.className} ${geistMono.variable} antialiased`}
 			>
 				<Providers>
 					<ThemeProvider
@@ -38,9 +49,9 @@ export default function RootLayout({
 						enableSystem
 						disableTransitionOnChange
 					>
-						<Toaster />
-						<Navbar />
+						<Header />
 						{children}
+						<SonnerToaster position="top-center" closeButton richColors />
 					</ThemeProvider>
 				</Providers>
 			</body>

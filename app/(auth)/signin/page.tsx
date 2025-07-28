@@ -2,24 +2,24 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { AuthLayout } from "@/components/authlayout"
-import { ArrowRight, BookOpen, Globe, Mic, Trophy } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { ArrowRight } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { signIn } from "next-auth/react"
 import { toast } from "sonner"
 
-export default function SignIn() {
+function SignInContent() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [isGoogleLoading, setIsGoogleLoading] = useState(false)
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -38,7 +38,7 @@ export default function SignIn() {
 
             if (result?.ok) {
                 toast.success('Welcome back!')
-                router.push('/dashboard')
+                router.push(callbackUrl)
             }
 
         } catch (error) {
@@ -53,7 +53,7 @@ export default function SignIn() {
         setIsGoogleLoading(true)
         try {
             await signIn('google', {
-                callbackUrl: '/dashboard'
+                callbackUrl
             })
         } catch (error) {
             console.error('Google sign-in error:', error)
@@ -62,140 +62,160 @@ export default function SignIn() {
         }
     }
 
-    const floatingElements = [
-        <motion.div
-            key="floating-1"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="absolute top-20 left-20 animate-float"
-        >
-            <div className="w-12 h-12 bg-gradient-to-br from-teal-400 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
-                <Mic className="w-6 h-6 text-white" />
-            </div>
-        </motion.div>,
-        <motion.div
-            key="floating-2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="absolute top-40 right-32 animate-float-delayed"
-        >
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
-                <BookOpen className="w-5 h-5 text-white" />
-            </div>
-        </motion.div>,
-        <motion.div
-            key="floating-3"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="absolute bottom-32 left-40 animate-float-slow"
-        >
-            <div className="w-14 h-14 bg-gradient-to-br from-teal-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg">
-                <Globe className="w-7 h-7 text-white" />
-            </div>
-        </motion.div>,
-        <motion.div
-            key="floating-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
-            className="absolute bottom-40 right-20 animate-float-reverse"
-        >
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow-lg">
-                <Trophy className="w-6 h-6 text-white" />
-            </div>
-        </motion.div>,
-    ]
-
     return (
-        <AuthLayout
-            title="Welcome back"
-            subtitle="Sign in to continue"
-            floating={floatingElements}
-        >
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                        id="email"
-                        type="email"
-                        placeholder="you@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        disabled={isLoading}
-                        className="rounded-xl border-teal-200 focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
-                    />
-                </div>
-                <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="password">Password</Label>
-                        <Link href="/forgot-password" className="text-sm text-teal-600 hover:text-teal-700 hover:underline">
-                            Forgot password?
-                        </Link>
-                    </div>
-                    <Input
-                        id="password"
-                        type="password"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        disabled={isLoading}
-                        className="rounded-xl border-teal-200 focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50"
-                    />
-                </div>
-                <Button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl"
-                    disabled={isLoading}
+        <div className="min-h-screen w-full bg-white dark:bg-neutral-950 flex flex-col relative overflow-hidden">
+            {/* Background patterns */}
+            <div className="absolute inset-0 pointer-events-none">
+                <svg
+                    className="w-full h-full text-neutral-950 dark:text-white opacity-[0.02]"
+                    viewBox="0 0 696 316"
+                    fill="none"
                 >
-                    {isLoading ? "Signing in..." : "Sign In"}
-                    {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
-                </Button>
-            </form>
-            <div className="mt-6 text-center">
-                <p className="text-sm text-gray-600">
-                    Don&apos;t have an account?{" "}
-                    <Link href="/signup" className="text-teal-600 hover:text-teal-700 hover:underline font-medium">
-                        Sign up
-                    </Link>
-                </p>
+                    <path
+                        d="M-380 -189C-380 -189 -312 216 152 343C616 470 684 875 684 875"
+                        stroke="currentColor"
+                        strokeWidth="0.5"
+                    />
+                    <path
+                        d="M-375 -183C-375 -183 -307 222 157 349C621 476 689 881 689 881"
+                        stroke="currentColor"
+                        strokeWidth="0.6"
+                    />
+                    <path
+                        d="M-370 -177C-370 -177 -302 228 162 355C626 482 694 887 694 887"
+                        stroke="currentColor"
+                        strokeWidth="0.7"
+                    />
+                </svg>
             </div>
-            <div className="pt-6 border-t border-gray-200">
-                <p className="text-xs text-center text-gray-500 mb-4">Or continue with</p>
-                <div className="grid grid-cols-1 gap-4">
-                    <Button 
-                        type="button"
-                        variant="outline" 
-                        className="rounded-xl border-teal-200 hover:bg-teal-50"
-                        onClick={handleGoogleSignIn}
-                        disabled={isLoading || isGoogleLoading}
-                    >
-                        <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                            <path
-                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                                fill="#4285F4"
-                            />
-                            <path
-                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                                fill="#34A853"
-                            />
-                            <path
-                                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                                fill="#FBBC05"
-                            />
-                            <path
-                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                                fill="#EA4335"
-                            />
-                        </svg>
-                        {isGoogleLoading ? "Signing in..." : "Google"}
-                    </Button>
+
+            {/* Header with back button */}
+            <div className="relative z-10 p-6">
+                <Link 
+                    href="/"
+                    className="inline-flex items-center gap-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span className="text-sm font-medium">Back to home</span>
+                </Link>
+            </div>
+
+            {/* Main content */}
+            <div className="flex-1 flex items-center justify-center p-4">
+                <div className="w-full max-w-md relative z-10">
+                    {/* ValidateX branding */}
+                    <div className="text-center mb-8">
+                        <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300">
+                            ValidateX
+                        </h1>
+                        <div className="w-12 h-0.5 bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300 mx-auto"></div>
+                    </div>
+
+                    {/* Auth card */}
+                    <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-neutral-200/20 dark:border-neutral-800/20 p-8">
+                        <div className="text-center mb-8">
+                            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Welcome back</h2>
+                            <p className="text-neutral-600 dark:text-neutral-400 mt-2">Sign in to your ValidateX account</p>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-neutral-700 dark:text-neutral-300 font-medium">Email</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="you@example.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    disabled={isLoading}
+                                    className="h-12 rounded-2xl border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:border-neutral-400 dark:focus:border-neutral-500 focus:ring-0 placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="password" className="text-neutral-700 dark:text-neutral-300 font-medium">Password</Label>
+                                    <Link href="/forgotpassword" className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:underline">
+                                        Forgot password?
+                                    </Link>
+                                </div>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    disabled={isLoading}
+                                    className="h-12 rounded-2xl border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:border-neutral-400 dark:focus:border-neutral-500 focus:ring-0 placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
+                                />
+                            </div>
+                            <Button
+                                type="submit"
+                                className="w-full h-12 bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-black rounded-2xl font-semibold transition-all duration-200 hover:shadow-lg"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? "Signing in..." : "Sign In"}
+                                {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
+                            </Button>
+                        </form>
+                        
+                        <div className="mt-8 text-center">
+                            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                                Don&apos;t have an account?{" "}
+                                <Link href="/signup" className="text-neutral-900 dark:text-white hover:underline font-medium">
+                                    Sign up
+                                </Link>
+                            </p>
+                        </div>
+                        
+                        <div className="mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-700">
+                            <p className="text-xs text-center text-neutral-500 dark:text-neutral-400 mb-4">Or continue with</p>
+                            <Button 
+                                type="button"
+                                variant="outline" 
+                                className="w-full h-12 rounded-2xl border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+                                onClick={handleGoogleSignIn}
+                                disabled={isLoading || isGoogleLoading}
+                            >
+                                <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+                                    <path
+                                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                        fill="#4285F4"
+                                    />
+                                    <path
+                                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                        fill="#34A853"
+                                    />
+                                    <path
+                                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                        fill="#FBBC05"
+                                    />
+                                    <path
+                                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                        fill="#EA4335"
+                                    />
+                                </svg>
+                                {isGoogleLoading ? "Signing in..." : "Continue with Google"}
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </AuthLayout>
+        </div>
+    )
+}
+
+export default function SignIn() {
+    return (
+        <Suspense fallback={
+            <div className="flex min-h-screen items-center justify-center bg-white dark:bg-neutral-950">
+                <div className="text-neutral-600 dark:text-neutral-400">Loading...</div>
+            </div>
+        }>
+            <SignInContent />
+        </Suspense>
     )
 }

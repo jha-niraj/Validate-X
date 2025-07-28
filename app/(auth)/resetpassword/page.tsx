@@ -6,9 +6,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, Eye, EyeOff, CheckCircle, AlertCircle, Shield } from "lucide-react"
-import { validateResetToken, resetPassword } from "@/actions/auth.action"
+import { ArrowRight, Eye, EyeOff, CheckCircle, AlertCircle, Shield } from "lucide-react"
+import { validateResetToken, resetPassword } from "@/actions/auth.actions"
 import { toast } from "sonner"
 
 function ResetPassword() {
@@ -82,10 +81,10 @@ function ResetPassword() {
 
     if (isValidToken === null) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-50">
+            <div className="flex min-h-screen items-center justify-center bg-white dark:bg-neutral-950">
                 <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-full animate-pulse mx-auto mb-4"></div>
-                    <p className="text-gray-600">Validating reset token...</p>
+                    <div className="w-16 h-16 bg-gradient-to-br from-neutral-600 to-neutral-800 dark:from-neutral-300 dark:to-neutral-500 rounded-full animate-pulse mx-auto mb-4"></div>
+                    <p className="text-neutral-600 dark:text-neutral-400">Validating reset token...</p>
                 </div>
             </div>
         )
@@ -93,209 +92,355 @@ function ResetPassword() {
 
     if (!isValidToken) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-50 px-4 py-12 sm:px-6 lg:px-8">
-                <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl border-0">
-                    <CardHeader className="space-y-4 text-center">
-                        <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                            <AlertCircle className="w-8 h-8 text-red-600" />
+            <div className="min-h-screen w-full bg-white dark:bg-neutral-950 flex flex-col relative overflow-hidden">
+                {/* Background patterns */}
+                <div className="absolute inset-0 pointer-events-none">
+                    <svg
+                        className="w-full h-full text-neutral-950 dark:text-white opacity-[0.02]"
+                        viewBox="0 0 696 316"
+                        fill="none"
+                    >
+                        <path
+                            d="M-380 -189C-380 -189 -312 216 152 343C616 470 684 875 684 875"
+                            stroke="currentColor"
+                            strokeWidth="0.5"
+                        />
+                        <path
+                            d="M-375 -183C-375 -183 -307 222 157 349C621 476 689 881 689 881"
+                            stroke="currentColor"
+                            strokeWidth="0.6"
+                        />
+                        <path
+                            d="M-370 -177C-370 -177 -302 228 162 355C626 482 694 887 694 887"
+                            stroke="currentColor"
+                            strokeWidth="0.7"
+                        />
+                    </svg>
+                </div>
+
+                {/* Header with back button */}
+                <div className="relative z-10 p-6">
+                    <Link 
+                        href="/"
+                        className="inline-flex items-center gap-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        <span className="text-sm font-medium">Back to home</span>
+                    </Link>
+                </div>
+
+                {/* Main content */}
+                <div className="flex-1 flex items-center justify-center p-4">
+                    <div className="w-full max-w-md relative z-10">
+                        {/* ValidateX branding */}
+                        <div className="text-center mb-8">
+                            <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300">
+                                ValidateX
+                            </h1>
+                            <div className="w-12 h-0.5 bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300 mx-auto"></div>
                         </div>
-                        <div>
-                            <CardTitle className="text-2xl font-bold tracking-tight text-gray-900">
-                                Invalid Reset Link
-                            </CardTitle>
-                            <CardDescription className="text-gray-600 mt-2">
-                                This password reset link is invalid or has expired
-                            </CardDescription>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="p-4 bg-red-50 rounded-lg border border-red-200">
-                            <div className="text-sm text-red-800">
-                                <p className="font-medium mb-1">Reset link expired</p>
-                                <p>Password reset links are only valid for 24 hours for security reasons.</p>
+
+                        {/* Auth card */}
+                        <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-neutral-200/20 dark:border-neutral-800/20 p-8">
+                            <div className="text-center mb-8">
+                                <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Invalid Reset Link</h2>
+                                <p className="text-neutral-600 dark:text-neutral-400 mt-2">This password reset link is invalid or has expired</p>
+                            </div>
+
+                            <div className="flex flex-col items-center justify-center py-8 space-y-6">
+                                <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center shadow-xl">
+                                    <AlertCircle className="w-10 h-10 text-red-600 dark:text-red-400" />
+                                </div>
+
+                                <div className="p-6 bg-red-50 dark:bg-red-900/20 rounded-2xl border border-red-200 dark:border-red-800">
+                                    <div className="text-sm text-red-800 dark:text-red-200">
+                                        <p className="font-medium mb-1">Reset link expired</p>
+                                        <p>Password reset links are only valid for 24 hours for security reasons.</p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4 w-full">
+                                    <Link href="/forgotpassword" className="w-full block">
+                                        <Button className="w-full h-12 bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-black rounded-2xl font-semibold transition-all duration-200 hover:shadow-lg">
+                                            Request New Reset Link
+                                            <ArrowRight className="ml-2 h-4 w-4" />
+                                        </Button>
+                                    </Link>
+                                    
+                                    <div className="text-center">
+                                        <Link 
+                                            href="/signin" 
+                                            className="inline-flex items-center text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
+                                        >
+                                            ← Back to sign in
+                                        </Link>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col space-y-4">
-                        <Link href="/auth/forgotpassword" className="w-full">
-                            <Button className="w-full bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white">
-                                Request New Reset Link
-                            </Button>
-                        </Link>
-                        <div className="text-center text-sm">
-                            <Link href="/auth/signin" className="flex items-center justify-center text-gray-600 hover:text-teal-600 transition-colors">
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                Back to sign in
-                            </Link>
-                        </div>
-                    </CardFooter>
-                </Card>
+                    </div>
+                </div>
             </div>
         )
     }
 
     if (isSuccess) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-50 px-4 py-12 sm:px-6 lg:px-8">
-                <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl border-0">
-                    <CardHeader className="space-y-4 text-center">
-                        <div className="mx-auto w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-full flex items-center justify-center">
-                            <CheckCircle className="w-8 h-8 text-white" />
+            <div className="min-h-screen w-full bg-white dark:bg-neutral-950 flex flex-col relative overflow-hidden">
+                {/* Background patterns */}
+                <div className="absolute inset-0 pointer-events-none">
+                    <svg
+                        className="w-full h-full text-neutral-950 dark:text-white opacity-[0.02]"
+                        viewBox="0 0 696 316"
+                        fill="none"
+                    >
+                        <path
+                            d="M-380 -189C-380 -189 -312 216 152 343C616 470 684 875 684 875"
+                            stroke="currentColor"
+                            strokeWidth="0.5"
+                        />
+                        <path
+                            d="M-375 -183C-375 -183 -307 222 157 349C621 476 689 881 689 881"
+                            stroke="currentColor"
+                            strokeWidth="0.6"
+                        />
+                        <path
+                            d="M-370 -177C-370 -177 -302 228 162 355C626 482 694 887 694 887"
+                            stroke="currentColor"
+                            strokeWidth="0.7"
+                        />
+                    </svg>
+                </div>
+
+                {/* Header with back button */}
+                <div className="relative z-10 p-6">
+                    <Link 
+                        href="/"
+                        className="inline-flex items-center gap-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        <span className="text-sm font-medium">Back to home</span>
+                    </Link>
+                </div>
+
+                {/* Main content */}
+                <div className="flex-1 flex items-center justify-center p-4">
+                    <div className="w-full max-w-md relative z-10">
+                        {/* ValidateX branding */}
+                        <div className="text-center mb-8">
+                            <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300">
+                                ValidateX
+                            </h1>
+                            <div className="w-12 h-0.5 bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300 mx-auto"></div>
                         </div>
-                        <div>
-                            <CardTitle className="text-2xl font-bold tracking-tight text-gray-900">
-                                Password Reset Successful
-                            </CardTitle>
-                            <CardDescription className="text-gray-600 mt-2">
-                                Your password has been successfully reset
-                            </CardDescription>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="p-4 bg-teal-50 rounded-lg border border-teal-200">
-                            <div className="flex items-start space-x-3">
-                                <Shield className="w-5 h-5 text-teal-600 mt-0.5" />
-                                <div className="text-sm text-teal-800">
-                                    <p className="font-medium mb-1">Security Notice</p>
-                                    <p>Your password has been changed. You can now sign in with your new password.</p>
+
+                        {/* Auth card */}
+                        <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-neutral-200/20 dark:border-neutral-800/20 p-8">
+                            <div className="text-center mb-8">
+                                <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Password Reset Successful</h2>
+                                <p className="text-neutral-600 dark:text-neutral-400 mt-2">Your password has been successfully reset</p>
+                            </div>
+
+                            <div className="flex flex-col items-center justify-center py-8 space-y-6">
+                                <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-xl">
+                                    <CheckCircle className="w-10 h-10 text-white" />
                                 </div>
+
+                                <div className="p-6 bg-green-50 dark:bg-green-900/20 rounded-2xl border border-green-200 dark:border-green-800">
+                                    <div className="flex items-start space-x-3">
+                                        <Shield className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
+                                        <div className="text-sm text-green-800 dark:text-green-200">
+                                            <p className="font-medium mb-1">Security Notice</p>
+                                            <p>Your password has been changed. You can now sign in with your new password.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <Link href="/signin" className="w-full">
+                                    <Button className="w-full h-12 bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-black rounded-2xl font-semibold transition-all duration-200 hover:shadow-lg">
+                                        Sign In
+                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
-                    </CardContent>
-                    <CardFooter>
-                        <Link href="/auth/signin" className="w-full">
-                            <Button className="w-full bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white">
-                                Sign In
-                            </Button>
-                        </Link>
-                    </CardFooter>
-                </Card>
+                    </div>
+                </div>
             </div>
         )
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-teal-50 to-emerald-50 px-4 py-12 sm:px-6 lg:px-8">
-            <div className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-teal-500/10 to-emerald-500/10 rounded-br-full"></div>
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl from-teal-500/10 to-emerald-500/10 rounded-tl-full"></div>
-            <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl border-0 relative">
-                <CardHeader className="space-y-4">
-                    <div className="flex items-center justify-center">
-                        <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                            <Shield className="w-6 h-6 text-white" />
-                        </div>
+        <div className="min-h-screen w-full bg-white dark:bg-neutral-950 flex flex-col relative overflow-hidden">
+            {/* Background patterns */}
+            <div className="absolute inset-0 pointer-events-none">
+                <svg
+                    className="w-full h-full text-neutral-950 dark:text-white opacity-[0.02]"
+                    viewBox="0 0 696 316"
+                    fill="none"
+                >
+                    <path
+                        d="M-380 -189C-380 -189 -312 216 152 343C616 470 684 875 684 875"
+                        stroke="currentColor"
+                        strokeWidth="0.5"
+                    />
+                    <path
+                        d="M-375 -183C-375 -183 -307 222 157 349C621 476 689 881 689 881"
+                        stroke="currentColor"
+                        strokeWidth="0.6"
+                    />
+                    <path
+                        d="M-370 -177C-370 -177 -302 228 162 355C626 482 694 887 694 887"
+                        stroke="currentColor"
+                        strokeWidth="0.7"
+                    />
+                </svg>
+            </div>
+
+            {/* Header with back button */}
+            <div className="relative z-10 p-6">
+                <Link 
+                    href="/"
+                    className="inline-flex items-center gap-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span className="text-sm font-medium">Back to home</span>
+                </Link>
+            </div>
+
+            {/* Main content */}
+            <div className="flex-1 flex items-center justify-center p-4">
+                <div className="w-full max-w-md relative z-10">
+                    {/* ValidateX branding */}
+                    <div className="text-center mb-8">
+                        <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300">
+                            ValidateX
+                        </h1>
+                        <div className="w-12 h-0.5 bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300 mx-auto"></div>
                     </div>
-                    <div className="text-center">
-                        <CardTitle className="text-2xl font-bold tracking-tight text-gray-900">
-                            Set new password
-                        </CardTitle>
-                        <CardDescription className="text-gray-600 mt-2">
-                            Create a strong password for your account
-                        </CardDescription>
+
+                    {/* Auth card */}
+                    <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-neutral-200/20 dark:border-neutral-800/20 p-8">
+                        <div className="text-center mb-8">
+                            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Set new password</h2>
+                            <p className="text-neutral-600 dark:text-neutral-400 mt-2">Create a strong password for your account</p>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="password" className="text-neutral-700 dark:text-neutral-300 font-medium">
+                                    New Password
+                                </Label>
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        type={showNewPassword ? "text" : "password"}
+                                        placeholder="Enter your new password"
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        required
+                                        disabled={isSubmitting}
+                                        className="h-12 rounded-2xl border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:border-neutral-400 dark:focus:border-neutral-500 focus:ring-0 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 pr-12"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent"
+                                        onClick={() => setShowNewPassword(!showNewPassword)}
+                                    >
+                                        {showNewPassword ? (
+                                            <EyeOff className="h-4 w-4 text-neutral-400" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-neutral-400" />
+                                        )}
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="confirm-password" className="text-neutral-700 dark:text-neutral-300 font-medium">
+                                    Confirm New Password
+                                </Label>
+                                <div className="relative">
+                                    <Input
+                                        id="confirm-password"
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        placeholder="Confirm your new password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        required
+                                        disabled={isSubmitting}
+                                        className="h-12 rounded-2xl border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:border-neutral-400 dark:focus:border-neutral-500 focus:ring-0 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 pr-12"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    >
+                                        {showConfirmPassword ? (
+                                            <EyeOff className="h-4 w-4 text-neutral-400" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-neutral-400" />
+                                        )}
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <div className="text-xs text-neutral-500 dark:text-neutral-400 space-y-2">
+                                <p className="font-medium">Password requirements:</p>
+                                <ul className="space-y-1 ml-4">
+                                    <li className={`flex items-center gap-2 ${newPassword.length >= 8 ? "text-green-600 dark:text-green-400" : ""}`}>
+                                        <div className={`w-1 h-1 rounded-full ${newPassword.length >= 8 ? "bg-green-600" : "bg-neutral-400"}`}></div>
+                                        At least 8 characters long
+                                    </li>
+                                    <li className={`flex items-center gap-2 ${newPassword !== confirmPassword && confirmPassword ? "text-red-600 dark:text-red-400" : confirmPassword && newPassword === confirmPassword ? "text-green-600 dark:text-green-400" : ""}`}>
+                                        <div className={`w-1 h-1 rounded-full ${confirmPassword && newPassword === confirmPassword ? "bg-green-600" : newPassword !== confirmPassword && confirmPassword ? "bg-red-600" : "bg-neutral-400"}`}></div>
+                                        Both passwords must match
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <Button
+                                type="submit"
+                                className="w-full h-12 bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-black rounded-2xl font-semibold transition-all duration-200 hover:shadow-lg"
+                                disabled={isSubmitting || newPassword.length < 8 || newPassword !== confirmPassword}
+                            >
+                                {isSubmitting ? "Resetting..." : "Reset password"}
+                                {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4" />}
+                            </Button>
+
+                            <div className="text-center">
+                                <Link 
+                                    href="/signin" 
+                                    className="inline-flex items-center text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
+                                >
+                                    ← Back to sign in
+                                </Link>
+                            </div>
+                        </form>
                     </div>
-                </CardHeader>
-                <form onSubmit={handleSubmit}>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-                                New Password
-                            </Label>
-                            <div className="relative">
-                                <Input
-                                    id="password"
-                                    type={showNewPassword ? "text" : "password"}
-                                    placeholder="Enter your new password"
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
-                                    required
-                                    className="rounded-lg border-gray-200 focus:border-teal-300 focus:ring-teal-200 pr-10"
-                                    disabled={isSubmitting}
-                                />
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                                    onClick={() => setShowNewPassword(!showNewPassword)}
-                                >
-                                    {
-                                        showNewPassword ? (
-                                            <EyeOff className="h-4 w-4 text-gray-400" />
-                                        ) : (
-                                            <Eye className="h-4 w-4 text-gray-400" />
-                                        )
-                                    }
-                                </Button>
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="confirm-password" className="text-sm font-medium text-gray-700">
-                                Confirm New Password
-                            </Label>
-                            <div className="relative">
-                                <Input
-                                    id="confirm-password"
-                                    type={showConfirmPassword ? "text" : "password"}
-                                    placeholder="Confirm your new password"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    required
-                                    className="rounded-lg border-gray-200 focus:border-teal-300 focus:ring-teal-200 pr-10"
-                                    disabled={isSubmitting}
-                                />
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                >
-                                    {
-                                        showConfirmPassword ? (
-                                            <EyeOff className="h-4 w-4 text-gray-400" />
-                                        ) : (
-                                            <Eye className="h-4 w-4 text-gray-400" />
-                                        )
-                                    }
-                                </Button>
-                            </div>
-                        </div>
-                        <div className="text-xs text-gray-500 space-y-1">
-                            <p>Password requirements:</p>
-                            <ul className="list-disc list-inside space-y-1 ml-2">
-                                <li className={newPassword.length >= 8 ? "text-green-600" : ""}>
-                                    At least 8 characters long
-                                </li>
-                                <li className={newPassword !== confirmPassword && confirmPassword ? "text-red-600" : confirmPassword && newPassword === confirmPassword ? "text-green-600" : ""}>
-                                    Both passwords must match
-                                </li>
-                            </ul>
-                        </div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col space-y-4">
-                        <Button
-                            type="submit"
-                            className="w-full bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-lg"
-                            disabled={isSubmitting || newPassword.length < 8 || newPassword !== confirmPassword}
-                        >
-                            {isSubmitting ? "Resetting..." : "Reset password"}
-                        </Button>
-                        <div className="text-center text-sm">
-                            <Link href="/auth/signin" className="flex items-center justify-center text-gray-600 hover:text-teal-600 transition-colors">
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                Back to sign in
-                            </Link>
-                        </div>
-                    </CardFooter>
-                </form>
-            </Card>
+                </div>
+            </div>
         </div>
     )
 }
 
 export default function ResetPasswordPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={
+            <div className="flex min-h-screen items-center justify-center bg-white dark:bg-neutral-950">
+                <div className="text-neutral-600 dark:text-neutral-400">Loading...</div>
+            </div>
+        }>
             <ResetPassword />
         </Suspense>
     )

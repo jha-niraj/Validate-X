@@ -23,6 +23,10 @@ model User {
     roleExplicitlyChosen Boolean   @default(false)
 	createdAt            DateTime  @default(now())
 
+    // Email verification
+    verificationToken    String?   @unique
+    verificationTokenExpiry DateTime?
+
     // Password reset
     resetToken           String?   @unique
     resetTokenExpiry     DateTime?
