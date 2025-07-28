@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Next Starter Kit",
-	description: "All medicine info at one place",
+	title: "Validate X",
+	description: "Validate anything and everything and also earn",
 };
 
 export default function RootLayout({
