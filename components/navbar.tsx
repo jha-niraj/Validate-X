@@ -5,16 +5,16 @@ import { Equal, Moon, Sun } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/liquid-glass-button'
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 
-const menuItems = [
-    { name: 'Features', href: '#features' },
-    { name: 'How it Works', href: '#how-it-works' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'About', href: '#about' },
-]
+// const menuItems = [
+//     { name: 'Features', href: '#features' },
+//     { name: 'How it Works', href: '#how-it-works' },
+//     { name: 'Pricing', href: '#pricing' },
+//     { name: 'About', href: '#about' },
+// ]
 
 export const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -28,14 +28,14 @@ export const Header = () => {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
-    const handleLinkClick = (href: string) => {
-        if (href.startsWith('#')) {
-            const element = document.querySelector(href);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-    };
+    // const handleLinkClick = (href: string) => {
+    //     if (href.startsWith('#')) {
+    //         const element = document.querySelector(href);
+    //         if (element) {
+    //             element.scrollIntoView({ behavior: 'smooth' });
+    //         }
+    //     }
+    // };
 
     return (
         <header>
