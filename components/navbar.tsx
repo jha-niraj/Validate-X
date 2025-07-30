@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Equal, Moon, Sun } from 'lucide-react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/liquid-glass-button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet'
@@ -17,10 +17,10 @@ const menuItems = [
 ]
 
 export const Header = () => {
-    const [isScrolled, setIsScrolled] = React.useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
     const { theme, setTheme } = useTheme(); 
 
-    React.useEffect(() => {
+    useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 50)
         }
@@ -70,12 +70,12 @@ export const Header = () => {
                                         <span className="sr-only">Open menu</span>
                                     </Button>
                                 </SheetTrigger>
-                                <SheetContent side="top" className="w-full h-[50vh]">
+                                <SheetContent side="top" className="w-full h-[20vh]">
                                     <SheetHeader>
                                         <SheetTitle className="text-left">Menu</SheetTitle>
                                     </SheetHeader>
                                     <div className="flex flex-col space-y-6 mt-8">
-                                        {menuItems.map((item, index) => (
+                                        {/* {menuItems.map((item, index) => (
                                             <SheetClose asChild key={index}>
                                                 <Link
                                                     href={item.href}
@@ -85,7 +85,7 @@ export const Header = () => {
                                                     {item.name}
                                                 </Link>
                                             </SheetClose>
-                                        ))}
+                                        ))} */}
                                         
                                         {/* Theme Toggle in Mobile */}
                                         <div className="flex items-center gap-2 pt-4 border-t">
@@ -111,7 +111,7 @@ export const Header = () => {
                                         </div>
                                         
                                         {/* Mobile Actions */}
-                                        <div className="flex gap-4 pt-4 border-t">
+                                        {/* <div className="flex gap-4 pt-4 border-t">
                                             <SheetClose asChild>
                                                 <Button
                                                     asChild
@@ -135,14 +135,14 @@ export const Header = () => {
                                                     </Link>
                                                 </Button>
                                             </SheetClose>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </SheetContent>
                             </Sheet>
                         </div>
 
                         {/* Desktop Menu */}
-                        <div className="absolute inset-0 m-auto hidden size-fit lg:block">
+                        {/* <div className="absolute inset-0 m-auto hidden size-fit lg:block">
                             <ul className="flex gap-8 text-sm">
                                 {menuItems.map((item, index) => (
                                     <li key={index}>
@@ -155,7 +155,7 @@ export const Header = () => {
                                     </li>
                                 ))}
                             </ul>
-                        </div>
+                        </div> */}
 
                         {/* Desktop Actions */}
                         <div className="hidden lg:flex items-center gap-4">
@@ -179,7 +179,7 @@ export const Header = () => {
                                 </Button>
                             </div>
                             
-                            <Button
+                            {/* <Button
                                 asChild
                                 variant="outline"
                                 size="sm"
@@ -203,7 +203,7 @@ export const Header = () => {
                                 <Link href="/signup">
                                     <span>Get Started</span>
                                 </Link>
-                            </Button>
+                            </Button> */}
                         </div>
                     </div>
                 </div>

@@ -113,7 +113,7 @@ export function BackgroundPaths({
     return (
         <>
             {/* Hero Section */}
-            <div className="relative min-h-screen w-full flex items-center justify-center overflow-auto bg-white dark:bg-neutral-950 py-24 md:py-0">
+            <div className="relative min-h-screen w-full flex items-center justify-center overflow-auto bg-white dark:bg-neutral-950 py-24 md:py-28">
                 <div className="absolute inset-0">
                     <FloatingPaths position={1} />
                     <FloatingPaths position={-1} />
@@ -127,7 +127,7 @@ export function BackgroundPaths({
                         className="max-w-6xl mx-auto"
                     >
                         <div className="flex flex-col gap-4 items-center justify-center mb-8">
-                            <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tighter">
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter">
                                 {words.map((word, wordIndex) => (
                                     <span
                                         key={wordIndex}
@@ -157,7 +157,7 @@ export function BackgroundPaths({
                                 ))}
                             </h1>
                             <WordRotate
-                                className="text-6xl font-bold text-black dark:text-white
+                                className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-black dark:text-white
                                     inline-block text-transparent bg-clip-text 
                                             bg-gradient-to-r from-neutral-900 to-neutral-700/80 
                                             dark:from-white dark:to-white/80
