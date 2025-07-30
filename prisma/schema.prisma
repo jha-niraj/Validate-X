@@ -58,3 +58,13 @@ model Account {
     @@unique([provider, providerAccountId])
     @@map("accounts")
 }
+
+model WaitingList {
+    id        String   @id @default(cuid())
+    email     String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([email])
+    @@map("waiting_list")
+}

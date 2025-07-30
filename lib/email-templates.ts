@@ -138,3 +138,127 @@ export const passwordResetEmailTemplate = (resetUrl: string) => {
         </html>
     `;
 };
+
+export const registrationSuccessEmailTemplate = (name: string, email: string) => {
+    return `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Welcome to ValidateX - Registration Complete!</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); min-height: 100vh;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+                <!-- Header -->
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="display: inline-flex; align-items: center; gap: 12px; background: white; padding: 16px 24px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #0d9488, #10b981); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <span style="color: white; font-size: 20px; font-weight: bold;">V</span>
+                        </div>
+                        <h1 style="margin: 0; color: #0d9488; font-size: 28px; font-weight: 700;">ValidateX</h1>
+                    </div>
+                </div>
+
+                <!-- Main Content Card -->
+                <div style="background: white; border-radius: 24px; padding: 40px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); border: 1px solid rgba(13, 148, 136, 0.1);">
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #059669, #10b981); border-radius: 50%; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(5, 150, 105, 0.3);">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 32px; font-weight: 700;">🎉 Welcome to ValidateX!</h2>
+                        <p style="margin: 0; color: #6b7280; font-size: 18px; line-height: 1.6;">Congratulations! Your account has been successfully created and verified. You're now part of our innovative idea validation community.</p>
+                    </div>
+
+                    <!-- Welcome Message -->
+                    <div style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 2px solid #0d9488; border-radius: 20px; padding: 32px; text-align: center; margin: 32px 0; position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: -20px; right: -20px; width: 60px; height: 60px; background: rgba(13, 148, 136, 0.1); border-radius: 50%;"></div>
+                        <div style="position: absolute; bottom: -30px; left: -30px; width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1); border-radius: 50%;"></div>
+                        <div style="position: relative; z-index: 1;">
+                            <h3 style="margin: 0 0 16px 0; color: #0d9488; font-size: 22px; font-weight: 700;">Hello ${name}! 👋</h3>
+                            <p style="margin: 0; color: #374151; font-size: 16px; line-height: 1.6;">You can now start validating innovative ideas and earning crypto rewards on the Polygon blockchain.</p>
+                        </div>
+                    </div>
+
+                    <!-- Next Steps -->
+                    <div style="margin: 32px 0;">
+                        <h3 style="margin: 0 0 24px 0; color: #1f2937; font-size: 20px; font-weight: 600; text-align: center;">What's Next?</h3>
+                        <div style="display: grid; gap: 16px;">
+                            <!-- Step 1 -->
+                            <div style="display: flex; align-items: start; gap: 16px; background: #f9fafb; border-radius: 12px; padding: 20px;">
+                                <div style="flex-shrink: 0; width: 40px; height: 40px; background: #0d9488; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: white; font-weight: bold;">1</span>
+                                </div>
+                                <div style="flex-grow: 1;">
+                                    <h4 style="margin: 0 0 8px 0; color: #1f2937; font-size: 16px; font-weight: 600;">Browse Ideas</h4>
+                                    <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.5;">Explore innovative ideas submitted by our global community of creators, startups, and students.</p>
+                                </div>
+                            </div>
+
+                            <!-- Step 2 -->
+                            <div style="display: flex; align-items: start; gap: 16px; background: #f9fafb; border-radius: 12px; padding: 20px;">
+                                <div style="flex-shrink: 0; width: 40px; height: 40px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: white; font-weight: bold;">2</span>
+                                </div>
+                                <div style="flex-grow: 1;">
+                                    <h4 style="margin: 0 0 8px 0; color: #1f2937; font-size: 16px; font-weight: 600;">Validate & Earn</h4>
+                                    <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.5;">Provide thoughtful feedback and earn crypto rewards directly to your wallet via Polygon blockchain.</p>
+                                </div>
+                            </div>
+
+                            <!-- Step 3 -->
+                            <div style="display: flex; align-items: start; gap: 16px; background: #f9fafb; border-radius: 12px; padding: 20px;">
+                                <div style="flex-shrink: 0; width: 40px; height: 40px; background: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: white; font-weight: bold;">3</span>
+                                </div>
+                                <div style="flex-grow: 1;">
+                                    <h4 style="margin: 0 0 8px 0; color: #1f2937; font-size: 16px; font-weight: 600;">Submit Your Ideas</h4>
+                                    <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.5;">Share your own innovative concepts and get valuable feedback from our diverse validator community.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Get Started Button -->
+                    <div style="text-align: center; margin: 40px 0;">
+                        <a href="${process.env.NEXTAUTH_URL || 'https://validatex.com'}/dashboard" style="display: inline-block; background: linear-gradient(135deg, #0d9488, #10b981); color: white; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-size: 18px; font-weight: 600; box-shadow: 0 8px 24px rgba(13, 148, 136, 0.3); transition: all 0.2s;">
+                            Start Validating Ideas
+                        </a>
+                    </div>
+
+                    <!-- Account Details -->
+                    <div style="background: #f9fafb; border-radius: 12px; padding: 24px; margin: 32px 0;">
+                        <h4 style="margin: 0 0 16px 0; color: #374151; font-size: 16px; font-weight: 600;">📧 Account Details</h4>
+                        <div style="color: #6b7280; font-size: 14px; line-height: 1.6;">
+                            <p style="margin: 0 0 8px 0;"><strong>Email:</strong> ${email}</p>
+                            <p style="margin: 0;"><strong>Registration Date:</strong> ${new Date().toLocaleDateString()}</p>
+                        </div>
+                    </div>
+
+                    <!-- Support Info -->
+                    <div style="background: #eff6ff; border: 1px solid #3b82f6; border-radius: 12px; padding: 20px; margin: 32px 0;">
+                        <h4 style="margin: 0 0 12px 0; color: #1e40af; font-size: 16px; font-weight: 600;">💬 Need Help?</h4>
+                        <p style="margin: 0; color: #1e40af; font-size: 14px; line-height: 1.6;">
+                            If you have any questions or need assistance, feel free to reach out to our support team. We're here to help you make the most of your ValidateX experience!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div style="text-align: center; margin-top: 40px; padding: 24px; background: rgba(255, 255, 255, 0.5); border-radius: 16px;">
+                    <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">This email was sent by ValidateX</p>
+                    <p style="margin: 0; color: #9ca3af; font-size: 12px;">Empowering innovation through community validation</p>
+                    <div style="margin-top: 16px;">
+                        <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                            Want to unsubscribe? 
+                            <a href="${process.env.NEXTAUTH_URL || 'https://validatex.com'}/unsubscribe?email=${encodeURIComponent(email)}" style="color: #0d9488; text-decoration: none;">Click here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
+};

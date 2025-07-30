@@ -4,7 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-providers";
 import { Toaster as SonnerToaster } from "sonner";
 import { Providers } from "./providers/providers";
-import { Header } from "@/components/header";
+import { Header } from "@/components/navbar";
 
 const spaceGrotesk = Space_Grotesk({
     subsets: ['latin'],

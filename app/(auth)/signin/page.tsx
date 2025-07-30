@@ -89,19 +89,6 @@ function SignInContent() {
                 </svg>
             </div>
 
-            {/* Header with back button */}
-            <div className="relative z-10 p-6">
-                <Link 
-                    href="/"
-                    className="inline-flex items-center gap-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
-                >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    <span className="text-sm font-medium">Back to home</span>
-                </Link>
-            </div>
-
             {/* Main content */}
             <div className="flex-1 flex items-center justify-center p-4">
                 <div className="w-full max-w-md relative z-10">

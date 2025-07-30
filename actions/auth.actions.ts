@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { Resend } from "resend"
 import bcrypt from "bcryptjs"
 import { signIn } from "@/auth"
-import { verificationEmailTemplate, passwordResetEmailTemplate } from "@/lib/email-templates"
+import { verificationEmailTemplate, passwordResetEmailTemplate, registrationSuccessEmailTemplate } from "@/lib/email-templates"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -22,7 +22,7 @@ function generateResetToken(): string {
 async function sendVerificationEmail(email: string, otp: string) {
     try {
         await resend.emails.send({
-            from: "ValidateX <onboarding@resend.dev>", // Change this to your domain
+            from: "ValidateX <noreply@coderz.nirajjha.xyz>",
             to: email,
             subject: "Verify your email address - ValidateX",
             html: verificationEmailTemplate(otp)
@@ -40,7 +40,7 @@ async function sendPasswordResetEmail(email: string, resetToken: string) {
     
     try {
         await resend.emails.send({
-            from: "ValidateX <onboarding@resend.dev>", // Change this to your domain
+            from: "ValidateX <noreply@coderz.nirajjha.xyz>",
             to: email,
             subject: "Reset your password - ValidateX",
             html: passwordResetEmailTemplate(resetUrl)
@@ -49,6 +49,22 @@ async function sendPasswordResetEmail(email: string, resetToken: string) {
     } catch (error) {
         console.error("Error sending password reset email:", error)
         return { success: false, error: "Failed to send password reset email" }
+    }
+}
+
+// Send registration success email
+async function sendRegistrationSuccessEmail(email: string, name: string) {
+    try {
+        await resend.emails.send({
+            from: "ValidateX <noreply@coderz.nirajjha.xyz>",
+            to: email,
+            subject: "Welcome to ValidateX - Registration Complete! 🎉",
+            html: registrationSuccessEmailTemplate(name, email)
+        })
+        return { success: true }
+    } catch (error) {
+        console.error("Error sending registration success email:", error)
+        return { success: false, error: "Failed to send registration success email" }
     }
 }
 
@@ -134,6 +150,14 @@ export async function verifyOTP(email: string, otp: string) {
                 verificationTokenExpiry: null,
             }
         })
+
+        // Send registration success email
+        try {
+            await sendRegistrationSuccessEmail(user.email, user.name)
+        } catch (error) {
+            console.error("Failed to send registration success email:", error)
+            // Don't fail the verification if email sending fails
+        }
 
         return { success: true, message: "Email verified successfully" }
     } catch (error) {

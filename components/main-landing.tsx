@@ -3,258 +3,9 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
-import { Menu, Star, Users, Shield, Zap, Globe, ArrowRight, CheckCircle, MessageSquare, Coins, TrendingUp } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Star, Users, Shield, Zap, Globe, ArrowRight, CheckCircle, MessageSquare, Coins, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-function FloatingPaths({ position }: { position: number }) {
-    const paths = Array.from({ length: 24 }, (_, i) => ({
-        id: i,
-        d: `M-${280 - i * 3 * position} -${139 + i * 4}C-${
-            280 - i * 3 * position
-        } -${139 + i * 4} -${212 - i * 3 * position} ${156 - i * 4} ${
-            102 - i * 3 * position
-        } ${243 - i * 4}C${416 - i * 3 * position} ${330 - i * 4} ${
-            484 - i * 3 * position
-        } ${575 - i * 4} ${484 - i * 3 * position} ${575 - i * 4}`,
-        color: `rgba(15,23,42,${0.05 + i * 0.02})`,
-        width: 0.3 + i * 0.02,
-    }));
-
-    return (
-        <div className="absolute inset-0 pointer-events-none">
-            <svg
-                className="w-full h-full text-slate-950 dark:text-white"
-                viewBox="0 0 696 316"
-                fill="none"
-            >
-                <title>Background Paths</title>
-                {paths.map((path) => (
-                    <motion.path
-                        key={path.id}
-                        d={path.d}
-                        stroke="currentColor"
-                        strokeWidth={path.width}
-                        strokeOpacity={0.05 + path.id * 0.02}
-                        initial={{ pathLength: 0.2, opacity: 0.3 }}
-                        animate={{
-                            pathLength: 1,
-                            opacity: [0.2, 0.4, 0.2],
-                            pathOffset: [0, 1, 0],
-                        }}
-                        transition={{
-                            duration: 25 + Math.random() * 15,
-                            repeat: Number.POSITIVE_INFINITY,
-                            ease: "linear",
-                        }}
-                    />
-                ))}
-            </svg>
-        </div>
-    );
-}
-
-const NavBar = () => {
-    const [isScrolled, setIsScrolled] = useState(false);
-    
-    useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 50);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const menuItems = [
-        { name: 'Features', href: '#features' },
-        { name: 'How it Works', href: '#how-it-works' },
-        { name: 'Pricing', href: '#pricing' },
-        { name: 'Community', href: '#community' },
-    ];
-
-    return (
-        <nav className={cn(
-            "fixed top-0 left-0 w-full z-50 transition-all duration-300",
-            isScrolled ? "bg-white/80 dark:bg-neutral-950/80 backdrop-blur-lg border-b border-neutral-200/20 dark:border-neutral-800/20" : ""
-        )}>
-            <div className="container mx-auto px-4 md:px-6">
-                <div className="flex items-center justify-between h-16">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-lg">V</span>
-                        </div>
-                        <span className="font-bold text-xl tracking-tight text-neutral-900 dark:text-white">ValidateX</span>
-                    </Link>
-
-                    {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-8">
-                        {menuItems.map((item) => (
-                            <Link
-                                key={item.name}
-                                href={item.href}
-                                className="text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white transition-colors"
-                            >
-                                {item.name}
-                            </Link>
-                        ))}
-                    </div>
-
-                    {/* Desktop CTA */}
-                    <div className="hidden md:flex items-center gap-4">
-                        <Button variant="ghost" asChild>
-                            <Link href="/signin">Sign In</Link>
-                        </Button>
-                        <Button asChild className="bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700">
-                            <Link href="/signup">Get Started</Link>
-                        </Button>
-                    </div>
-
-                    {/* Mobile Navigation */}
-                    <div className="md:hidden">
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <Menu className="h-6 w-6" />
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="right" className="w-80">
-                                <div className="flex flex-col gap-6 mt-8">
-                                    {menuItems.map((item) => (
-                                        <Link
-                                            key={item.name}
-                                            href={item.href}
-                                            className="text-lg text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white transition-colors"
-                                        >
-                                            {item.name}
-                                        </Link>
-                                    ))}
-                                    <hr className="border-neutral-200 dark:border-neutral-800" />
-                                    <div className="flex flex-col gap-3">
-                                        <Button variant="ghost" asChild>
-                                            <Link href="/signin">Sign In</Link>
-                                        </Button>
-                                        <Button asChild className="bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700">
-                                            <Link href="/signup">Get Started</Link>
-                                        </Button>
-                                    </div>
-                                </div>
-                            </SheetContent>
-                        </Sheet>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    );
-};
-
-const HeroSection = () => {
-    const words = "ValidateX".split(" ");
-    
-    return (
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-            <div className="absolute inset-0">
-                <FloatingPaths position={1} />
-                <FloatingPaths position={-1} />
-            </div>
-
-            <div className="relative z-10 container mx-auto px-4 md:px-6 text-center pt-16">
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 2 }}
-                    className="max-w-6xl mx-auto"
-                >
-                    <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold mb-8 tracking-tighter">
-                        {words.map((word, wordIndex) => (
-                            <span key={wordIndex} className="inline-block mr-4 last:mr-0">
-                                {word.split("").map((letter, letterIndex) => (
-                                    <motion.span
-                                        key={`${wordIndex}-${letterIndex}`}
-                                        initial={{ y: 100, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        transition={{
-                                            delay: wordIndex * 0.1 + letterIndex * 0.03,
-                                            type: "spring",
-                                            stiffness: 150,
-                                            damping: 25,
-                                        }}
-                                        className="inline-block text-transparent bg-clip-text 
-                                        bg-gradient-to-r from-neutral-900 to-neutral-700/80 
-                                        dark:from-white dark:to-white/80"
-                                    >
-                                        {letter}
-                                    </motion.span>
-                                ))}
-                            </span>
-                        ))}
-                    </h1>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1, duration: 0.8 }}
-                        className="text-xl md:text-2xl mb-12 text-neutral-600 dark:text-neutral-400 max-w-4xl mx-auto"
-                    >
-                        Empower Your Ideas with Blockchain-Powered Community Validation
-                    </motion.p>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1.5, duration: 0.8 }}
-                        className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
-                    >
-                        <Button
-                            asChild
-                            size="lg"
-                            className="px-8 py-6 text-lg font-semibold rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white"
-                        >
-                            <Link href="/signup">
-                                Start Validating
-                                <ArrowRight className="ml-2 h-5 w-5" />
-                            </Link>
-                        </Button>
-
-                        <Button
-                            asChild
-                            variant="outline"
-                            size="lg"
-                            className="px-8 py-6 text-lg font-semibold rounded-2xl border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                        >
-                            <Link href="/signin">
-                                Sign In
-                            </Link>
-                        </Button>
-                    </motion.div>
-
-                    {/* Stats */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 2, duration: 0.8 }}
-                        className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto"
-                    >
-                        <div className="text-center">
-                            <div className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">10K+</div>
-                            <div className="text-neutral-600 dark:text-neutral-400">Ideas Validated</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">50K+</div>
-                            <div className="text-neutral-600 dark:text-neutral-400">Community Members</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">$100K+</div>
-                            <div className="text-neutral-600 dark:text-neutral-400">Rewards Distributed</div>
-                        </div>
-                    </motion.div>
-                </motion.div>
-            </div>
-        </section>
-    );
-};
 
 const FeaturesSection = () => {
     const features = [
@@ -292,7 +43,7 @@ const FeaturesSection = () => {
 
     return (
         <section id="features" className="py-24 bg-neutral-50 dark:bg-neutral-900/50">
-            <div className="container mx-auto px-4 md:px-6">
+            <div className="container mx-auto px-4 md:px-6 max-w-7xl">
                 <div className="text-center mb-16">
                     <motion.h2
                         initial={{ opacity: 0, y: 50 }}
@@ -369,7 +120,7 @@ const HowItWorksSection = () => {
 
     return (
         <section id="how-it-works" className="py-24">
-            <div className="container mx-auto px-4 md:px-6">
+            <div className="container mx-auto px-4 md:px-6 max-w-7xl">
                 <div className="text-center mb-16">
                     <motion.h2
                         initial={{ opacity: 0, y: 50 }}
@@ -418,51 +169,60 @@ const HowItWorksSection = () => {
 const PricingSection = () => {
     const plans = [
         {
-            name: "Starter",
-            price: "Free",
-            description: "Perfect for individuals getting started",
+            name: "Pay-Per-Validation",
+            price: "5% Fee",
+            description: "Pay only when you validate ideas",
             features: [
-                "Submit 3 ideas per month",
+                "No monthly subscription",
+                "5% fee on validation amount",
+                "Pay with crypto (Solana, Polygon, etc.)",
+                "Community-based validation",
                 "Basic feedback reports",
-                "Community access",
-                "Email support"
+                "Flexible payment options"
             ],
-            cta: "Get Started",
-            popular: false
+            cta: "Start Validating",
+            popular: true,
+            note: "Fee is taken from your validation deposit, rest distributed to validators"
         },
         {
-            name: "Pro",
-            price: "$29",
-            description: "Ideal for entrepreneurs and small teams",
+            name: "Premium Validation",
+            price: "$49",
+            description: "Get expert validation from curated validators",
             features: [
-                "Unlimited idea submissions",
-                "Detailed analytics",
-                "Priority validation",
-                "Expert feedback",
-                "24/7 support"
+                "Everything in Pay-Per-Validation",
+                "Curated expert validators",
+                "Detailed market analysis",
+                "Real user feedback simulation",
+                "Priority validation queue",
+                "Advanced analytics dashboard",
+                "Direct validator communication"
             ],
-            cta: "Start Pro Trial",
-            popular: true
+            cta: "Get Premium",
+            popular: false,
+            note: "Monthly subscription for access to expert validator pool"
         },
         {
             name: "Enterprise",
             price: "Custom",
             description: "For organizations and large teams",
             features: [
-                "Everything in Pro",
+                "Everything in Premium",
                 "Custom validation criteria",
                 "API access",
                 "Dedicated account manager",
-                "Custom integrations"
+                "Custom integrations",
+                "White-label solution",
+                "SLA guarantees"
             ],
             cta: "Contact Sales",
-            popular: false
+            popular: false,
+            note: "Custom pricing based on validation volume and requirements"
         }
     ];
 
     return (
         <section id="pricing" className="py-24 bg-neutral-50 dark:bg-neutral-900/50">
-            <div className="container mx-auto px-4 md:px-6">
+            <div className="container mx-auto px-4 md:px-6 max-w-7xl">
                 <div className="text-center mb-16">
                     <motion.h2
                         initial={{ opacity: 0, y: 50 }}
@@ -470,19 +230,19 @@ const PricingSection = () => {
                         transition={{ duration: 0.8 }}
                         className="text-4xl md:text-5xl font-bold mb-6 text-neutral-900 dark:text-white"
                     >
-                        Simple Pricing
+                        Transparent Pricing
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 50 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto"
+                        className="text-xl text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto"
                     >
-                        Choose the plan that&apos;s right for you and start validating your ideas today
+                        Choose between pay-as-you-go validation or premium expert feedback. No hidden fees, fully transparent blockchain payments.
                     </motion.p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     {plans.map((plan, index) => (
                         <motion.div
                             key={index}
@@ -492,16 +252,16 @@ const PricingSection = () => {
                         >
                             <Card className={cn(
                                 "h-full bg-white dark:bg-neutral-900 relative",
-                                plan.popular && "border-teal-500 shadow-lg scale-105"
+                                plan.popular && "border-teal-500 shadow-xl scale-105"
                             )}>
                                 {plan.popular && (
                                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                                        <span className="bg-gradient-to-r from-teal-500 to-emerald-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                                        <span className="bg-gradient-to-r from-teal-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
                                             Most Popular
                                         </span>
                                     </div>
                                 )}
-                                <CardHeader className="text-center">
+                                <CardHeader className="text-center pb-4">
                                     <CardTitle className="text-2xl font-bold text-neutral-900 dark:text-white">
                                         {plan.name}
                                     </CardTitle>
@@ -509,20 +269,25 @@ const PricingSection = () => {
                                         <span className="text-4xl font-bold text-neutral-900 dark:text-white">
                                             {plan.price}
                                         </span>
-                                        {plan.price !== "Free" && plan.price !== "Custom" && (
+                                        {plan.price !== "Custom" && plan.price !== "5% Fee" && (
                                             <span className="text-neutral-600 dark:text-neutral-400">/month</span>
                                         )}
                                     </div>
                                     <p className="text-neutral-600 dark:text-neutral-400 mt-2">
                                         {plan.description}
                                     </p>
+                                    {plan.note && (
+                                        <p className="text-xs text-teal-600 dark:text-teal-400 mt-2 bg-teal-50 dark:bg-teal-900/20 p-2 rounded-lg">
+                                            {plan.note}
+                                        </p>
+                                    )}
                                 </CardHeader>
                                 <CardContent>
                                     <ul className="space-y-3 mb-8">
                                         {plan.features.map((feature, featureIndex) => (
-                                            <li key={featureIndex} className="flex items-center gap-3">
-                                                <CheckCircle className="h-5 w-5 text-teal-500 flex-shrink-0" />
-                                                <span className="text-neutral-600 dark:text-neutral-400">
+                                            <li key={featureIndex} className="flex items-start gap-3">
+                                                <CheckCircle className="h-5 w-5 text-teal-500 flex-shrink-0 mt-0.5" />
+                                                <span className="text-neutral-600 dark:text-neutral-400 text-sm">
                                                     {feature}
                                                 </span>
                                             </li>
@@ -546,6 +311,41 @@ const PricingSection = () => {
                         </motion.div>
                     ))}
                 </div>
+
+                {/* Additional Info Section */}
+                <div className="mt-16 text-center">
+                    <div className="bg-white dark:bg-neutral-900 rounded-2xl p-8 max-w-4xl mx-auto border border-neutral-200 dark:border-neutral-800">
+                        <h3 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">
+                            How Our Pricing Works
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                            <div>
+                                <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">💰 Pay-Per-Validation</h4>
+                                <p className="text-neutral-600 dark:text-neutral-400 text-sm">
+                                    Set your validation deposit amount. We take 5%, the rest is distributed equally among validators who provide feedback.
+                                </p>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">🎯 Premium Access</h4>
+                                <p className="text-neutral-600 dark:text-neutral-400 text-sm">
+                                    Subscribe to access our curated pool of expert validators including market researchers, entrepreneurs, and industry specialists.
+                                </p>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">⛓️ Blockchain Transparency</h4>
+                                <p className="text-neutral-600 dark:text-neutral-400 text-sm">
+                                    All payments are handled through smart contracts on Polygon/Solana for complete transparency and automatic distribution.
+                                </p>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">🚀 No Hidden Fees</h4>
+                                <p className="text-neutral-600 dark:text-neutral-400 text-sm">
+                                    What you see is what you pay. No setup fees, no hidden charges. Only pay when you validate or for premium access.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     );
@@ -561,7 +361,7 @@ const CommunitySection = () => {
 
     return (
         <section id="community" className="py-24">
-            <div className="container mx-auto px-4 md:px-6">
+            <div className="container mx-auto px-4 md:px-6 max-w-7xl">
                 <div className="text-center mb-16">
                     <motion.h2
                         initial={{ opacity: 0, y: 50 }}
@@ -674,7 +474,7 @@ const Footer = () => {
 
     return (
         <footer className="bg-neutral-900 text-white py-16">
-            <div className="container mx-auto px-4 md:px-6">
+            <div className="container mx-auto px-4 md:px-6 max-w-7xl">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
                     {/* Logo and Description */}
                     <div className="lg:col-span-2">
@@ -741,8 +541,6 @@ const Footer = () => {
 export function MainLanding() {
     return (
         <div className="min-h-screen bg-white dark:bg-neutral-950">
-            <NavBar />
-            <HeroSection />
             <FeaturesSection />
             <HowItWorksSection />
             <PricingSection />

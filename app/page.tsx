@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 export default function Home() {
 	return (
 		<BackgroundPaths
-			title="ValidateX"
+			title="Validate"
 			subtitle="Empower Your Ideas with Blockchain-Powered Community Validation"
 			showWaitingArea={true}
 		/>
