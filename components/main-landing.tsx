@@ -62,32 +62,33 @@ const FeaturesSection = () => {
                         Discover the powerful features that make ValidateX the perfect platform for idea validation
                     </motion.p>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {features.map((feature, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: index * 0.1 }}
-                        >
-                            <Card className="h-full bg-white/50 dark:bg-black/20 backdrop-blur-lg border-neutral-200/50 dark:border-neutral-800/50 hover:shadow-lg transition-shadow">
-                                <CardHeader>
-                                    <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-xl mb-4 flex items-center justify-center">
-                                        <feature.icon className="h-6 w-6 text-white" />
-                                    </div>
-                                    <CardTitle className="text-xl font-semibold text-neutral-900 dark:text-white">
-                                        {feature.title}
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-neutral-600 dark:text-neutral-400">
-                                        {feature.description}
-                                    </p>
-                                </CardContent>
-                            </Card>
-                        </motion.div>
-                    ))}
+                    {
+                        features.map((feature, index) => (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: index * 0.1 }}
+                            >
+                                <Card className="h-full bg-white/50 dark:bg-black/20 backdrop-blur-lg border-neutral-200/50 dark:border-neutral-800/50 hover:shadow-lg transition-shadow">
+                                    <CardHeader>
+                                        <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-xl mb-4 flex items-center justify-center">
+                                            <feature.icon className="h-6 w-6 text-white" />
+                                        </div>
+                                        <CardTitle className="text-xl font-semibold text-neutral-900 dark:text-white">
+                                            {feature.title}
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p className="text-neutral-600 dark:text-neutral-400">
+                                            {feature.description}
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            </motion.div>
+                        ))
+                    }
                 </div>
             </div>
         </section>
@@ -139,27 +140,28 @@ const HowItWorksSection = () => {
                         Simple steps to validate your ideas and earn rewards
                     </motion.p>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {steps.map((step, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: index * 0.2 }}
-                            className="text-center"
-                        >
-                            <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <span className="text-white font-bold text-xl">{step.step}</span>
-                            </div>
-                            <h3 className="text-xl font-semibold mb-4 text-neutral-900 dark:text-white">
-                                {step.title}
-                            </h3>
-                            <p className="text-neutral-600 dark:text-neutral-400">
-                                {step.description}
-                            </p>
-                        </motion.div>
-                    ))}
+                    {
+                        steps.map((step, index) => (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: index * 0.2 }}
+                                className="text-center"
+                            >
+                                <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <span className="text-white font-bold text-xl">{step.step}</span>
+                                </div>
+                                <h3 className="text-xl font-semibold mb-4 text-neutral-900 dark:text-white">
+                                    {step.title}
+                                </h3>
+                                <p className="text-neutral-600 dark:text-neutral-400">
+                                    {step.description}
+                                </p>
+                            </motion.div>
+                        ))
+                    }
                 </div>
             </div>
         </section>
@@ -380,29 +382,29 @@ const CommunitySection = () => {
                         Connect with innovators, entrepreneurs, and creators from around the world
                     </motion.p>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-                    {stats.map((stat, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: index * 0.1 }}
-                            className="text-center"
-                        >
-                            <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <stat.icon className="h-8 w-8 text-white" />
-                            </div>
-                            <div className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
-                                {stat.value}
-                            </div>
-                            <div className="text-neutral-600 dark:text-neutral-400">
-                                {stat.label}
-                            </div>
-                        </motion.div>
-                    ))}
+                    {
+                        stats.map((stat, index) => (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: index * 0.1 }}
+                                className="text-center"
+                            >
+                                <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <stat.icon className="h-8 w-8 text-white" />
+                                </div>
+                                <div className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
+                                    {stat.value}
+                                </div>
+                                <div className="text-neutral-600 dark:text-neutral-400">
+                                    {stat.label}
+                                </div>
+                            </motion.div>
+                        ))
+                    }
                 </div>
-
                 <motion.div
                     initial={{ opacity: 0, y: 50 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -476,7 +478,6 @@ const Footer = () => {
         <footer className="bg-neutral-900 text-white py-16">
             <div className="container mx-auto px-4 md:px-6 max-w-7xl">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
-                    {/* Logo and Description */}
                     <div className="lg:col-span-2">
                         <Link href="/" className="flex items-center gap-2 mb-4">
                             <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-lg flex items-center justify-center">
@@ -502,29 +503,29 @@ const Footer = () => {
                             </Button>
                         </div>
                     </div>
-
-                    {/* Footer Links */}
-                    {Object.entries(footerLinks).map(([category, links]) => (
-                        <div key={category}>
-                            <h3 className="font-semibold mb-4">{category}</h3>
-                            <ul className="space-y-2">
-                                {links.map((link) => (
-                                    <li key={link.name}>
-                                        <Link
-                                            href={link.href}
-                                            className="text-neutral-400 hover:text-white transition-colors"
-                                        >
-                                            {link.name}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
+                    {
+                        Object.entries(footerLinks).map(([category, links]) => (
+                            <div key={category}>
+                                <h3 className="font-semibold mb-4">{category}</h3>
+                                <ul className="space-y-2">
+                                    {
+                                        links.map((link) => (
+                                            <li key={link.name}>
+                                                <Link
+                                                    href={link.href}
+                                                    className="text-neutral-400 hover:text-white transition-colors"
+                                                >
+                                                    {link.name}
+                                                </Link>
+                                            </li>
+                                        ))
+                                    }
+                                </ul>
+                            </div>
+                        ))
+                    }
                 </div>
-
                 <hr className="border-neutral-800 mb-8" />
-
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-neutral-400 text-sm">
                         © 2024 ValidateX. All rights reserved.

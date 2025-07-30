@@ -152,7 +152,6 @@ function VerifyContent() {
 
     return (
         <div className="min-h-screen w-full bg-white dark:bg-neutral-950 flex flex-col relative overflow-hidden">
-            {/* Background patterns */}
             <div className="absolute inset-0 pointer-events-none">
                 <svg
                     className="w-full h-full text-neutral-950 dark:text-white opacity-[0.02]"
@@ -176,32 +175,14 @@ function VerifyContent() {
                     />
                 </svg>
             </div>
-
-            {/* Header with back button */}
-            <div className="relative z-10 p-6">
-                <button 
-                    onClick={() => router.back()}
-                    className="inline-flex items-center gap-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
-                >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    <span className="text-sm font-medium">Back</span>
-                </button>
-            </div>
-
-            {/* Main content */}
             <div className="flex-1 flex items-center justify-center p-4">
                 <div className="w-full max-w-md relative z-10">
-                    {/* ValidateX branding */}
                     <div className="text-center mb-8">
                         <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300">
                             ValidateX
                         </h1>
                         <div className="w-12 h-0.5 bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300 mx-auto"></div>
                     </div>
-
-                    {/* Auth card */}
                     <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-neutral-200/20 dark:border-neutral-800/20 p-8">
                         <div className="text-center mb-8">
                             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">

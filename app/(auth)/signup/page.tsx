@@ -35,7 +35,7 @@ function SignUp() {
 
             toast.success('Account created successfully! Please check your email for verification code.')
             router.push(`/verify?email=${encodeURIComponent(email)}`)
-            
+
             const signInResult = await signIn('credentials', {
                 email,
                 password,
@@ -72,7 +72,6 @@ function SignUp() {
 
     return (
         <div className="min-h-screen w-full bg-white dark:bg-neutral-950 flex flex-col relative overflow-hidden">
-            {/* Background patterns */}
             <div className="absolute inset-0 pointer-events-none">
                 <svg
                     className="w-full h-full text-neutral-950 dark:text-white opacity-[0.02]"
@@ -96,25 +95,19 @@ function SignUp() {
                     />
                 </svg>
             </div>
-
-            {/* Main content */}
             <div className="flex-1 flex items-center justify-center py-24">
                 <div className="w-full max-w-md relative z-10">
-                    {/* ValidateX branding */}
                     <div className="text-center mb-2">
                         <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300">
                             ValidateX
                         </h1>
                         <div className="w-12 h-0.5 bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300 mx-auto"></div>
                     </div>
-
-                    {/* Auth card */}
                     <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-neutral-200/20 dark:border-neutral-800/20 p-8">
                         <div className="text-center mb-8">
                             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Create your account</h2>
                             <p className="text-neutral-600 dark:text-neutral-400 mt-2">Join the future of idea validation</p>
                         </div>
-
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="name" className="text-neutral-700 dark:text-neutral-300 font-medium">Full Name</Label>
@@ -181,7 +174,6 @@ function SignUp() {
                                 {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
                             </Button>
                         </form>
-                        
                         <div className="mt-8 text-center">
                             <p className="text-sm text-neutral-600 dark:text-neutral-400">
                                 Already have an account?{" "}
@@ -190,12 +182,11 @@ function SignUp() {
                                 </Link>
                             </p>
                         </div>
-                        
                         <div className="mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-700">
                             <p className="text-xs text-center text-neutral-500 dark:text-neutral-400 mb-4">Or continue with</p>
-                            <Button 
+                            <Button
                                 type="button"
-                                variant="outline" 
+                                variant="outline"
                                 className="w-full h-12 rounded-2xl border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
                                 onClick={handleGoogleSignUp}
                                 disabled={isLoading || isGoogleLoading}
@@ -229,9 +220,9 @@ function SignUp() {
 }
 
 export default function SignupPage() {
-	return (
-		<Suspense fallback={<div>Loading...</div>}>
-			<SignUp />
-		</Suspense>
-	)
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <SignUp />
+        </Suspense>
+    )
 }

@@ -93,7 +93,6 @@ function ResetPassword() {
     if (!isValidToken) {
         return (
             <div className="min-h-screen w-full bg-white dark:bg-neutral-950 flex flex-col relative overflow-hidden">
-                {/* Background patterns */}
                 <div className="absolute inset-0 pointer-events-none">
                     <svg
                         className="w-full h-full text-neutral-950 dark:text-white opacity-[0.02]"
@@ -117,38 +116,19 @@ function ResetPassword() {
                         />
                     </svg>
                 </div>
-
-                {/* Header with back button */}
-                <div className="relative z-10 p-6">
-                    <Link 
-                        href="/"
-                        className="inline-flex items-center gap-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        <span className="text-sm font-medium">Back to home</span>
-                    </Link>
-                </div>
-
-                {/* Main content */}
                 <div className="flex-1 flex items-center justify-center p-4">
                     <div className="w-full max-w-md relative z-10">
-                        {/* ValidateX branding */}
                         <div className="text-center mb-8">
                             <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300">
                                 ValidateX
                             </h1>
                             <div className="w-12 h-0.5 bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300 mx-auto"></div>
                         </div>
-
-                        {/* Auth card */}
                         <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-neutral-200/20 dark:border-neutral-800/20 p-8">
                             <div className="text-center mb-8">
                                 <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Invalid Reset Link</h2>
                                 <p className="text-neutral-600 dark:text-neutral-400 mt-2">This password reset link is invalid or has expired</p>
                             </div>
-
                             <div className="flex flex-col items-center justify-center py-8 space-y-6">
                                 <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center shadow-xl">
                                     <AlertCircle className="w-10 h-10 text-red-600 dark:text-red-400" />
@@ -160,7 +140,6 @@ function ResetPassword() {
                                         <p>Password reset links are only valid for 24 hours for security reasons.</p>
                                     </div>
                                 </div>
-
                                 <div className="space-y-4 w-full">
                                     <Link href="/forgotpassword" className="w-full block">
                                         <Button className="w-full h-12 bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-black rounded-2xl font-semibold transition-all duration-200 hover:shadow-lg">
@@ -168,10 +147,9 @@ function ResetPassword() {
                                             <ArrowRight className="ml-2 h-4 w-4" />
                                         </Button>
                                     </Link>
-                                    
                                     <div className="text-center">
-                                        <Link 
-                                            href="/signin" 
+                                        <Link
+                                            href="/signin"
                                             className="inline-flex items-center text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
                                         >
                                             ← Back to sign in
@@ -189,7 +167,6 @@ function ResetPassword() {
     if (isSuccess) {
         return (
             <div className="min-h-screen w-full bg-white dark:bg-neutral-950 flex flex-col relative overflow-hidden">
-                {/* Background patterns */}
                 <div className="absolute inset-0 pointer-events-none">
                     <svg
                         className="w-full h-full text-neutral-950 dark:text-white opacity-[0.02]"
@@ -213,43 +190,23 @@ function ResetPassword() {
                         />
                     </svg>
                 </div>
-
-                {/* Header with back button */}
-                <div className="relative z-10 p-6">
-                    <Link 
-                        href="/"
-                        className="inline-flex items-center gap-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        <span className="text-sm font-medium">Back to home</span>
-                    </Link>
-                </div>
-
-                {/* Main content */}
                 <div className="flex-1 flex items-center justify-center p-4">
                     <div className="w-full max-w-md relative z-10">
-                        {/* ValidateX branding */}
                         <div className="text-center mb-8">
                             <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300">
                                 ValidateX
                             </h1>
                             <div className="w-12 h-0.5 bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300 mx-auto"></div>
                         </div>
-
-                        {/* Auth card */}
                         <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-neutral-200/20 dark:border-neutral-800/20 p-8">
                             <div className="text-center mb-8">
                                 <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Password Reset Successful</h2>
                                 <p className="text-neutral-600 dark:text-neutral-400 mt-2">Your password has been successfully reset</p>
                             </div>
-
                             <div className="flex flex-col items-center justify-center py-8 space-y-6">
                                 <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-xl">
                                     <CheckCircle className="w-10 h-10 text-white" />
                                 </div>
-
                                 <div className="p-6 bg-green-50 dark:bg-green-900/20 rounded-2xl border border-green-200 dark:border-green-800">
                                     <div className="flex items-start space-x-3">
                                         <Shield className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
@@ -259,7 +216,6 @@ function ResetPassword() {
                                         </div>
                                     </div>
                                 </div>
-
                                 <Link href="/signin" className="w-full">
                                     <Button className="w-full h-12 bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-black rounded-2xl font-semibold transition-all duration-200 hover:shadow-lg">
                                         Sign In
@@ -276,7 +232,6 @@ function ResetPassword() {
 
     return (
         <div className="min-h-screen w-full bg-white dark:bg-neutral-950 flex flex-col relative overflow-hidden">
-            {/* Background patterns */}
             <div className="absolute inset-0 pointer-events-none">
                 <svg
                     className="w-full h-full text-neutral-950 dark:text-white opacity-[0.02]"
@@ -300,38 +255,19 @@ function ResetPassword() {
                     />
                 </svg>
             </div>
-
-            {/* Header with back button */}
-            <div className="relative z-10 p-6">
-                <Link 
-                    href="/"
-                    className="inline-flex items-center gap-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
-                >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    <span className="text-sm font-medium">Back to home</span>
-                </Link>
-            </div>
-
-            {/* Main content */}
             <div className="flex-1 flex items-center justify-center p-4">
                 <div className="w-full max-w-md relative z-10">
-                    {/* ValidateX branding */}
                     <div className="text-center mb-8">
                         <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300">
                             ValidateX
                         </h1>
                         <div className="w-12 h-0.5 bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300 mx-auto"></div>
                     </div>
-
-                    {/* Auth card */}
                     <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-neutral-200/20 dark:border-neutral-800/20 p-8">
                         <div className="text-center mb-8">
                             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Set new password</h2>
                             <p className="text-neutral-600 dark:text-neutral-400 mt-2">Create a strong password for your account</p>
                         </div>
-
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="password" className="text-neutral-700 dark:text-neutral-300 font-medium">
@@ -355,15 +291,16 @@ function ResetPassword() {
                                         className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent"
                                         onClick={() => setShowNewPassword(!showNewPassword)}
                                     >
-                                        {showNewPassword ? (
-                                            <EyeOff className="h-4 w-4 text-neutral-400" />
-                                        ) : (
-                                            <Eye className="h-4 w-4 text-neutral-400" />
-                                        )}
+                                        {
+                                            showNewPassword ? (
+                                                <EyeOff className="h-4 w-4 text-neutral-400" />
+                                            ) : (
+                                                <Eye className="h-4 w-4 text-neutral-400" />
+                                            )
+                                        }
                                     </Button>
                                 </div>
                             </div>
-
                             <div className="space-y-2">
                                 <Label htmlFor="confirm-password" className="text-neutral-700 dark:text-neutral-300 font-medium">
                                     Confirm New Password
@@ -386,15 +323,16 @@ function ResetPassword() {
                                         className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                     >
-                                        {showConfirmPassword ? (
-                                            <EyeOff className="h-4 w-4 text-neutral-400" />
-                                        ) : (
-                                            <Eye className="h-4 w-4 text-neutral-400" />
-                                        )}
+                                        {
+                                            showConfirmPassword ? (
+                                                <EyeOff className="h-4 w-4 text-neutral-400" />
+                                            ) : (
+                                                <Eye className="h-4 w-4 text-neutral-400" />
+                                            )
+                                        }
                                     </Button>
                                 </div>
                             </div>
-
                             <div className="text-xs text-neutral-500 dark:text-neutral-400 space-y-2">
                                 <p className="font-medium">Password requirements:</p>
                                 <ul className="space-y-1 ml-4">
@@ -408,7 +346,6 @@ function ResetPassword() {
                                     </li>
                                 </ul>
                             </div>
-
                             <Button
                                 type="submit"
                                 className="w-full h-12 bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-black rounded-2xl font-semibold transition-all duration-200 hover:shadow-lg"
@@ -417,10 +354,9 @@ function ResetPassword() {
                                 {isSubmitting ? "Resetting..." : "Reset password"}
                                 {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4" />}
                             </Button>
-
                             <div className="text-center">
-                                <Link 
-                                    href="/signin" 
+                                <Link
+                                    href="/signin"
                                     className="inline-flex items-center text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
                                 >
                                     ← Back to sign in

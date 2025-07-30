@@ -30,26 +30,28 @@ function FloatingPaths({ position }: { position: number }) {
                 fill="none"
             >
                 <title>Background Paths</title>
-                {paths.map((path) => (
-                    <motion.path
-                        key={path.id}
-                        d={path.d}
-                        stroke="currentColor"
-                        strokeWidth={path.width}
-                        strokeOpacity={0.1 + path.id * 0.03}
-                        initial={{ pathLength: 0.3, opacity: 0.6 }}
-                        animate={{
-                            pathLength: 1,
-                            opacity: [0.3, 0.6, 0.3],
-                            pathOffset: [0, 1, 0],
-                        }}
-                        transition={{
-                            duration: 20 + Math.random() * 10,
-                            repeat: Number.POSITIVE_INFINITY,
-                            ease: "linear",
-                        }}
-                    />
-                ))}
+                {
+                    paths.map((path) => (
+                        <motion.path
+                            key={path.id}
+                            d={path.d}
+                            stroke="currentColor"
+                            strokeWidth={path.width}
+                            strokeOpacity={0.1 + path.id * 0.03}
+                            initial={{ pathLength: 0.3, opacity: 0.6 }}
+                            animate={{
+                                pathLength: 1,
+                                opacity: [0.3, 0.6, 0.3],
+                                pathOffset: [0, 1, 0],
+                            }}
+                            transition={{
+                                duration: 20 + Math.random() * 10,
+                                repeat: Number.POSITIVE_INFINITY,
+                                ease: "linear",
+                            }}
+                        />
+                    ))
+                }
             </svg>
         </div>
     );
@@ -70,7 +72,6 @@ export function BackgroundPaths({
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
     const [waitingListCount, setWaitingListCount] = useState(0);
 
-    // Fetch waiting list count when component mounts and when in waiting area mode
     useEffect(() => {
         if (showWaitingArea) {
             const fetchCount = async () => {
@@ -89,12 +90,12 @@ export function BackgroundPaths({
 
         try {
             const result = await addToWaitingList(email);
-            
+
             if (result.success) {
                 setShowSuccessDialog(true);
                 setEmail("");
                 toast.success(result.message);
-                // Refresh the count after successful submission
+
                 const countResult = await getWaitingListCount();
                 if (countResult.success) {
                     setWaitingListCount(countResult.count);
@@ -112,13 +113,11 @@ export function BackgroundPaths({
 
     return (
         <>
-            {/* Hero Section */}
             <div className="relative min-h-screen w-full flex items-center justify-center overflow-auto bg-white dark:bg-neutral-950 py-24 md:py-28">
                 <div className="absolute inset-0">
                     <FloatingPaths position={1} />
                     <FloatingPaths position={-1} />
                 </div>
-
                 <section className="relative z-10 container mx-auto px-4 md:px-6 text-center">
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -128,33 +127,37 @@ export function BackgroundPaths({
                     >
                         <div className="flex flex-col gap-4 items-center justify-center mb-8">
                             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter">
-                                {words.map((word, wordIndex) => (
-                                    <span
-                                        key={wordIndex}
-                                        className="inline-block mr-4 last:mr-0"
-                                    >
-                                        {word.split("").map((letter, letterIndex) => (
-                                            <motion.span
-                                                key={`${wordIndex}-${letterIndex}`}
-                                                initial={{ y: 100, opacity: 0 }}
-                                                animate={{ y: 0, opacity: 1 }}
-                                                transition={{
-                                                    delay:
-                                                        wordIndex * 0.1 +
-                                                        letterIndex * 0.03,
-                                                    type: "spring",
-                                                    stiffness: 150,
-                                                    damping: 25,
-                                                }}
-                                                className="inline-block text-transparent bg-clip-text 
+                                {
+                                    words.map((word, wordIndex) => (
+                                        <span
+                                            key={wordIndex}
+                                            className="inline-block mr-4 last:mr-0"
+                                        >
+                                            {
+                                                word.split("").map((letter, letterIndex) => (
+                                                    <motion.span
+                                                        key={`${wordIndex}-${letterIndex}`}
+                                                        initial={{ y: 100, opacity: 0 }}
+                                                        animate={{ y: 0, opacity: 1 }}
+                                                        transition={{
+                                                            delay:
+                                                                wordIndex * 0.1 +
+                                                                letterIndex * 0.03,
+                                                            type: "spring",
+                                                            stiffness: 150,
+                                                            damping: 25,
+                                                        }}
+                                                        className="inline-block text-transparent bg-clip-text 
                                             bg-gradient-to-r from-neutral-900 to-neutral-700/80 
                                             dark:from-white dark:to-white/80"
-                                            >
-                                                {letter}
-                                            </motion.span>
-                                        ))}
-                                    </span>
-                                ))}
+                                                    >
+                                                        {letter}
+                                                    </motion.span>
+                                                ))
+                                            }
+                                        </span>
+                                    ))
+                                }
                             </h1>
                             <WordRotate
                                 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-black dark:text-white
@@ -186,7 +189,6 @@ export function BackgroundPaths({
                                 <h3 className="text-lg font-semibold mb-2 text-neutral-800 dark:text-neutral-200">Submit Ideas</h3>
                                 <p className="text-neutral-600 dark:text-neutral-400 text-sm">Share your innovations and get valuable feedback from our diverse community of validators.</p>
                             </div>
-
                             <div className="bg-white/10 dark:bg-black/10 backdrop-blur-lg rounded-2xl p-6 border border-neutral-200/20 dark:border-neutral-800/20">
                                 <div className="mx-auto w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl mb-4 flex items-center justify-center">
                                     <span className="text-white text-xl">⛓️</span>
@@ -194,7 +196,6 @@ export function BackgroundPaths({
                                 <h3 className="text-lg font-semibold mb-2 text-neutral-800 dark:text-neutral-200">Blockchain Rewards</h3>
                                 <p className="text-neutral-600 dark:text-neutral-400 text-sm">Earn crypto rewards for validating ideas. Transparent payments via Polygon blockchain.</p>
                             </div>
-
                             <div className="bg-white/10 dark:bg-black/10 backdrop-blur-lg rounded-2xl p-6 border border-neutral-200/20 dark:border-neutral-800/20">
                                 <div className="mx-auto w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl mb-4 flex items-center justify-center">
                                     <span className="text-white text-xl">🌍</span>
@@ -203,92 +204,93 @@ export function BackgroundPaths({
                                 <p className="text-neutral-600 dark:text-neutral-400 text-sm">Connect with students, startups, NGOs, and creators worldwide for diverse perspectives.</p>
                             </div>
                         </motion.div>
-
                         <motion.div
                             initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 2, duration: 0.8 }}
                             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
                         >
-                            {!showWaitingArea ? (
-                                <>
-                                    <div
-                                        className="inline-block group relative bg-gradient-to-b from-black/10 to-white/10 
+                            {
+                                !showWaitingArea ? (
+                                    <>
+                                        <div
+                                            className="inline-block group relative bg-gradient-to-b from-black/10 to-white/10 
                                         dark:from-white/10 dark:to-black/10 p-px rounded-2xl backdrop-blur-lg 
                                         overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
-                                    >
-                                        <Button
-                                            asChild
-                                            variant="ghost"
-                                            className="rounded-[1.15rem] px-8 py-6 text-lg font-semibold backdrop-blur-md 
+                                        >
+                                            <Button
+                                                asChild
+                                                variant="ghost"
+                                                className="rounded-[1.15rem] px-8 py-6 text-lg font-semibold backdrop-blur-md 
                                             bg-white/95 hover:bg-white/100 dark:bg-black/95 dark:hover:bg-black/100 
                                             text-black dark:text-white transition-all duration-300 
                                             group-hover:-translate-y-0.5 border border-black/10 dark:border-white/10
                                             hover:shadow-md dark:hover:shadow-neutral-800/50"
-                                        >
-                                            <Link href="/signup">
-                                                <span className="opacity-90 group-hover:opacity-100 transition-opacity">
-                                                    Start Validating
-                                                </span>
-                                                <span
-                                                    className="ml-3 opacity-70 group-hover:opacity-100 group-hover:translate-x-1.5 
+                                            >
+                                                <Link href="/signup">
+                                                    <span className="opacity-90 group-hover:opacity-100 transition-opacity">
+                                                        Start Validating
+                                                    </span>
+                                                    <span
+                                                        className="ml-3 opacity-70 group-hover:opacity-100 group-hover:translate-x-1.5 
                                                     transition-all duration-300"
-                                                >
-                                                    →
-                                                </span>
+                                                    >
+                                                        →
+                                                    </span>
+                                                </Link>
+                                            </Button>
+                                        </div>
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            className="px-8 py-6 text-lg font-semibold rounded-2xl border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                        >
+                                            <Link href="/signin">
+                                                Sign In
                                             </Link>
                                         </Button>
+                                    </>
+                                ) : (
+                                    <div className="w-full max-w-md">
+                                        <form onSubmit={handleWaitingListSubmit} className="flex flex-col sm:flex-row gap-4">
+                                            <Input
+                                                type="email"
+                                                placeholder="Enter your email"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                required
+                                                disabled={isLoading}
+                                                className="flex-1 px-6 py-4 text-lg rounded-2xl border-neutral-300 dark:border-neutral-700 bg-white/90 dark:bg-black/90 backdrop-blur-sm"
+                                            />
+                                            <Button
+                                                type="submit"
+                                                disabled={isLoading}
+                                                className="px-8 py-4 text-lg font-semibold rounded-2xl bg-gradient-to-r from-neutral-900 to-neutral-700 hover:from-neutral-800 hover:to-neutral-600 text-white dark:from-white dark:to-neutral-200 dark:hover:from-neutral-100 dark:hover:to-neutral-300 dark:text-black"
+                                            >
+                                                {isLoading ? "Joining..." : "Join Waitlist"}
+                                            </Button>
+                                        </form>
+                                        <div className="text-center space-y-2 mt-4">
+                                            {
+                                                waitingListCount > 0 && (
+                                                    <div className="inline-flex items-center gap-2 bg-teal-50 dark:bg-teal-900/20 px-4 py-2 rounded-full border border-teal-200 dark:border-teal-800">
+                                                        <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
+                                                        <span className="text-sm font-medium text-teal-700 dark:text-teal-300">
+                                                            {waitingListCount.toLocaleString()} {waitingListCount === 1 ? 'person has' : 'people have'} already joined
+                                                        </span>
+                                                    </div>
+                                                )
+                                            }
+                                            <p className="text-center text-sm text-neutral-600 dark:text-neutral-400">
+                                                Be the first to know when we launch
+                                            </p>
+                                        </div>
                                     </div>
-
-                                    <Button
-                                        asChild
-                                        variant="outline"
-                                        className="px-8 py-6 text-lg font-semibold rounded-2xl border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                                    >
-                                        <Link href="/signin">
-                                            Sign In
-                                        </Link>
-                                    </Button>
-                                </>
-                            ) : (
-                                <div className="w-full max-w-md">
-                                    <form onSubmit={handleWaitingListSubmit} className="flex flex-col sm:flex-row gap-4">
-                                        <Input
-                                            type="email"
-                                            placeholder="Enter your email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            required
-                                            disabled={isLoading}
-                                            className="flex-1 px-6 py-4 text-lg rounded-2xl border-neutral-300 dark:border-neutral-700 bg-white/90 dark:bg-black/90 backdrop-blur-sm"
-                                        />
-                                        <Button
-                                            type="submit"
-                                            disabled={isLoading}
-                                            className="px-8 py-4 text-lg font-semibold rounded-2xl bg-gradient-to-r from-neutral-900 to-neutral-700 hover:from-neutral-800 hover:to-neutral-600 text-white dark:from-white dark:to-neutral-200 dark:hover:from-neutral-100 dark:hover:to-neutral-300 dark:text-black"
-                                        >
-                                            {isLoading ? "Joining..." : "Join Waitlist"}
-                                        </Button>
-                                    </form>
-                                    <div className="text-center space-y-2 mt-4">
-                                        {waitingListCount > 0 && (
-                                            <div className="inline-flex items-center gap-2 bg-teal-50 dark:bg-teal-900/20 px-4 py-2 rounded-full border border-teal-200 dark:border-teal-800">
-                                                <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
-                                                <span className="text-sm font-medium text-teal-700 dark:text-teal-300">
-                                                    {waitingListCount.toLocaleString()} {waitingListCount === 1 ? 'person has' : 'people have'} already joined
-                                                </span>
-                                            </div>
-                                        )}
-                                        <p className="text-center text-sm text-neutral-600 dark:text-neutral-400">
-                                            Be the first to know when we launch
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
+                                )
+                            }
                         </motion.div>
                     </motion.div>
                 </section>
-
                 <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
@@ -308,8 +310,6 @@ export function BackgroundPaths({
                     </DialogContent>
                 </Dialog>
             </div>
-
-            {/* Main Landing Content - Only show when not in waiting area */}
             {!showWaitingArea && <MainLanding />}
         </>
     );
