@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/auth"
 import { revalidatePath } from "next/cache"
-import { PaymentMethod } from "@prisma/client"
+import { PaymentMethod, CashoutStatus } from "@prisma/client"
 import { Decimal } from "@prisma/client/runtime/library"
 
 interface CashoutData {
@@ -35,7 +35,8 @@ export async function getWalletInfo(userId?: string) {
 				preferredPaymentMethod: true,
 				totalValidations: true,
 				totalIdeasSubmitted: true,
-				reputationScore: true
+				reputationScore: true,
+				lastCashoutAt: true
 			}
 		})
 
@@ -65,13 +66,37 @@ export async function getWalletInfo(userId?: string) {
 			_count: true
 		})
 
+		// Calculate next cashout availability (15 days after last cashout)
+		const CASHOUT_COOLDOWN_DAYS = 15
+		let nextCashoutAvailable: Date | null = null
+		let canCashout = true
+		
+		if (user.lastCashoutAt) {
+			const nextAllowedDate = new Date(user.lastCashoutAt)
+			nextAllowedDate.setDate(nextAllowedDate.getDate() + CASHOUT_COOLDOWN_DAYS)
+			
+			if (new Date() < nextAllowedDate) {
+				canCashout = false
+				nextCashoutAvailable = nextAllowedDate
+			}
+		}
+
 		return {
 			success: true,
 			wallet: {
 				...user,
-				monthlyEarnings: monthlyEarnings._sum.amount || new Decimal(0),
+				totalBalance: user.totalBalance.toNumber(),
+				availableBalance: user.availableBalance.toNumber(),
+				optedOutBalance: user.optedOutBalance.toNumber(),
+				monthlyEarnings: monthlyEarnings._sum.amount ? monthlyEarnings._sum.amount.toNumber() : 0,
 				monthlyValidations: monthlyEarnings._count || 0,
-				recentTransactions: transactions
+				recentTransactions: transactions.map(t => ({
+					...t,
+					amount: t.amount.toNumber()
+				})),
+				canCashout,
+				nextCashoutAvailable,
+				cashoutCooldownDays: CASHOUT_COOLDOWN_DAYS
 			}
 		}
 	} catch (error) {
@@ -118,11 +143,12 @@ export async function requestCashout(data: CashoutData) {
 			return { success: false, error: "Unauthorized" }
 		}
 
-		// Get user's current balance
+		// Get user's current balance and last cashout
 		const user = await prisma.user.findUnique({
 			where: { id: session.user.id },
 			select: {
 				availableBalance: true,
+				lastCashoutAt: true,
 				upiId: true,
 				paytmNumber: true,
 				walletAddress: true
@@ -131,6 +157,21 @@ export async function requestCashout(data: CashoutData) {
 
 		if (!user) {
 			return { success: false, error: "User not found" }
+		}
+
+		// Check cashout cooldown (15 days)
+		const CASHOUT_COOLDOWN_DAYS = 15
+		if (user.lastCashoutAt) {
+			const nextAllowedDate = new Date(user.lastCashoutAt)
+			nextAllowedDate.setDate(nextAllowedDate.getDate() + CASHOUT_COOLDOWN_DAYS)
+			
+			if (new Date() < nextAllowedDate) {
+				const daysLeft = Math.ceil((nextAllowedDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+				return { 
+					success: false, 
+					error: `Cashout not available yet. You can cash out again in ${daysLeft} days.` 
+				}
+			}
 		}
 
 		// Check minimum cashout amount (₹100)
@@ -148,30 +189,26 @@ export async function requestCashout(data: CashoutData) {
 			if (!data.upiId && !data.paytmNumber) {
 				return { success: false, error: "UPI ID or mobile number required" }
 			}
-		} else if (data.method === PaymentMethod.POLYGON) {
-			if (!data.walletAddress) {
-				return { success: false, error: "Wallet address required for crypto cashout" }
-			}
 		}
 
-		// Create cashout transaction
-		const transaction = await prisma.transaction.create({
+		// Create cashout request (not processed immediately)
+		const cashoutRequest = await prisma.cashoutRequest.create({
 			data: {
 				userId: session.user.id,
 				amount: new Decimal(data.amount),
-				type: "CASHOUT",
 				method: data.method,
-				description: `Cashout request via ${data.method}`,
-				status: "PENDING" // Will be processed manually or via webhook
+				upiId: data.upiId,
+				paytmNumber: data.paytmNumber,
+				walletAddress: data.walletAddress,
+				status: CashoutStatus.PENDING
 			}
 		})
 
-		// Update user balance (move from available to pending)
+		// Update user's last cashout date and payment info
 		await prisma.user.update({
 			where: { id: session.user.id },
 			data: {
-				availableBalance: { decrement: data.amount },
-				// Update payment info if provided
+				lastCashoutAt: new Date(),
 				...(data.upiId && { upiId: data.upiId }),
 				...(data.paytmNumber && { paytmNumber: data.paytmNumber }),
 				...(data.walletAddress && { walletAddress: data.walletAddress }),
@@ -181,7 +218,7 @@ export async function requestCashout(data: CashoutData) {
 
 		revalidatePath('/wallet')
 
-		return { success: true, transaction }
+		return { success: true, cashoutRequest }
 	} catch (error) {
 		console.error("Error requesting cashout:", error)
 		return { success: false, error: "Failed to process cashout request" }
@@ -228,7 +265,10 @@ export async function getTransactionHistory(userId?: string, limit: number = 50)
 
 		return {
 			success: true,
-			transactions,
+			transactions: transactions.map(t => ({
+				...t,
+				amount: t.amount.toNumber()
+			})),
 			summary
 		}
 	} catch (error) {

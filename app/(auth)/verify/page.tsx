@@ -9,6 +9,7 @@ import { ArrowRight, CheckCircle, RefreshCw } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { verifyOTP, resendVerificationOTP } from "@/actions/auth.actions"
+import { signIn } from "next-auth/react"
 
 function VerifyContent() {
 	const [isLoading, setIsLoading] = useState(false)
@@ -124,11 +125,21 @@ function VerifyContent() {
 				setIsVerified(true)
 				toast.success("Email verified successfully!")
 
-				// Simple approach: redirect to signin with a success message
-				setTimeout(() => {
-					toast.success("Please sign in with your credentials")
-					router.push(`/signin?verified=true&email=${encodeURIComponent(email)}`)
-				}, 1500)
+				const signInResult = await signIn('credentials', {
+                    email: email,
+                    password: "verified", // Use "verified" to trigger special case in auth.ts
+					redirect: false
+				})
+
+                if (signInResult?.ok) {
+                    setTimeout(() => {
+                        router.push('/onboarding')
+                    }, 2000)
+                } else {
+                    setTimeout(() => {
+                        router.push('/signin?verified=true')
+                    }, 2000)
+                }
 			} else {
 				toast.error(result.error || "Invalid verification code")
 				setCode(["", "", "", "", "", ""])

@@ -66,12 +66,6 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 			status: "active"
 		},
 		{
-			path: "profile",
-			name: "Profile",
-			icon: <Users className="h-5 w-5" />,
-			status: "active"
-		},
-		{
 			path: "analytics",
 			name: "Analytics",
 			icon: <BarChart3 className="h-5 w-5" />,
@@ -82,12 +76,6 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 			name: "Feedback",
 			icon: <MessageSquare className="h-5 w-5" />,
 			status: "active"
-		},
-		{
-			path: "settings",
-			name: "Settings",
-			icon: <Settings className="h-5 w-5" />,
-			status: "active"
 		}
 	];
 
@@ -96,18 +84,19 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 	return (
 		<TooltipProvider>
 			<motion.div
-				className="fixed top-0 left-0 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 shadow-sm z-20 sm:block hidden"
-				animate={{ width: isCollapsed ? 60 : 240 }}
+				className="fixed top-0 left-0 h-full bg-white dark:bg-neutral-900 border-r border-gray-200 dark:border-gray-800 shadow-sm z-20 sm:block hidden"
+				animate={{ width: isCollapsed ? 60 : 180 }}
 				transition={{ duration: 0.3, ease: "easeInOut" }}
 			>
 				<div className="flex flex-col h-full relative">
 					<div className="flex items-center justify-center p-4 h-[80px] border-b border-gray-200 dark:border-gray-800">
 						<Link href={session ? "/dashboard" : "/"} className="flex gap-2 items-center justify-center group cursor-pointer">
 							<Image
-								src="/shunyatech.png"
+								src="/validatexmainlogo.png"
 								alt="ShunyaTech"
 								width={32}
 								height={32}
+								className="rounded-2xl"
 							/>
 							<motion.div
 								animate={{
@@ -120,7 +109,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 							>
 								<div className="whitespace-nowrap">
 									<h1 className="text-xl font-bold text-gray-900 dark:text-white">
-										ShunyaTech
+										ValidateX
 									</h1>
 								</div>
 							</motion.div>

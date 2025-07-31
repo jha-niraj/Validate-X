@@ -66,7 +66,7 @@ const MainNavbar = ({ isCollapsed }: { isCollapsed: boolean }) => {
 
     return (
         <nav
-            className={`fixed top-0 right-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 transition-all duration-300 z-10 ${scrolled ? "shadow-sm" : ""} ${isCollapsed ? "left-0 sm:left-[60px]" : "left-0 sm:left-[240px]"} left-0`}
+            className={`fixed top-0 right-0 bg-white dark:bg-neutral-900 border-b border-gray-200 dark:border-gray-800 transition-all duration-300 z-10 ${scrolled ? "shadow-sm" : ""} ${isCollapsed ? "left-0 sm:left-[60px]" : "left-0 sm:left-[180px]"} left-0`}
         >
             <div className="px-3 sm:px-6 py-3 sm:py-4">
                 <div className="flex justify-between items-center">

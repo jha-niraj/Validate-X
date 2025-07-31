@@ -89,6 +89,7 @@ model User {
     
     // Payment preferences
     preferredPaymentMethod PaymentMethod?
+    lastCashoutAt        DateTime?
 
     // Email verification
     verificationToken    String?   @unique
@@ -102,6 +103,7 @@ model User {
     posts                Post[]
     validations          Validation[]
     transactions         Transaction[]
+    cashoutRequests      CashoutRequest[]
 
     @@index([email])
 }
@@ -217,6 +219,45 @@ model Validation {
     @@index([postId])
     @@index([validatorId])
     @@index([status])
+}
+
+enum CashoutStatus {
+    PENDING       // Submitted, awaiting admin review
+    APPROVED      // Approved by admin, payment in progress  
+    COMPLETED     // Payment completed
+    REJECTED      // Rejected by admin
+    CANCELLED     // Cancelled by user
+}
+
+model CashoutRequest {
+    id              String          @id @default(cuid())
+    userId          String
+    amount          Decimal         @db.Decimal(10,2)
+    method          PaymentMethod
+    
+    // Payment details based on method
+    upiId           String?
+    paytmNumber     String?
+    walletAddress   String?
+    
+    // Admin review
+    status          CashoutStatus   @default(PENDING)
+    adminNotes      String?
+    reviewedBy      String?         // Admin user ID
+    reviewedAt      DateTime?
+    
+    // Payment processing
+    transactionId   String?         // External payment gateway transaction ID
+    processedAt     DateTime?
+    
+    createdAt       DateTime        @default(now())
+    updatedAt       DateTime        @updatedAt
+    
+    user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    
+    @@index([userId])
+    @@index([status])
+    @@index([createdAt])
 }
 
 model Transaction {

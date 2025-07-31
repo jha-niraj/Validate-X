@@ -126,96 +126,98 @@ export default function OnboardingPage() {
 	}
 
 	const renderStep1 = () => (
-		<Card className="w-full max-w-2xl">
+		<Card className="max-w-7xl mx-auto">
 			<CardHeader className="text-center">
 				<CardTitle className="text-2xl font-bold">Choose Your Role</CardTitle>
 				<CardDescription>
 					How would you like to participate in ValidateX?
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="space-y-4">
-				<div
-					className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.userRole === "SUBMITTER" ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20" : "border-gray-200"
-						}`}
-					onClick={() => handleRoleSelection("SUBMITTER")}
-				>
-					<div className="flex items-start gap-4">
-						<div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
-							<Lightbulb className="h-6 w-6 text-blue-600" />
-						</div>
-						<div className="flex-1">
-							<h3 className="text-lg font-semibold mb-2">Submit Ideas (Sam)</h3>
-							<p className="text-gray-600 dark:text-gray-400">
-								Submit ideas for feedback (e.g., projects, pitches, assignments)
-							</p>
-							<div className="flex items-center gap-2 mt-3">
-								<Badge variant="outline">Idea Creator</Badge>
-								<Badge variant="outline">Project Owner</Badge>
+			<CardContent className="flex flex-col gap-4">
+				<div className="flex gap-4">
+					<div
+						className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.userRole === "SUBMITTER" ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20" : "border-gray-200"
+							}`}
+						onClick={() => handleRoleSelection("SUBMITTER")}
+					>
+						<div className="flex items-start gap-4">
+							<div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+								<Lightbulb className="h-6 w-6 text-blue-600" />
 							</div>
+							<div className="flex-1">
+								<h3 className="text-lg font-semibold mb-2">Submit Ideas</h3>
+								<p className="text-gray-600 dark:text-gray-400">
+									Submit ideas for feedback (e.g., projects, pitches, assignments)
+								</p>
+								<div className="flex items-center gap-2 mt-3">
+									<Badge variant="outline">Idea Creator</Badge>
+									<Badge variant="outline">Project Owner</Badge>
+								</div>
+							</div>
+							{formData.userRole === "SUBMITTER" && (
+								<CheckCircle className="h-6 w-6 text-blue-600" />
+							)}
 						</div>
-						{formData.userRole === "SUBMITTER" && (
-							<CheckCircle className="h-6 w-6 text-blue-600" />
-						)}
+					</div>
+
+					<div
+						className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.userRole === "VALIDATOR" ? "border-green-500 bg-green-50 dark:bg-green-950/20" : "border-gray-200"
+							}`}
+						onClick={() => handleRoleSelection("VALIDATOR")}
+					>
+						<div className="flex items-start gap-4">
+							<div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
+								<Users className="h-6 w-6 text-green-600" />
+							</div>
+							<div className="flex-1">
+								<h3 className="text-lg font-semibold mb-2">Validate Ideas</h3>
+								<p className="text-gray-600 dark:text-gray-400">
+									Earn rewards by reviewing and providing feedback on ideas
+								</p>
+								<div className="flex items-center gap-2 mt-3">
+									<Badge variant="outline">Expert Reviewer</Badge>
+									<Badge variant="outline">Reward Earner</Badge>
+								</div>
+							</div>
+							{formData.userRole === "VALIDATOR" && (
+								<CheckCircle className="h-6 w-6 text-green-600" />
+							)}
+						</div>
+					</div>
+
+					<div
+						className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.userRole === "BOTH" ? "border-purple-500 bg-purple-50 dark:bg-purple-950/20" : "border-gray-200"
+							}`}
+						onClick={() => handleRoleSelection("BOTH")}
+					>
+						<div className="flex items-start gap-4">
+							<div className="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
+								<div className="flex items-center gap-1">
+									<Lightbulb className="h-4 w-4 text-purple-600" />
+									<Users className="h-4 w-4 text-purple-600" />
+								</div>
+							</div>
+							<div className="flex-1">
+								<h3 className="text-lg font-semibold mb-2">Both Submit & Validate</h3>
+								<p className="text-gray-600 dark:text-gray-400">
+									Get the full ValidateX experience - submit your ideas and help validate others
+								</p>
+								<div className="flex items-center gap-2 mt-3">
+									<Badge variant="outline">Complete Experience</Badge>
+									<Badge variant="outline">Community Member</Badge>
+								</div>
+							</div>
+							{formData.userRole === "BOTH" && (
+								<CheckCircle className="h-6 w-6 text-purple-600" />
+							)}
+						</div>
 					</div>
 				</div>
 
-				<div
-					className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.userRole === "VALIDATOR" ? "border-green-500 bg-green-50 dark:bg-green-950/20" : "border-gray-200"
-						}`}
-					onClick={() => handleRoleSelection("VALIDATOR")}
-				>
-					<div className="flex items-start gap-4">
-						<div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
-							<Users className="h-6 w-6 text-green-600" />
-						</div>
-						<div className="flex-1">
-							<h3 className="text-lg font-semibold mb-2">Validate Ideas (Elina)</h3>
-							<p className="text-gray-600 dark:text-gray-400">
-								Earn rewards by reviewing and providing feedback on ideas
-							</p>
-							<div className="flex items-center gap-2 mt-3">
-								<Badge variant="outline">Expert Reviewer</Badge>
-								<Badge variant="outline">Reward Earner</Badge>
-							</div>
-						</div>
-						{formData.userRole === "VALIDATOR" && (
-							<CheckCircle className="h-6 w-6 text-green-600" />
-						)}
-					</div>
-				</div>
-
-				<div
-					className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.userRole === "BOTH" ? "border-purple-500 bg-purple-50 dark:bg-purple-950/20" : "border-gray-200"
-						}`}
-					onClick={() => handleRoleSelection("BOTH")}
-				>
-					<div className="flex items-start gap-4">
-						<div className="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
-							<div className="flex items-center gap-1">
-								<Lightbulb className="h-4 w-4 text-purple-600" />
-								<Users className="h-4 w-4 text-purple-600" />
-							</div>
-						</div>
-						<div className="flex-1">
-							<h3 className="text-lg font-semibold mb-2">Both Submit & Validate</h3>
-							<p className="text-gray-600 dark:text-gray-400">
-								Get the full ValidateX experience - submit your ideas and help validate others
-							</p>
-							<div className="flex items-center gap-2 mt-3">
-								<Badge variant="outline">Complete Experience</Badge>
-								<Badge variant="outline">Community Member</Badge>
-							</div>
-						</div>
-						{formData.userRole === "BOTH" && (
-							<CheckCircle className="h-6 w-6 text-purple-600" />
-						)}
-					</div>
-				</div>
-
-				<div className="pt-4">
+				<div className="pt-4 text-center">
 					<Button
 						onClick={handleNext}
-						className="w-full"
+						className="w-fit mx-auto"
 						size="lg"
 						disabled={!formData.userRole}
 					>
@@ -227,7 +229,7 @@ export default function OnboardingPage() {
 	)
 
 	const renderStep2 = () => (
-		<Card className="w-full max-w-2xl">
+		<Card className="w-full max-w-7xl mx-auto">
 			<CardHeader className="text-center">
 				<CardTitle className="text-2xl font-bold">Select Your Interests</CardTitle>
 				<CardDescription>
@@ -303,7 +305,7 @@ export default function OnboardingPage() {
 	)
 
 	const renderStep3 = () => (
-		<Card className="w-full max-w-2xl">
+		<Card className="w-full max-w-7xl mx-auto">
 			<CardHeader className="text-center">
 				<CardTitle className="text-2xl font-bold">How ValidateX Works</CardTitle>
 				<CardDescription>
@@ -337,7 +339,7 @@ export default function OnboardingPage() {
 	)
 
 	const renderStep4 = () => (
-		<Card className="w-full max-w-2xl">
+		<Card className="w-full max-w-7xl mx-auto">
 			<CardHeader className="text-center">
 				<CardTitle className="text-2xl font-bold">You&apos;re All Set!</CardTitle>
 				<CardDescription>
@@ -349,8 +351,8 @@ export default function OnboardingPage() {
 					<div>
 						<h4 className="font-semibold mb-2">Your Role:</h4>
 						<Badge variant="outline" className="text-base px-3 py-1">
-							{formData.userRole === "SUBMITTER" && "Idea Submitter (Sam)"}
-							{formData.userRole === "VALIDATOR" && "Idea Validator (Elina)"}
+							{formData.userRole === "SUBMITTER" && "Idea Submitter"}
+							{formData.userRole === "VALIDATOR" && "Idea Validator"}
 							{formData.userRole === "BOTH" && "Both Submit & Validate"}
 						</Badge>
 					</div>
@@ -408,16 +410,16 @@ export default function OnboardingPage() {
 	)
 
 	return (
-		<div className="min-h-screen bg-gradient-to-bl from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-950 flex items-center justify-center p-4">
+		<div className="min-h-screen flex flex-col bg-white dark:bg-neutral-900 flex items-center justify-center p-4 py-24 md:py-0">
 			<div className="w-full max-w-4xl">
 				{/* Progress indicator */}
-				<div className="mb-8">
-					<div className="flex items-center justify-center gap-2 mb-4">
+				<div className="mb-4">
+					<div className="flex items-center justify-center gap-2 mb-4 flex-wrap">
 						{[1, 2, 3, 4].map((step) => (
 							<div key={step} className="flex items-center">
 								<div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step <= currentStep
-										? "bg-blue-600 text-white"
-										: "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
+									? "bg-blue-600 text-white"
+									: "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
 									}`}>
 									{step}
 								</div>
@@ -432,13 +434,12 @@ export default function OnboardingPage() {
 						Step {currentStep} of 4
 					</p>
 				</div>
-
-				<div className="flex justify-center">
-					{currentStep === 1 && renderStep1()}
-					{currentStep === 2 && renderStep2()}
-					{currentStep === 3 && renderStep3()}
-					{currentStep === 4 && renderStep4()}
-				</div>
+			</div>
+			<div className="max-w-7xl mx-auto">
+				{currentStep === 1 && renderStep1()}
+				{currentStep === 2 && renderStep2()}
+				{currentStep === 3 && renderStep3()}
+				{currentStep === 4 && renderStep4()}
 			</div>
 		</div>
 	)

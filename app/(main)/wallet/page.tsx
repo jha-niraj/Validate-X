@@ -31,9 +31,9 @@ import { getWalletInfo, updatePaymentPreferences, requestCashout, getTransaction
 import { PaymentMethod } from '@prisma/client'
 
 interface WalletData {
-	totalBalance: any
-	availableBalance: any
-	optedOutBalance: any
+	totalBalance: number
+	availableBalance: number
+	optedOutBalance: number
 	upiId: string | null
 	paytmNumber: string | null
 	walletAddress: string | null
@@ -41,24 +41,43 @@ interface WalletData {
 	totalValidations: number
 	totalIdeasSubmitted: number
 	reputationScore: number
-	monthlyEarnings: any
+	monthlyEarnings: number
 	monthlyValidations: number
-	recentTransactions: any[]
+	canCashout: boolean
+	nextCashoutAvailable: Date | null
+	cashoutCooldownDays: number
+	recentTransactions: Array<{
+		id: string
+		amount: number
+		type: string
+		status: string
+		description: string
+		createdAt: Date
+	}>
 }
 
 export default function WalletPage() {
 	const { data: session } = useSession()
 	const [walletData, setWalletData] = useState<WalletData | null>(null)
-	const [transactions, setTransactions] = useState<any[]>([])
+	const [transactions, setTransactions] = useState<Array<{
+		id: string
+		amount: number
+		type: string
+		status: string
+		description: string
+		createdAt: Date
+	}>>([]);
 	const [loading, setLoading] = useState(true)
 	const [balanceVisible, setBalanceVisible] = useState(true)
 	const [cashoutOpen, setCashoutOpen] = useState(false)
 	const [settingsOpen, setSettingsOpen] = useState(false)
 	const [optOutOpen, setOptOutOpen] = useState(false)
+	const [blockchainWalletOpen, setBlockchainWalletOpen] = useState(false)
 
 	// Form states
 	const [cashoutAmount, setCashoutAmount] = useState('')
 	const [cashoutMethod, setCashoutMethod] = useState<PaymentMethod>('RAZORPAY')
+	const [cashoutPassword, setCashoutPassword] = useState('')
 	const [paymentDetails, setPaymentDetails] = useState({
 		upiId: '',
 		paytmNumber: '',
@@ -103,14 +122,29 @@ export default function WalletPage() {
 	}
 
 	const handleCashout = async () => {
+		if (!walletData.canCashout) {
+			toast.error('Cashout not available yet. Please wait for the cooldown period.')
+			return
+		}
+
 		if (!cashoutAmount || isNaN(Number(cashoutAmount))) {
 			toast.error('Please enter a valid amount')
+			return
+		}
+
+		if (!cashoutPassword) {
+			toast.error('Please enter your password to confirm cashout')
 			return
 		}
 
 		const amount = Number(cashoutAmount)
 		if (amount < 100) {
 			toast.error('Minimum cashout amount is ₹100')
+			return
+		}
+
+		if (amount > walletData.availableBalance) {
+			toast.error('Insufficient balance')
 			return
 		}
 
@@ -124,9 +158,10 @@ export default function WalletPage() {
 			})
 
 			if (result.success) {
-				toast.success('Cashout request submitted successfully')
+				toast.success('Cashout request submitted successfully! It will be reviewed within 1-2 business days.')
 				setCashoutOpen(false)
 				setCashoutAmount('')
+				setCashoutPassword('')
 				loadWalletData()
 				loadTransactions()
 			} else {
@@ -184,8 +219,16 @@ export default function WalletPage() {
 		}
 	}
 
-	const formatCurrency = (amount: any) => {
+	const formatCurrency = (amount: number) => {
 		return `₹${Number(amount).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
+	}
+
+	const formatDate = (date: Date | string) => {
+		return new Date(date).toLocaleDateString('en-IN', {
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric'
+		})
 	}
 
 	const getTransactionIcon = (type: string) => {
@@ -282,42 +325,90 @@ export default function WalletPage() {
 										<SelectContent>
 											<SelectItem value="RAZORPAY">Razorpay (UPI/Cards)</SelectItem>
 											<SelectItem value="PHONEPE">PhonePe UPI</SelectItem>
-											<SelectItem value="POLYGON">Polygon Crypto</SelectItem>
 										</SelectContent>
 									</Select>
 								</div>
 
-								<div className="space-y-3">
-									<div>
-										<Label>UPI ID</Label>
-										<Input
-											placeholder="your-upi@bank"
-											value={paymentDetails.upiId}
-											onChange={(e) => setPaymentDetails(prev => ({ ...prev, upiId: e.target.value }))}
-										/>
-									</div>
+								{/* Show only UPI fields for UPI payment methods */}
+								{(paymentDetails.preferredMethod === 'RAZORPAY' || paymentDetails.preferredMethod === 'PHONEPE') && (
+									<div className="space-y-3">
+										<div>
+											<Label>UPI ID</Label>
+											<Input
+												placeholder="your-upi@bank"
+												value={paymentDetails.upiId}
+												onChange={(e) => setPaymentDetails(prev => ({ ...prev, upiId: e.target.value }))}
+											/>
+										</div>
 
-									<div>
-										<Label>Mobile Number (PayTM)</Label>
-										<Input
-											placeholder="+91 9876543210"
-											value={paymentDetails.paytmNumber}
-											onChange={(e) => setPaymentDetails(prev => ({ ...prev, paytmNumber: e.target.value }))}
-										/>
+										<div>
+											<Label>Mobile Number (for PayTM/backup)</Label>
+											<Input
+												placeholder="+91 9876543210"
+												value={paymentDetails.paytmNumber}
+												onChange={(e) => setPaymentDetails(prev => ({ ...prev, paytmNumber: e.target.value }))}
+											/>
+										</div>
 									</div>
+								)}
 
-									<div>
-										<Label>Polygon Wallet Address</Label>
-										<Input
-											placeholder="0x..."
-											value={paymentDetails.walletAddress}
-											onChange={(e) => setPaymentDetails(prev => ({ ...prev, walletAddress: e.target.value }))}
-										/>
+								<div className="flex gap-2">
+									<Button onClick={handleUpdatePaymentSettings} className="flex-1">
+										Update Settings
+									</Button>
+									<Button 
+										variant="outline" 
+										onClick={() => {
+											setSettingsOpen(false)
+											setBlockchainWalletOpen(true)
+										}}
+										className="flex-1"
+									>
+										<Bitcoin className="h-4 w-4 mr-2" />
+										Blockchain
+									</Button>
+								</div>
+							</div>
+						</DialogContent>
+					</Dialog>
+
+					{/* Blockchain Wallet Dialog */}
+					<Dialog open={blockchainWalletOpen} onOpenChange={setBlockchainWalletOpen}>
+						<DialogContent>
+							<DialogHeader>
+								<DialogTitle className="flex items-center gap-2">
+									<Bitcoin className="h-5 w-5" />
+									Blockchain Wallet
+								</DialogTitle>
+							</DialogHeader>
+							<div className="space-y-4">
+								<div className="text-center py-8">
+									<Bitcoin className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+									<h3 className="text-lg font-semibold mb-2">Coming Soon!</h3>
+									<p className="text-gray-600 mb-4">
+										Blockchain wallet integration with Polygon and other chains is under development.
+									</p>
+									<div className="space-y-2 text-sm text-gray-500">
+										<div className="flex items-center justify-center gap-2">
+											<Bitcoin className="h-4 w-4" />
+											<span>Polygon (MATIC)</span>
+										</div>
+										<div className="flex items-center justify-center gap-2">
+											<Bitcoin className="h-4 w-4" />
+											<span>Ethereum (ETH)</span>
+										</div>
+										<div className="flex items-center justify-center gap-2">
+											<Bitcoin className="h-4 w-4" />
+											<span>USDC Stablecoin</span>
+										</div>
 									</div>
 								</div>
-
-								<Button onClick={handleUpdatePaymentSettings} className="w-full">
-									Update Settings
+								<Button 
+									variant="outline" 
+									onClick={() => setBlockchainWalletOpen(false)}
+									className="w-full"
+								>
+									Close
 								</Button>
 							</div>
 						</DialogContent>
@@ -352,28 +443,47 @@ export default function WalletPage() {
 								</div>
 							</div>
 							<div className="text-right">
-								<Dialog open={cashoutOpen} onOpenChange={setCashoutOpen}>
-									<DialogTrigger asChild>
-										<Button>
-											<Download className="h-4 w-4 mr-2" />
-											Cash Out
-										</Button>
-									</DialogTrigger>
+								<div className="space-y-2">
+									{!walletData.canCashout && walletData.nextCashoutAvailable && (
+										<p className="text-xs text-amber-600">
+											Next cashout: {formatDate(walletData.nextCashoutAvailable)}
+										</p>
+									)}
+									<Dialog open={cashoutOpen} onOpenChange={setCashoutOpen}>
+										<DialogTrigger asChild>
+											<Button 
+												disabled={!walletData.canCashout}
+												variant={walletData.canCashout ? "default" : "secondary"}
+											>
+												<Download className="h-4 w-4 mr-2" />
+												{walletData.canCashout ? "Cash Out" : "Cashout Unavailable"}
+											</Button>
+										</DialogTrigger>
 									<DialogContent>
 										<DialogHeader>
-											<DialogTitle>Cash Out</DialogTitle>
+											<DialogTitle>Cash Out Request</DialogTitle>
 										</DialogHeader>
 										<div className="space-y-4">
 											<div>
 												<Label>Amount (₹)</Label>
-												<Input
-													type="number"
-													placeholder="100"
-													value={cashoutAmount}
-													onChange={(e) => setCashoutAmount(e.target.value)}
-												/>
+												<div className="flex gap-2">
+													<Input
+														type="number"
+														placeholder="100"
+														value={cashoutAmount}
+														onChange={(e) => setCashoutAmount(e.target.value)}
+														className="flex-1"
+													/>
+													<Button 
+														variant="outline" 
+														onClick={() => setCashoutAmount(walletData.availableBalance.toString())}
+														type="button"
+													>
+														Max
+													</Button>
+												</div>
 												<p className="text-sm text-gray-500 mt-1">
-													Available: {formatCurrency(walletData.availableBalance)}
+													Available: {formatCurrency(walletData.availableBalance)} • Min: ₹100
 												</p>
 											</div>
 
@@ -386,17 +496,40 @@ export default function WalletPage() {
 													<SelectContent>
 														<SelectItem value="RAZORPAY">Razorpay (UPI/Cards)</SelectItem>
 														<SelectItem value="PHONEPE">PhonePe UPI</SelectItem>
-														<SelectItem value="POLYGON">Polygon Crypto</SelectItem>
 													</SelectContent>
 												</Select>
 											</div>
 
-											<Button onClick={handleCashout} className="w-full">
+											<div>
+												<Label>Confirm with Password</Label>
+												<Input
+													type="password"
+													placeholder="Enter your password"
+													value={cashoutPassword}
+													onChange={(e) => setCashoutPassword(e.target.value)}
+												/>
+												<p className="text-sm text-gray-500 mt-1">
+													Required for security verification
+												</p>
+											</div>
+
+											<div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+												<p className="text-sm text-amber-800">
+													<strong>Processing Time:</strong> Cashout requests are reviewed manually and processed within 1-2 business days.
+												</p>
+											</div>
+
+											<Button 
+												onClick={handleCashout} 
+												className="w-full"
+												disabled={!cashoutAmount || !cashoutPassword}
+											>
 												Request Cashout
 											</Button>
 										</div>
 									</DialogContent>
 								</Dialog>
+								</div>
 							</div>
 						</div>
 					</CardContent>
@@ -531,7 +664,7 @@ export default function WalletPage() {
 										<div>
 											<div className="font-medium">{transaction.description}</div>
 											<div className="text-sm text-gray-500">
-												{new Date(transaction.createdAt).toLocaleDateString()}
+												{formatDate(transaction.createdAt)}
 											</div>
 										</div>
 									</div>

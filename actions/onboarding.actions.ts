@@ -22,11 +22,62 @@ export async function completeOnboarding(data: OnboardingInput) {
 		}
 
 		const validatedData = onboardingSchema.parse(data);
+		const { userRole, categories: inputCategories, customCategory } = validatedData;
 
-		// Add custom category to the categories array if provided
-		let categories = validatedData.categories;
-		if (validatedData.customCategory && validatedData.customCategory.trim()) {
-			categories = [...categories, validatedData.customCategory.trim()];
+		// Ensure default categories exist in database
+		const existingCategories = await seedDefaultCategories();
+
+		// Map category names/IDs to database IDs
+		const categoryIds: string[] = [];
+		
+		for (const categoryNameOrId of inputCategories) {
+			// Check if it's already a valid CUID (database ID)
+			const existingCategory = existingCategories.find(cat => 
+				cat.id === categoryNameOrId || cat.name.toLowerCase() === categoryNameOrId.toLowerCase()
+			);
+			
+			if (existingCategory) {
+				categoryIds.push(existingCategory.id);
+			} else {
+				// If it's a fallback category name, try to find by name mapping
+				const fallbackMapping: Record<string, string> = {
+					'tech': 'Technology',
+					'business': 'Business', 
+					'assignments': 'Assignments',
+					'social-impact': 'Social Impact',
+					'creative': 'Creative'
+				};
+				
+				const mappedName = fallbackMapping[categoryNameOrId] || categoryNameOrId;
+				const mappedCategory = existingCategories.find(cat => 
+					cat.name.toLowerCase() === mappedName.toLowerCase()
+				);
+				
+				if (mappedCategory) {
+					categoryIds.push(mappedCategory.id);
+				}
+			}
+		}
+
+		// Create custom category if provided and doesn't exist
+		if (customCategory && customCategory.trim()) {
+			const existingCustom = existingCategories.find(cat => 
+				cat.name.toLowerCase() === customCategory.trim().toLowerCase()
+			);
+			
+			if (!existingCustom) {
+				const newCategory = await prisma.category.create({
+					data: {
+						name: customCategory.trim(),
+						description: `Custom category: ${customCategory.trim()}`,
+						icon: "⭐", // Default icon for custom categories
+						isActive: true
+					}
+				});
+				categoryIds.push(newCategory.id);
+			} else {
+				categoryIds.push(existingCustom.id);
+			}
 		}
 
 		// Update user with onboarding data
@@ -40,9 +91,9 @@ export async function completeOnboarding(data: OnboardingInput) {
 		});
 
 		// Create category selections for the user
-		if (categories.length > 0) {
+		if (categoryIds.length > 0) {
 			await prisma.categorySelection.createMany({
-				data: categories.map(categoryId => ({
+				data: categoryIds.map(categoryId => ({
 					userId: session.user.id,
 					categoryId
 				})),
@@ -102,5 +153,41 @@ export async function redirectAfterOnboarding(userRole: string) {
 			redirect('/dashboard');
 		default:
 			redirect('/dashboard');
+	}
+}
+
+// Seed default categories if they don't exist
+export async function seedDefaultCategories() {
+	const DEFAULT_CATEGORIES = [
+		{ name: "Technology", icon: "💻", description: "Software, Hardware, AI, Web Development" },
+		{ name: "Business", icon: "🏢", description: "Startups, Business Models, Marketing" },
+		{ name: "Assignments", icon: "📚", description: "Academic Projects, Research, Studies" },
+		{ name: "Social Impact", icon: "❤️", description: "Non-profit, Community, Sustainability" },
+		{ name: "Creative", icon: "🎨", description: "Design, Art, Content, Media" },
+	]
+
+	try {
+		const existingCategories = await prisma.category.findMany()
+		
+		if (existingCategories.length === 0) {
+			await prisma.category.createMany({
+				data: DEFAULT_CATEGORIES.map(category => ({
+					name: category.name,
+					description: category.description,
+					icon: category.icon,
+					isActive: true
+				})),
+				skipDuplicates: true
+			})
+			console.log("Default categories seeded")
+		}
+		
+		return await prisma.category.findMany({
+			where: { isActive: true },
+			orderBy: { name: 'asc' }
+		})
+	} catch (error) {
+		console.error("Error seeding categories:", error);
+		throw error;
 	}
 }

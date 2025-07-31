@@ -20,13 +20,24 @@ const changePasswordSchema = z.object({
     currentPassword: z.string().min(1, "Current password is required"),
     newPassword: z.string().min(6, "New password must be at least 6 characters"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
-}).refine((data) => data.newPassword === data.confirmPassword, {
+}).refine((data) => (
+    data.newPassword === data.confirmPassword
+), {
     message: "Passwords don't match",
     path: ["confirmPassword"],
 });
 
+// Delete Account Schema
+const deleteAccountSchema = z.object({
+    password: z.string().min(1, "Password is required to delete account"),
+    confirmText: z.string().refine((val) => val === "DELETE", {
+        message: "You must type 'DELETE' to confirm"
+    })
+});
+
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+export type DeleteAccountInput = z.infer<typeof deleteAccountSchema>;
 
 interface CloudinaryUploadResult {
     secure_url: string;
@@ -237,6 +248,13 @@ export async function changePassword(data: ChangePasswordInput) {
             return { success: false, error: "Current password is incorrect" };
         }
 
+        // Check if new password is same as current password
+        const isSamePassword = await bcrypt.compare(validatedData.newPassword, user.password);
+        
+        if (isSamePassword) {
+            return { success: false, error: "New password cannot be the same as your current password" };
+        }
+
         // Hash new password
         const hashedNewPassword = await bcrypt.hash(validatedData.newPassword, 12);
 
@@ -299,5 +317,73 @@ export async function getUserStats() {
     } catch (error) {
         console.error("Error fetching user stats:", error);
         return { success: false, error: "Failed to fetch user stats" };
+    }
+}
+
+// Delete Account function
+export async function deleteAccount(data: DeleteAccountInput) {
+    try {
+        const session = await auth();
+        
+        if (!session?.user?.id) {
+            return { success: false, error: "Not authenticated" };
+        }
+
+        const validatedData = deleteAccountSchema.parse(data);
+
+        // Get current user
+        const user = await prisma.user.findUnique({
+            where: { id: session.user.id },
+            select: { password: true, email: true }
+        });
+
+        if (!user || !user.password) {
+            return { success: false, error: "User not found or no password set" };
+        }
+
+        // Verify password
+        const isPasswordValid = await bcrypt.compare(validatedData.password, user.password);
+        
+        if (!isPasswordValid) {
+            return { success: false, error: "Password is incorrect" };
+        }
+
+        // Start transaction to delete all user-related data
+        await prisma.$transaction(async (tx) => {
+            // Delete user's category selections
+            await tx.categorySelection.deleteMany({
+                where: { userId: session.user.id }
+            });
+
+            // Delete user's validations
+            await tx.validation.deleteMany({
+                where: { validatorId: session.user.id }
+            });
+
+            // Delete user's posts
+            await tx.post.deleteMany({
+                where: { authorId: session.user.id }
+            });
+
+            // Delete user's transactions
+            await tx.transaction.deleteMany({
+                where: { userId: session.user.id }
+            });
+
+            // Finally delete the user
+            await tx.user.delete({
+                where: { id: session.user.id }
+            });
+        });
+
+        return { success: true, message: "Account deleted successfully" };
+    } catch (error) {
+        console.error("Error deleting account:", error);
+        
+        if (error instanceof z.ZodError) {
+            return { success: false, error: error.issues[0].message };
+        }
+        
+        return { success: false, error: "Failed to delete account" };
     }
 }

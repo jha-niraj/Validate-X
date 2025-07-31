@@ -108,7 +108,7 @@ export default function DashboardPage() {
 	const { user } = dashboardData
 
 	return (
-		<div className="min-h-screen bg-gradient-to-bl dark:from-black dark:via-gray-900 dark:to-black">
+		<div className="min-h-screen bg-white dark:bg-neutral-900">
 			<div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
 				{/* Welcome Section */}
 				<div className="mb-8">

@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-providers";
 import { Toaster as SonnerToaster } from "sonner";
 import { Providers } from "./providers/providers";
-import { Header } from "@/components/navbar";
 
 const spaceGrotesk = Space_Grotesk({
     subsets: ['latin'],
@@ -49,7 +48,6 @@ export default function RootLayout({
 						enableSystem
 						disableTransitionOnChange
 					>
-						<Header />
 						{children}
 						<SonnerToaster position="top-center" closeButton richColors />
 					</ThemeProvider>

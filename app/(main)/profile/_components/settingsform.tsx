@@ -1,13 +1,15 @@
 "use client"
 
 import { useState } from "react"
-import { changePassword } from "@/actions/profile.action"
+import { changePassword, deleteAccount, type DeleteAccountInput } from "@/actions/profile.action"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { toast } from "sonner"
-import { Loader2, Shield, Eye, EyeOff } from "lucide-react"
+import { Loader2, Shield, Eye, EyeOff, Trash2, AlertTriangle } from "lucide-react"
+import { signOut } from "next-auth/react"
 
 interface SettingsFormProps {
 	user: {
@@ -19,14 +21,21 @@ interface SettingsFormProps {
 
 export function SettingsForm({ user }: SettingsFormProps) {
 	const [isLoading, setIsLoading] = useState(false)
+	const [isDeleteLoading, setIsDeleteLoading] = useState(false)
 	const [showCurrentPassword, setShowCurrentPassword] = useState(false)
 	const [showNewPassword, setShowNewPassword] = useState(false)
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+	const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
 	const [passwordData, setPasswordData] = useState({
 		currentPassword: "",
 		newPassword: "",
 		confirmPassword: ""
+	})
+
+	const [deleteData, setDeleteData] = useState({
+		password: "",
+		confirmText: ""
 	})
 
 	const handlePasswordChange = async (e: React.FormEvent) => {
@@ -53,6 +62,35 @@ export function SettingsForm({ user }: SettingsFormProps) {
 		}
 	}
 
+	const handleDeleteAccount = async (e: React.FormEvent) => {
+		e.preventDefault()
+		setIsDeleteLoading(true)
+
+		try {
+			const result = await deleteAccount(deleteData)
+
+			if (result.success) {
+				toast.success("Account deleted successfully")
+				// Sign out the user and redirect to home
+				await signOut({ callbackUrl: '/' })
+			} else {
+				toast.error(result.error || "Failed to delete account")
+			}
+		} catch {
+			toast.error("An error occurred while deleting account")
+		} finally {
+			setIsDeleteLoading(false)
+		}
+	}
+
+	const handleDeleteInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target
+		setDeleteData(prev => ({
+			...prev,
+			[name]: value
+		}))
+	}
+
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target
 		setPasswordData(prev => ({
@@ -63,7 +101,10 @@ export function SettingsForm({ user }: SettingsFormProps) {
 
 	const isPasswordValid = passwordData.newPassword.length >= 6
 	const doPasswordsMatch = passwordData.newPassword === passwordData.confirmPassword
-	const canSubmit = passwordData.currentPassword && isPasswordValid && doPasswordsMatch
+	const isSameAsCurrentPassword = passwordData.currentPassword && passwordData.newPassword && passwordData.currentPassword === passwordData.newPassword
+	const canSubmit = passwordData.currentPassword && isPasswordValid && doPasswordsMatch && !isSameAsCurrentPassword
+
+	const canDeleteAccount = deleteData.password && deleteData.confirmText === "DELETE"
 
 	return (
 		<div className="space-y-6">
@@ -182,6 +223,9 @@ export function SettingsForm({ user }: SettingsFormProps) {
 							{passwordData.newPassword && !isPasswordValid && (
 								<p className="text-xs text-red-500">Password must be at least 6 characters long</p>
 							)}
+							{isSameAsCurrentPassword && (
+								<p className="text-xs text-red-500">New password cannot be the same as your current password</p>
+							)}
 						</div>
 
 						<div className="space-y-2">
@@ -235,6 +279,123 @@ export function SettingsForm({ user }: SettingsFormProps) {
 							</Button>
 						</div>
 					</form>
+				</CardContent>
+			</Card>
+
+			{/* Delete Account Section */}
+			<Card className="bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800">
+				<CardHeader>
+					<CardTitle className="text-lg font-semibold text-red-800 dark:text-red-200 flex items-center gap-2">
+						<Trash2 className="h-5 w-5 text-red-500" />
+						Delete Account
+					</CardTitle>
+					<CardDescription className="text-red-600 dark:text-red-400">
+						Permanently delete your account and all associated data. This action cannot be undone.
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<div className="space-y-4">
+						<div className="bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+							<div className="flex items-start gap-3">
+								<AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+								<div className="space-y-2">
+									<h4 className="font-medium text-red-800 dark:text-red-200">
+										What will be deleted:
+									</h4>
+									<ul className="text-sm text-red-700 dark:text-red-300 space-y-1">
+										<li>• Your profile information and account data</li>
+										<li>• All your posts and submissions</li>
+										<li>• Your validation history and earned rewards</li>
+										<li>• Transaction history and wallet connections</li>
+										<li>• All category preferences and settings</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						<Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+							<DialogTrigger asChild>
+								<Button
+									variant="outline"
+									className="border-red-300 text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20"
+								>
+									<Trash2 className="mr-2 h-4 w-4" />
+									Delete My Account
+								</Button>
+							</DialogTrigger>
+							<DialogContent className="sm:max-w-md">
+								<DialogHeader>
+									<DialogTitle className="text-red-800 dark:text-red-200 flex items-center gap-2">
+										<AlertTriangle className="h-5 w-5 text-red-500" />
+										Delete Account Confirmation
+									</DialogTitle>
+									<DialogDescription className="text-red-600 dark:text-red-400">
+										This action is permanent and cannot be undone. All your data will be permanently deleted.
+									</DialogDescription>
+								</DialogHeader>
+								<form onSubmit={handleDeleteAccount} className="space-y-4">
+									<div className="space-y-2">
+										<Label htmlFor="deletePassword" className="text-sm font-medium">
+											Enter your password to confirm:
+										</Label>
+										<Input
+											id="deletePassword"
+											name="password"
+											type="password"
+											value={deleteData.password}
+											onChange={handleDeleteInputChange}
+											required
+											className="border-red-300 focus:border-red-500"
+											placeholder="Enter your password"
+										/>
+									</div>
+									<div className="space-y-2">
+										<Label htmlFor="confirmText" className="text-sm font-medium">
+											Type <span className="font-bold text-red-600">DELETE</span> to confirm:
+										</Label>
+										<Input
+											id="confirmText"
+											name="confirmText"
+											type="text"
+											value={deleteData.confirmText}
+											onChange={handleDeleteInputChange}
+											required
+											className="border-red-300 focus:border-red-500"
+											placeholder="Type DELETE to confirm"
+										/>
+									</div>
+									<DialogFooter className="flex-col sm:flex-row gap-2">
+										<Button
+											type="button"
+											variant="outline"
+											onClick={() => setShowDeleteDialog(false)}
+											disabled={isDeleteLoading}
+										>
+											Cancel
+										</Button>
+										<Button
+											type="submit"
+											variant="destructive"
+											disabled={isDeleteLoading || !canDeleteAccount}
+											className="bg-red-600 hover:bg-red-700"
+										>
+											{isDeleteLoading ? (
+												<>
+													<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+													Deleting...
+												</>
+											) : (
+												<>
+													<Trash2 className="mr-2 h-4 w-4" />
+													Delete Account
+												</>
+											)}
+										</Button>
+									</DialogFooter>
+								</form>
+							</DialogContent>
+						</Dialog>
+					</div>
 				</CardContent>
 			</Card>
 

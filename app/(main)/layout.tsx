@@ -4,10 +4,8 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Sidebar from '@/components/mainsidebar';
 import MainNavbar from '@/components/mainnavbar';
-import LoadingScreen from '@/components/loadingscreen';
 import OnboardingCheck from '@/components/onboarding-check';
 import { redirect } from 'next/navigation';
-import { Toaster } from 'sonner';
 
 interface LayoutProps {
 	children: React.ReactNode
@@ -30,10 +28,6 @@ const Layout = ({ children }: LayoutProps) => {
 		localStorage.setItem('mainSidebarCollapsed', JSON.stringify(newState));
 	};
 
-	if (status === 'loading') {
-		return <LoadingScreen routeName="dashboard" />;
-	}
-
 	if (!session?.user) {
 		redirect('/signin');
 	}
@@ -47,13 +41,12 @@ const Layout = ({ children }: LayoutProps) => {
 				/>
 				<div className="flex flex-col flex-1">
 					<MainNavbar isCollapsed={sidebarCollapsed} />
-					<main className={`backdrop-blur-sm transition-all duration-300 ${sidebarCollapsed ? 'sm:ml-[60px] ml-[0px]' : 'sm:ml-[240px] ml-[0px]'} pt-16`}>
+					<main className={`backdrop-blur-sm transition-all duration-300 ${sidebarCollapsed ? 'sm:ml-[60px] ml-[0px]' : 'sm:ml-[180px] ml-[0px]'} pt-16`}>
 						<div className="h-full pb-16 md:pb-0">
 							{children}
 						</div>
 					</main>
 				</div>
-				<Toaster />
 			</div>
 		</OnboardingCheck>
 	);

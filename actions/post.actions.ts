@@ -293,7 +293,7 @@ export async function updatePostStatus(postId: string, status: PostStatus) {
 
 export async function getCategories() {
 	try {
-		const categories = await prisma.category.findMany({
+		let categories = await prisma.category.findMany({
 			where: {
 				isActive: true
 			},
@@ -301,6 +301,37 @@ export async function getCategories() {
 				name: 'asc'
 			}
 		})
+
+		// If no categories exist, seed the default ones
+		if (categories.length === 0) {
+			const DEFAULT_CATEGORIES = [
+				{ name: "Technology", icon: "💻", description: "Software, Hardware, AI, Web Development" },
+				{ name: "Business", icon: "🏢", description: "Startups, Business Models, Marketing" },
+				{ name: "Assignments", icon: "📚", description: "Academic Projects, Research, Studies" },
+				{ name: "Social Impact", icon: "❤️", description: "Non-profit, Community, Sustainability" },
+				{ name: "Creative", icon: "🎨", description: "Design, Art, Content, Media" },
+			]
+
+			await prisma.category.createMany({
+				data: DEFAULT_CATEGORIES.map(category => ({
+					name: category.name,
+					description: category.description,
+					icon: category.icon,
+					isActive: true
+				})),
+				skipDuplicates: true
+			})
+
+			// Fetch the newly created categories
+			categories = await prisma.category.findMany({
+				where: {
+					isActive: true
+				},
+				orderBy: {
+					name: 'asc'
+				}
+			})
+		}
 
 		return { success: true, categories }
 	} catch (error) {
