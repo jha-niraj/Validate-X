@@ -38,8 +38,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                     }
 
                     // For special case where password is "verified" (after OTP verification)
-                    // Refetch user to get latest verification status
                     if (credentials.password === "verified") {
+                        // Refetch user to get latest verification status
                         const freshUser = await prisma.user.findUnique({
                             where: {
                                 email: credentials.email as string
@@ -92,20 +92,30 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         }),
     ],
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.id = user.id!;
                 token.role = user.role;
                 token.roleExplicitlyChosen = user.roleExplicitlyChosen;
             }
 
-            if (token && !token.roleExplicitlyChosen) {
-                const dbUser = await prisma.user.findUnique({
-                    where: { id: token.id as string },
-                    select: { roleExplicitlyChosen: true }
-                });
-                if (dbUser) {
-                    token.roleExplicitlyChosen = dbUser.roleExplicitlyChosen;
+            // Only fetch from database during session updates or when explicitly triggered
+            // This prevents Prisma from running in Edge Runtime during middleware execution
+            if (token && !token.roleExplicitlyChosen && (trigger === "update" || trigger === "signIn")) {
+                try {
+                    // Check if we're in Edge Runtime by trying to access process
+                    if (typeof process !== 'undefined' && process.env) {
+                        const dbUser = await prisma.user.findUnique({
+                            where: { id: token.id as string },
+                            select: { roleExplicitlyChosen: true }
+                        });
+                        if (dbUser) {
+                            token.roleExplicitlyChosen = dbUser.roleExplicitlyChosen;
+                        }
+                    }
+                } catch (error) {
+                    // Silently fail if running in Edge Runtime (middleware)
+                    console.log("JWT callback: Skipping database query in Edge Runtime");
                 }
             }
 

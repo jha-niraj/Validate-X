@@ -33,22 +33,10 @@ function SignUp() {
                 throw new Error(result.error || 'Registration failed')
             }
 
+            console.log("Signup Result: " + result?.message);
+
             toast.success('Account created successfully! Please check your email for verification code.')
             router.push(`/verify?email=${encodeURIComponent(email)}`)
-
-            const signInResult = await signIn('credentials', {
-                email,
-                password,
-                redirect: false,
-            })
-
-            if (signInResult?.ok) {
-                router.push('/dashboard')
-            } else {
-                toast.info('Please sign in to continue')
-                router.push('/signin')
-            }
-
         } catch (error) {
             console.error('Registration error:', error)
             toast.error(error instanceof Error ? error.message : 'Registration failed')

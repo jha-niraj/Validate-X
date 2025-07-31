@@ -45,10 +45,7 @@ const apiRoutes = [
 
 export default auth((req) => {
 	const { nextUrl } = req
-	const isLoggedIn = !!req.auth
-
-	console.log(`Middleware: ${nextUrl.pathname}, isLoggedIn: ${isLoggedIn}`) // Debug log
-
+	
 	// Allow API routes to pass through
 	if (apiRoutes.some(route => nextUrl.pathname.startsWith(route))) {
 		return NextResponse.next()
@@ -73,6 +70,8 @@ export default auth((req) => {
 		nextUrl.pathname === route || (route !== '/' && nextUrl.pathname.startsWith(route))
 	)
 
+	const isLoggedIn = !!req.auth
+
 	// If user is not logged in and trying to access protected route
 	if (!isLoggedIn && isProtectedRoute) {
 		const signInUrl = new URL('/signin', nextUrl.origin)
@@ -85,12 +84,6 @@ export default auth((req) => {
 		// If user is trying to access signin/signup, redirect to dashboard
 		if (nextUrl.pathname === '/signin' || nextUrl.pathname === '/signup') {
 			return NextResponse.redirect(new URL('/dashboard', nextUrl.origin))
-		}
-
-		// Check if user needs onboarding (skip for onboarding page itself)
-		if (nextUrl.pathname !== '/onboarding') {
-			// TODO: Add database check for onboarding completion
-			// For now, we'll let the onboarding page handle the check
 		}
 
 		// For the root path, redirect authenticated users to dashboard

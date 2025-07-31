@@ -99,7 +99,7 @@ export default function ValidateHubPage() {
 		try {
 			const result = await getCategories()
 			if (result.success && result.categories) {
-				setCategories(result.categories)
+				setCategories(result.categories as Category[])
 			}
 		} catch (error) {
 			console.error('Failed to load categories')

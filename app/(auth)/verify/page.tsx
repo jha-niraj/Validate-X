@@ -9,7 +9,6 @@ import { ArrowRight, CheckCircle, RefreshCw } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { verifyOTP, resendVerificationOTP } from "@/actions/auth.actions"
-import { signIn } from "next-auth/react"
 
 function VerifyContent() {
     const [isLoading, setIsLoading] = useState(false)
@@ -125,31 +124,11 @@ function VerifyContent() {
                 setIsVerified(true)
                 toast.success("Email verified successfully!")
                 
-                // Wait a moment to ensure the database update is committed
-                setTimeout(async () => {
-                    try {
-                        // Sign in the user automatically
-                        const signInResult = await signIn("credentials", {
-                            email,
-                            password: "verified", // This is a special flag for verified users
-                            redirect: false,
-                        })
-
-                        if (signInResult?.error) {
-                            console.error("Sign in error:", signInResult.error)
-                            toast.error("Verification successful! Please sign in manually.")
-                            router.push('/signin')
-                        } else {
-                            toast.success("Welcome to ValidateX!")
-                            // Redirect new users to onboarding instead of dashboard
-                            router.push('/onboarding')
-                        }
-                    } catch (error) {
-                        console.error("Auto sign-in failed:", error)
-                        toast.error("Verification successful! Please sign in manually.")
-                        router.push('/signin')
-                    }
-                }, 1000) // Wait 1 second to ensure DB transaction is committed
+                // Simple approach: redirect to signin with a success message
+                setTimeout(() => {
+                    toast.success("Please sign in with your credentials")
+                    router.push(`/signin?verified=true&email=${encodeURIComponent(email)}`)
+                }, 1500)
             } else {
                 toast.error(result.error || "Invalid verification code")
                 setCode(["", "", "", "", "", ""])

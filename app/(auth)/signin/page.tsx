@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, Suspense } from "react"
+import { useState, Suspense, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,6 +21,19 @@ function SignInContent() {
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
 
+    // Handle verified email parameter
+    useEffect(() => {
+        const verified = searchParams.get('verified')
+        const emailParam = searchParams.get('email')
+        
+        if (verified === 'true') {
+            toast.success('Email verified successfully! Please sign in.')
+            if (emailParam) {
+                setEmail(decodeURIComponent(emailParam))
+            }
+        }
+    }, [searchParams])
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsLoading(true)
@@ -38,7 +51,11 @@ function SignInContent() {
 
             if (result?.ok) {
                 toast.success('Welcome back!')
-                router.push(callbackUrl)
+                // For newly verified users, redirect to onboarding instead of dashboard
+                const redirectUrl = callbackUrl === '/dashboard' && searchParams.get('verified') === 'true' 
+                    ? '/onboarding' 
+                    : callbackUrl
+                router.push(redirectUrl)
             }
 
         } catch (error) {
