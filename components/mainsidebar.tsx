@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { LogOut, ChevronRight, UserPlus, Users, Briefcase, BarChart3, MessageSquare, Settings, Home } from "lucide-react"
+import { LogOut, ChevronRight, UserPlus, Users, BarChart3, MessageSquare, Settings, Home, Eye, Wallet } from "lucide-react"
 import Link from "next/link"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "sonner"
@@ -54,14 +54,20 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
             status: "active"
         },
         {
-            path: "projects",
-            name: "Projects",
-            icon: <Briefcase className="h-5 w-5" />,
+            path: "validatehub",
+            name: "ValidateHub",
+            icon: <Eye className="h-5 w-5" />,
             status: "active"
         },
         {
-            path: "team",
-            name: "Team",
+            path: "wallet",
+            name: "Wallet",
+            icon: <Wallet className="h-5 w-5" />,
+            status: "active"
+        },
+        {
+            path: "profile",
+            name: "Profile",
             icon: <Users className="h-5 w-5" />,
             status: "active"
         },

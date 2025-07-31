@@ -141,7 +141,8 @@ function VerifyContent() {
                             router.push('/signin')
                         } else {
                             toast.success("Welcome to ValidateX!")
-                            router.push('/dashboard')
+                            // Redirect new users to onboarding instead of dashboard
+                            router.push('/onboarding')
                         }
                     } catch (error) {
                         console.error("Auto sign-in failed:", error)

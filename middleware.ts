@@ -11,7 +11,9 @@ const protectedRoutes = [
 	'/validation',
 	'/analytics',
 	'/transactions',
-	'/wallet'
+	'/wallet',
+	'/onboarding',
+	'/validatehub'
 ]
 
 // Public routes that don't require authentication
@@ -83,6 +85,12 @@ export default auth((req) => {
 		// If user is trying to access signin/signup, redirect to dashboard
 		if (nextUrl.pathname === '/signin' || nextUrl.pathname === '/signup') {
 			return NextResponse.redirect(new URL('/dashboard', nextUrl.origin))
+		}
+
+		// Check if user needs onboarding (skip for onboarding page itself)
+		if (nextUrl.pathname !== '/onboarding') {
+			// TODO: Add database check for onboarding completion
+			// For now, we'll let the onboarding page handle the check
 		}
 
 		// For the root path, redirect authenticated users to dashboard

@@ -12,6 +12,45 @@ enum Role {
     ADMIN
 }
 
+enum UserRole {
+    SUBMITTER     // Sam - Submit ideas
+    VALIDATOR     // Elina - Validate ideas
+    BOTH          // Both submit and validate
+}
+
+enum PostStatus {
+    DRAFT         // Draft, not yet published
+    OPEN          // Open for validation
+    CLOSED        // Closed, validation complete
+    EXPIRED       // Expired without completion
+}
+
+enum ValidationType {
+    NORMAL        // Quick vote (Yes/No/Neutral)
+    DETAILED      // Detailed feedback with rating
+}
+
+enum ValidationStatus {
+    PENDING       // Submitted, awaiting approval (detailed only)
+    APPROVED      // Approved by submitter
+    REJECTED      // Rejected by submitter
+    COMPLETED     // Normal validation (auto-approved)
+}
+
+enum PaymentMethod {
+    RAZORPAY      // UPI/Cards via Razorpay
+    PHONEPE       // UPI via PhonePe
+    POLYGON       // Crypto via Polygon blockchain
+}
+
+enum TransactionType {
+    VALIDATION_EARNING // Earning from validation
+    POST_PAYMENT      // Payment for post creation
+    CASHOUT          // Cash-out withdrawal
+    BONUS            // Bonus rewards
+    REFUND           // Refund for rejected post
+}
+
 model User {
     id                   String    @id @default(cuid())
     email                String    @unique
@@ -25,6 +64,12 @@ model User {
     skills               String?   // JSON string of skills array
     interests            String?   // JSON string of interests array
     role                 Role      @default(USER)
+    
+    // Onboarding fields
+    userRole             UserRole? // Submitter, Validator, or Both
+    selectedCategories   CategorySelection[]
+    onboardingCompleted  Boolean   @default(false)
+    
     roleExplicitlyChosen Boolean   @default(false)
     createdAt            DateTime  @default(now())
     updatedAt            DateTime  @updatedAt
@@ -33,7 +78,17 @@ model User {
     totalValidations     Int       @default(0)
     totalIdeasSubmitted  Int       @default(0)
     reputationScore      Int       @default(0)
+    
+    // Wallet fields
+    totalBalance         Decimal   @default(0) @db.Decimal(10,2)
+    availableBalance     Decimal   @default(0) @db.Decimal(10,2)
+    optedOutBalance      Decimal   @default(0) @db.Decimal(10,2)
+    upiId                String?
+    paytmNumber          String?
     walletAddress        String?   // For Polygon blockchain rewards
+    
+    // Payment preferences
+    preferredPaymentMethod PaymentMethod?
 
     // Email verification
     verificationToken    String?   @unique
@@ -43,9 +98,151 @@ model User {
     resetToken           String?   @unique
     resetTokenExpiry     DateTime?
 
-    accounts              Account[]
+    accounts             Account[]
+    posts                Post[]
+    validations          Validation[]
+    transactions         Transaction[]
 
     @@index([email])
+}
+
+model Category {
+    id          String    @id @default(cuid())
+    name        String    @unique
+    description String?
+    icon        String?   // Icon name or emoji
+    isActive    Boolean   @default(true)
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    
+    selections  CategorySelection[]
+    posts       Post[]
+
+    @@index([name])
+}
+
+model CategorySelection {
+    id         String   @id @default(cuid())
+    userId     String
+    categoryId String
+    createdAt  DateTime @default(now())
+    
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    
+    @@unique([userId, categoryId])
+    @@index([userId])
+    @@index([categoryId])
+}
+
+model Post {
+    id                    String     @id @default(cuid())
+    title                 String
+    description           String
+    categoryId            String
+    authorId              String
+    
+    // Files and links
+    fileUrl               String?
+    fileName              String?
+    fileType              String?
+    linkUrl               String?
+    
+    // Validation requirements
+    normalValidatorCount  Int        @default(500)
+    detailedValidatorCount Int       @default(100)
+    currentNormalCount    Int        @default(0)
+    currentDetailedCount  Int        @default(0)
+    
+    // Budget and payments
+    totalBudget           Decimal    @db.Decimal(10,2)
+    normalReward          Decimal    @db.Decimal(10,2)
+    detailedReward        Decimal    @db.Decimal(10,2)
+    platformFee           Decimal    @db.Decimal(10,2)
+    
+    // Settings
+    allowAIFeedback       Boolean    @default(true)
+    detailedApprovalRequired Boolean @default(true)
+    
+    // Status and timing
+    status                PostStatus @default(DRAFT)
+    expiryDate            DateTime
+    
+    createdAt             DateTime   @default(now())
+    updatedAt             DateTime   @updatedAt
+    
+    author                User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    category              Category   @relation(fields: [categoryId], references: [id])
+    validations           Validation[]
+    
+    @@index([authorId])
+    @@index([categoryId])
+    @@index([status])
+    @@index([expiryDate])
+}
+
+model Validation {
+    id                String           @id @default(cuid())
+    postId            String
+    validatorId       String
+    type              ValidationType
+    
+    // Basic validation data
+    vote              String?          // LIKE, DISLIKE, NEUTRAL for normal
+    shortComment      String?
+    
+    // Detailed validation data
+    detailedFeedback  String?
+    rating            Int?             // 1-5 scale
+    feedbackFileUrl   String?
+    feedbackFileName  String?
+    
+    // Quality and approval
+    isOriginal        Boolean          @default(false) // Human-certified checkbox
+    originalityScore  Decimal?         @db.Decimal(3,2) // Plagiarism score
+    status            ValidationStatus @default(PENDING)
+    approvalReason    String?          // Reason for approval/rejection
+    
+    // Rewards
+    rewardAmount      Decimal          @db.Decimal(10,2)
+    isPaid            Boolean          @default(false)
+    
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
+    
+    post              Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+    validator         User             @relation(fields: [validatorId], references: [id], onDelete: Cascade)
+    
+    @@unique([postId, validatorId]) // One validation per user per post
+    @@index([postId])
+    @@index([validatorId])
+    @@index([status])
+}
+
+model Transaction {
+    id              String          @id @default(cuid())
+    userId          String
+    amount          Decimal         @db.Decimal(10,2)
+    type            TransactionType
+    method          PaymentMethod?
+    
+    // Related entities
+    postId          String?         // For post payments
+    validationId    String?         // For validation earnings
+    
+    // Transaction details
+    description     String
+    status          String          @default("COMPLETED") // PENDING, COMPLETED, FAILED
+    transactionId   String?         // External payment gateway ID
+    
+    createdAt       DateTime        @default(now())
+    updatedAt       DateTime        @updatedAt
+    
+    user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    
+    @@index([userId])
+    @@index([type])
+    @@index([createdAt])
 }
 
 model Account {
