@@ -10,53 +10,53 @@ import { redirect } from 'next/navigation';
 import { Toaster } from 'sonner';
 
 interface LayoutProps {
-    children: React.ReactNode
+	children: React.ReactNode
 }
 
 const Layout = ({ children }: LayoutProps) => {
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
-    const { data: session, status } = useSession();
+	const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+	const { data: session, status } = useSession();
 
-    useEffect(() => {
-        const savedState = localStorage.getItem('mainSidebarCollapsed');
-        if (savedState !== null) {
-            setSidebarCollapsed(JSON.parse(savedState));
-        }
-    }, []);
+	useEffect(() => {
+		const savedState = localStorage.getItem('mainSidebarCollapsed');
+		if (savedState !== null) {
+			setSidebarCollapsed(JSON.parse(savedState));
+		}
+	}, []);
 
-    const toggleSidebar = () => {
-        const newState = !sidebarCollapsed;
-        setSidebarCollapsed(newState);
-        localStorage.setItem('mainSidebarCollapsed', JSON.stringify(newState));
-    };
+	const toggleSidebar = () => {
+		const newState = !sidebarCollapsed;
+		setSidebarCollapsed(newState);
+		localStorage.setItem('mainSidebarCollapsed', JSON.stringify(newState));
+	};
 
-    if (status === 'loading') {
-        return <LoadingScreen routeName="dashboard" />;
-    }
+	if (status === 'loading') {
+		return <LoadingScreen routeName="dashboard" />;
+	}
 
-    if (!session?.user) {
-        redirect('/signin');
-    }
+	if (!session?.user) {
+		redirect('/signin');
+	}
 
-    return (
-        <OnboardingCheck>
-            <div className="flex h-screen">
-                <Sidebar
-                    isCollapsed={sidebarCollapsed}
-                    toggleSidebar={toggleSidebar}
-                />
-                <div className="flex flex-col flex-1">
-                    <MainNavbar isCollapsed={sidebarCollapsed} />
-                    <main className={`backdrop-blur-sm transition-all duration-300 ${sidebarCollapsed ? 'sm:ml-[60px] ml-[0px]' : 'sm:ml-[240px] ml-[0px]'} pt-16`}>
-                        <div className="h-full pb-16 md:pb-0">
-                            {children}
-                        </div>
-                    </main>
-                </div>
-                <Toaster />
-            </div>
-        </OnboardingCheck>
-    );
+	return (
+		<OnboardingCheck>
+			<div className="flex h-screen">
+				<Sidebar
+					isCollapsed={sidebarCollapsed}
+					toggleSidebar={toggleSidebar}
+				/>
+				<div className="flex flex-col flex-1">
+					<MainNavbar isCollapsed={sidebarCollapsed} />
+					<main className={`backdrop-blur-sm transition-all duration-300 ${sidebarCollapsed ? 'sm:ml-[60px] ml-[0px]' : 'sm:ml-[240px] ml-[0px]'} pt-16`}>
+						<div className="h-full pb-16 md:pb-0">
+							{children}
+						</div>
+					</main>
+				</div>
+				<Toaster />
+			</div>
+		</OnboardingCheck>
+	);
 };
 
 export default Layout;
