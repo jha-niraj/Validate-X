@@ -433,7 +433,7 @@ const CommunitySection = () => {
                             asChild
                             size="lg"
                             variant="outline"
-                            className="px-8 py-6 text-lg font-semibold rounded-2xl border-white/20 text-white hover:bg-white/10"
+                            className="px-8 py-6 text-lg font-semibold rounded-2xl border-white/20 text-black dark:text-white hover:bg-white/10"
                         >
                             <Link href="#features">
                                 Learn More

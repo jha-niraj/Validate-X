@@ -63,7 +63,7 @@ function SignInContent() {
     }
 
     return (
-        <div className="min-h-screen w-full bg-white dark:bg-neutral-950 flex flex-col relative overflow-hidden">
+        <div className="min-h-screen py-16 w-full bg-white dark:bg-neutral-950 flex flex-col relative overflow-hidden">
             <div className="absolute inset-0 pointer-events-none">
                 <svg
                     className="w-full h-full text-neutral-950 dark:text-white opacity-[0.02]"
@@ -89,14 +89,14 @@ function SignInContent() {
             </div>
             <div className="flex-1 flex items-center justify-center p-4">
                 <div className="w-full max-w-md relative z-10">
-                    <div className="text-center mb-8">
+                    <div className="text-center mb-4">
                         <h1 className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300">
                             ValidateX
                         </h1>
                         <div className="w-12 h-0.5 bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300 mx-auto"></div>
                     </div>
                     <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-neutral-200/20 dark:border-neutral-800/20 p-8">
-                        <div className="text-center mb-8">
+                        <div className="text-center mb-4">
                             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Welcome back</h2>
                             <p className="text-neutral-600 dark:text-neutral-400 mt-2">Sign in to your ValidateX account</p>
                         </div>

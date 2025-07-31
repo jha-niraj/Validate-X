@@ -18,10 +18,22 @@ model User {
     emailVerified        DateTime?
     password             String?
     name                 String
-    image                String    @default("https://res.cloudinary.com/dhfuckcax/image/upload/v1739810646/krk8x7fzjukcfcoefrea.jpg")
+    image                String?
+    bio                  String?
+    location             String?
+    website              String?
+    skills               String?   // JSON string of skills array
+    interests            String?   // JSON string of interests array
     role                 Role      @default(USER)
     roleExplicitlyChosen Boolean   @default(false)
-	createdAt            DateTime  @default(now())
+    createdAt            DateTime  @default(now())
+    updatedAt            DateTime  @updatedAt
+
+    // Stats for gamification
+    totalValidations     Int       @default(0)
+    totalIdeasSubmitted  Int       @default(0)
+    reputationScore      Int       @default(0)
+    walletAddress        String?   // For Polygon blockchain rewards
 
     // Email verification
     verificationToken    String?   @unique

@@ -125,18 +125,30 @@ function VerifyContent() {
                 setIsVerified(true)
                 toast.success("Email verified successfully!")
                 
-                // Sign in the user automatically
-                const signInResult = await signIn("credentials", {
-                    email,
-                    password: "verified", // This is a special flag for verified users
-                    redirect: false,
-                })
+                // Wait a moment to ensure the database update is committed
+                setTimeout(async () => {
+                    try {
+                        // Sign in the user automatically
+                        const signInResult = await signIn("credentials", {
+                            email,
+                            password: "verified", // This is a special flag for verified users
+                            redirect: false,
+                        })
 
-                if (signInResult?.error) {
-                    toast.error("Verification successful, but failed to sign in. Please sign in manually.")
-                } else {
-                    router.push('/dashboard')
-                }
+                        if (signInResult?.error) {
+                            console.error("Sign in error:", signInResult.error)
+                            toast.error("Verification successful! Please sign in manually.")
+                            router.push('/signin')
+                        } else {
+                            toast.success("Welcome to ValidateX!")
+                            router.push('/dashboard')
+                        }
+                    } catch (error) {
+                        console.error("Auto sign-in failed:", error)
+                        toast.error("Verification successful! Please sign in manually.")
+                        router.push('/signin')
+                    }
+                }, 1000) // Wait 1 second to ensure DB transaction is committed
             } else {
                 toast.error(result.error || "Invalid verification code")
                 setCode(["", "", "", "", "", ""])
@@ -189,7 +201,7 @@ function VerifyContent() {
                                 {isVerified ? "Verification Successful" : "Verify your email"}
                             </h2>
                             <p className="text-neutral-600 dark:text-neutral-400 mt-2">
-                                {isVerified ? "Redirecting you to complete your profile..." : "We've sent a 6-digit code to your email"}
+                                {isVerified ? "Signing you in and redirecting to your dashboard..." : "We've sent a 6-digit code to your email"}
                             </p>
                         </div>
 

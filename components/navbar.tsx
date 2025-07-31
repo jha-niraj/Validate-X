@@ -5,16 +5,16 @@ import { Equal, Moon, Sun } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/liquid-glass-button'
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 
-// const menuItems = [
-//     { name: 'Features', href: '#features' },
-//     { name: 'How it Works', href: '#how-it-works' },
-//     { name: 'Pricing', href: '#pricing' },
-//     { name: 'About', href: '#about' },
-// ]
+const menuItems = [
+    { name: 'Features', href: '#features' },
+    { name: 'How it Works', href: '#how-it-works' },
+    { name: 'Pricing', href: '#pricing' },
+    { name: 'About', href: '#about' },
+]
 
 export const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -28,14 +28,14 @@ export const Header = () => {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
-    // const handleLinkClick = (href: string) => {
-    //     if (href.startsWith('#')) {
-    //         const element = document.querySelector(href);
-    //         if (element) {
-    //             element.scrollIntoView({ behavior: 'smooth' });
-    //         }
-    //     }
-    // };
+    const handleLinkClick = (href: string) => {
+        if (href.startsWith('#')) {
+            const element = document.querySelector(href);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    };
 
     return (
         <header>
@@ -73,7 +73,7 @@ export const Header = () => {
                                         <SheetTitle className="text-left">Menu</SheetTitle>
                                     </SheetHeader>
                                     <div className="flex flex-col space-y-6 mt-8">
-                                        {/* {
+                                        {
                                             menuItems.map((item, index) => (
                                                 <SheetClose asChild key={index}>
                                                     <Link
@@ -85,7 +85,7 @@ export const Header = () => {
                                                     </Link>
                                                 </SheetClose>
                                             ))
-                                        } */}
+                                        }
                                         <div className="flex items-center gap-2 pt-4 border-t">
                                             <span className="text-sm text-muted-foreground">Theme:</span>
                                             <div className="flex items-center bg-stone-100/50 dark:bg-stone-800/50 rounded-xl p-1 border border-stone-200/50 dark:border-stone-700/50">
@@ -107,7 +107,7 @@ export const Header = () => {
                                                 </Button>
                                             </div>
                                         </div>
-                                        {/* <div className="flex gap-4 pt-4 border-t">
+                                        <div className="flex gap-4 pt-4 border-t">
                                             <SheetClose asChild>
                                                 <Button
                                                     asChild
@@ -131,12 +131,12 @@ export const Header = () => {
                                                     </Link>
                                                 </Button>
                                             </SheetClose>
-                                        </div> */}
+                                        </div>
                                     </div>
                                 </SheetContent>
                             </Sheet>
                         </div>
-                        {/* <div className="absolute inset-0 m-auto hidden size-fit lg:block">
+                        <div className="absolute inset-0 m-auto hidden size-fit lg:block">
                             <ul className="flex gap-8 text-sm">
                                 {
                                     menuItems.map((item, index) => (
@@ -151,7 +151,7 @@ export const Header = () => {
                                     ))
                                 }
                             </ul>
-                        </div> */}
+                        </div>
                         <div className="hidden lg:flex items-center gap-4">
                             <div className="flex items-center bg-stone-100/50 dark:bg-stone-800/50 rounded-xl p-1 border border-stone-200/50 dark:border-stone-700/50">
                                 <Button
@@ -171,7 +171,7 @@ export const Header = () => {
                                     <Moon className="h-3 w-3 text-blue-500" />
                                 </Button>
                             </div>
-                            {/* <Button
+                            <Button
                                 asChild
                                 variant="outline"
                                 size="sm"
@@ -195,7 +195,7 @@ export const Header = () => {
                                 <Link href="/signup">
                                     <span>Get Started</span>
                                 </Link>
-                            </Button> */}
+                            </Button>
                         </div>
                     </div>
                 </div>

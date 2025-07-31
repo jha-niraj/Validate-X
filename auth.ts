@@ -37,21 +37,32 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         return null;
                     }
 
-                    // Check if email is verified
-                    if (!user.emailVerified) {
-                        throw new Error("Please verify your email before signing in");
+                    // For special case where password is "verified" (after OTP verification)
+                    // Refetch user to get latest verification status
+                    if (credentials.password === "verified") {
+                        const freshUser = await prisma.user.findUnique({
+                            where: {
+                                email: credentials.email as string
+                            }
+                        });
+
+                        if (freshUser && freshUser.emailVerified) {
+                            return {
+                                id: freshUser.id,
+                                email: freshUser.email,
+                                name: freshUser.name,
+                                image: freshUser.image,
+                                role: freshUser.role,
+                                roleExplicitlyChosen: freshUser.roleExplicitlyChosen,
+                            };
+                        } else {
+                            throw new Error("Email verification not completed");
+                        }
                     }
 
-                    // For special case where password is "verified" (after OTP verification)
-                    if (credentials.password === "verified" && user.emailVerified) {
-                        return {
-                            id: user.id,
-                            email: user.email,
-                            name: user.name,
-                            image: user.image,
-                            role: user.role,
-                            roleExplicitlyChosen: user.roleExplicitlyChosen,
-                        };
+                    // Check if email is verified for regular password login
+                    if (!user.emailVerified) {
+                        throw new Error("Please verify your email before signing in");
                     }
 
                     // Regular password check

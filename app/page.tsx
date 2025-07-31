@@ -10,7 +10,7 @@ export default function Home() {
 		<BackgroundPaths
 			title="Validate"
 			subtitle="Empower Your Ideas with Blockchain-Powered Community Validation"
-			showWaitingArea={true}
+			showWaitingArea={false}
 		/>
 	)
 }
