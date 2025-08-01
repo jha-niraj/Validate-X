@@ -55,7 +55,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 								role: freshUser.role,
 								roleExplicitlyChosen: freshUser.roleExplicitlyChosen,
 								onboardingCompleted: freshUser.onboardingCompleted,
-								userRole: freshUser.userRole
+								userRole: freshUser.userRole!
 							};
 						} else {
 							throw new Error("Email verification not completed");
@@ -130,7 +130,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 				session.user.id = token.id as string;
 				session.user.role = token.role as Role
 				session.user.roleExplicitlyChosen = Boolean(token.roleExplicitlyChosen);
-				session.user.userRole = token.userRole as UserRole;
+				session.user.userRole = token.userRole as UserRole | undefined;
 			}
 			return session;
 		},
