@@ -122,7 +122,7 @@ export default function WalletPage() {
 	}
 
 	const handleCashout = async () => {
-		if (!walletData.canCashout) {
+		if (!walletData?.canCashout) {
 			toast.error('Cashout not available yet. Please wait for the cooldown period.')
 			return
 		}
