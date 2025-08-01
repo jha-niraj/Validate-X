@@ -110,7 +110,6 @@ export default function DashboardPage() {
 	return (
 		<div className="min-h-screen bg-white dark:bg-neutral-900">
 			<div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-				{/* Welcome Section */}
 				<div className="mb-8">
 					<div className="flex items-center gap-3 mb-2">
 						<h1 className="text-3xl font-bold">Welcome back, {user.name}!</h1>
@@ -124,38 +123,36 @@ export default function DashboardPage() {
 						{user.userRole === 'BOTH' && "Submit ideas and validate others' concepts to maximize your impact"}
 					</p>
 				</div>
-
-				{/* Create Post Prompt for New Submitters */}
-				{showCreatePrompt && (user.userRole === 'SUBMITTER' || user.userRole === 'BOTH') && (
-					<Card className="mb-8 border-green-200 bg-green-50 dark:bg-green-950/20 dark:border-green-800">
-						<CardContent className="p-6">
-							<div className="flex items-start gap-4">
-								<div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-									<Lightbulb className="h-6 w-6 text-green-600" />
-								</div>
-								<div className="flex-1">
-									<h3 className="text-lg font-semibold mb-2">Ready to share your first idea?</h3>
-									<p className="text-gray-600 dark:text-gray-400 mb-4">
-										Get valuable feedback from our community of validators and improve your concepts.
-									</p>
-									<div className="flex gap-3">
-										<Link href="/post/create">
-											<Button className="flex items-center gap-2">
-												<Plus className="h-4 w-4" />
-												Create Your First Post
+				{
+					showCreatePrompt && (user.userRole === 'SUBMITTER' || user.userRole === 'BOTH') && (
+						<Card className="mb-8 border-green-200 bg-green-50 dark:bg-green-950/20 dark:border-green-800">
+							<CardContent className="p-6">
+								<div className="flex items-start gap-4">
+									<div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+										<Lightbulb className="h-6 w-6 text-green-600" />
+									</div>
+									<div className="flex-1">
+										<h3 className="text-lg font-semibold mb-2">Ready to share your first idea?</h3>
+										<p className="text-gray-600 dark:text-gray-400 mb-4">
+											Get valuable feedback from our community of validators and improve your concepts.
+										</p>
+										<div className="flex gap-3">
+											<Link href="/post/create">
+												<Button className="flex items-center gap-2">
+													<Plus className="h-4 w-4" />
+													Create Your First Post
+												</Button>
+											</Link>
+											<Button variant="outline" onClick={() => setShowCreatePrompt(false)}>
+												Maybe Later
 											</Button>
-										</Link>
-										<Button variant="outline" onClick={() => setShowCreatePrompt(false)}>
-											Maybe Later
-										</Button>
+										</div>
 									</div>
 								</div>
-							</div>
-						</CardContent>
-					</Card>
-				)}
-
-				{/* Stats Overview */}
+							</CardContent>
+						</Card>
+					)
+				}
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
 					<Card>
 						<CardContent className="p-6">
@@ -170,7 +167,6 @@ export default function DashboardPage() {
 							</div>
 						</CardContent>
 					</Card>
-
 					<Card>
 						<CardContent className="p-6">
 							<div className="flex items-center gap-3">
@@ -184,7 +180,6 @@ export default function DashboardPage() {
 							</div>
 						</CardContent>
 					</Card>
-
 					<Card>
 						<CardContent className="p-6">
 							<div className="flex items-center gap-3">
@@ -198,7 +193,6 @@ export default function DashboardPage() {
 							</div>
 						</CardContent>
 					</Card>
-
 					<Card>
 						<CardContent className="p-6">
 							<div className="flex items-center gap-3">
@@ -213,15 +207,15 @@ export default function DashboardPage() {
 						</CardContent>
 					</Card>
 				</div>
-
-				{/* Role-based Dashboard Content */}
-				{user.userRole === 'BOTH' ? (
-					<BothDashboard data={dashboardData} />
-				) : user.userRole === 'SUBMITTER' ? (
-					<SubmitterDashboard data={dashboardData} />
-				) : (
-					<ValidatorDashboard data={dashboardData} />
-				)}
+				{
+					user.userRole === 'BOTH' ? (
+						<BothDashboard data={dashboardData} />
+					) : user.userRole === 'SUBMITTER' ? (
+						<SubmitterDashboard data={dashboardData} />
+					) : (
+						<ValidatorDashboard data={dashboardData} />
+					)
+				}
 			</div>
 		</div>
 	)
@@ -231,7 +225,6 @@ export default function DashboardPage() {
 function SubmitterDashboard({ data }: { data: DashboardData }) {
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-			{/* Quick Actions */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -263,8 +256,6 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 					</Link>
 				</CardContent>
 			</Card>
-
-			{/* Recent Posts */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -276,43 +267,47 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					{data.posts && data.posts.length > 0 ? (
-						<div className="space-y-4">
-							{data.posts.slice(0, 5).map((post) => (
-								<div key={post.id} className="flex items-center justify-between p-3 border rounded-lg">
-									<div className="flex-1">
-										<h4 className="font-medium line-clamp-1">{post.title}</h4>
-										<div className="flex items-center gap-2 mt-1">
-											<Badge variant="outline" className="text-xs">
-												{post.category}
-											</Badge>
-											<Badge variant={
-												post.status === 'OPEN' ? 'default' :
-													post.status === 'CLOSED' ? 'secondary' :
-														'outline'
-											} className="text-xs">
-												{post.status}
-											</Badge>
+					{
+						data.posts && data.posts.length > 0 ? (
+							<div className="space-y-4">
+								{
+									data.posts.slice(0, 5).map((post) => (
+										<div key={post.id} className="flex items-center justify-between p-3 border rounded-lg">
+											<div className="flex-1">
+												<h4 className="font-medium line-clamp-1">{post.title}</h4>
+												<div className="flex items-center gap-2 mt-1">
+													<Badge variant="outline" className="text-xs">
+														{post.category}
+													</Badge>
+													<Badge variant={
+														post.status === 'OPEN' ? 'default' :
+															post.status === 'CLOSED' ? 'secondary' :
+																'outline'
+													} className="text-xs">
+														{post.status}
+													</Badge>
+												</div>
+											</div>
+											<div className="text-right">
+												<p className="text-sm font-medium">{post.validationCount} validations</p>
+												<p className="text-xs text-muted-foreground">
+													₹{Number(post.totalBudget).toFixed(0)} budget
+												</p>
+											</div>
 										</div>
-									</div>
-									<div className="text-right">
-										<p className="text-sm font-medium">{post.validationCount} validations</p>
-										<p className="text-xs text-muted-foreground">
-											₹{Number(post.totalBudget).toFixed(0)} budget
-										</p>
-									</div>
-								</div>
-							))}
-						</div>
-					) : (
-						<div className="text-center py-8 text-muted-foreground">
-							<Lightbulb className="h-12 w-12 mx-auto mb-4 opacity-50" />
-							<p className="text-lg font-medium mb-2">No posts yet</p>
-							<p className="text-sm">
-								Start by submitting your first idea
-							</p>
-						</div>
-					)}
+									))
+								}
+							</div>
+						) : (
+							<div className="text-center py-8 text-muted-foreground">
+								<Lightbulb className="h-12 w-12 mx-auto mb-4 opacity-50" />
+								<p className="text-lg font-medium mb-2">No posts yet</p>
+								<p className="text-sm">
+									Start by submitting your first idea
+								</p>
+							</div>
+						)
+					}
 				</CardContent>
 			</Card>
 		</div>
@@ -323,7 +318,6 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 function ValidatorDashboard({ data }: { data: DashboardData }) {
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-			{/* Available Posts */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -335,50 +329,52 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					{data.availablePosts && data.availablePosts.length > 0 ? (
-						<div className="space-y-4">
-							{data.availablePosts.slice(0, 5).map((post) => (
-								<div key={post.id} className="flex items-center justify-between p-3 border rounded-lg">
-									<div className="flex-1">
-										<h4 className="font-medium line-clamp-1">{post.title}</h4>
-										<div className="flex items-center gap-2 mt-1">
-											<Badge variant="outline" className="text-xs">
-												{post.category}
-											</Badge>
-											<p className="text-xs text-muted-foreground">
-												by {post.authorName}
-											</p>
+					{
+						data.availablePosts && data.availablePosts.length > 0 ? (
+							<div className="space-y-4">
+								{
+									data.availablePosts.slice(0, 5).map((post) => (
+										<div key={post.id} className="flex items-center justify-between p-3 border rounded-lg">
+											<div className="flex-1">
+												<h4 className="font-medium line-clamp-1">{post.title}</h4>
+												<div className="flex items-center gap-2 mt-1">
+													<Badge variant="outline" className="text-xs">
+														{post.category}
+													</Badge>
+													<p className="text-xs text-muted-foreground">
+														by {post.authorName}
+													</p>
+												</div>
+											</div>
+											<div className="text-right">
+												<p className="text-sm font-medium text-green-600">
+													₹{Number(post.normalReward).toFixed(0)} - ₹{Number(post.detailedReward).toFixed(0)}
+												</p>
+												<p className="text-xs text-muted-foreground">
+													{post.validationCount} validations
+												</p>
+											</div>
 										</div>
-									</div>
-									<div className="text-right">
-										<p className="text-sm font-medium text-green-600">
-											₹{Number(post.normalReward).toFixed(0)} - ₹{Number(post.detailedReward).toFixed(0)}
-										</p>
-										<p className="text-xs text-muted-foreground">
-											{post.validationCount} validations
-										</p>
-									</div>
-								</div>
-							))}
-							<Link href="/validatehub">
-								<Button className="w-full mt-4">
-									View All Available Posts
-								</Button>
-							</Link>
-						</div>
-					) : (
-						<div className="text-center py-8 text-muted-foreground">
-							<Eye className="h-12 w-12 mx-auto mb-4 opacity-50" />
-							<p className="text-lg font-medium mb-2">No posts available</p>
-							<p className="text-sm">
-								Check back later for new validation opportunities
-							</p>
-						</div>
-					)}
+									))
+								}
+								<Link href="/validatehub">
+									<Button className="w-full mt-4">
+										View All Available Posts
+									</Button>
+								</Link>
+							</div>
+						) : (
+							<div className="text-center py-8 text-muted-foreground">
+								<Eye className="h-12 w-12 mx-auto mb-4 opacity-50" />
+								<p className="text-lg font-medium mb-2">No posts available</p>
+								<p className="text-sm">
+									Check back later for new validation opportunities
+								</p>
+							</div>
+						)
+					}
 				</CardContent>
 			</Card>
-
-			{/* Recent Validations */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -390,45 +386,49 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					{data.validations && data.validations.length > 0 ? (
-						<div className="space-y-4">
-							{data.validations.slice(0, 5).map((validation) => (
-								<div key={validation.id} className="flex items-center justify-between p-3 border rounded-lg">
-									<div className="flex-1">
-										<h4 className="font-medium line-clamp-1">{validation.postTitle}</h4>
-										<div className="flex items-center gap-2 mt-1">
-											<Badge variant="outline" className="text-xs">
-												{validation.postCategory}
-											</Badge>
-											<Badge variant={
-												validation.status === 'APPROVED' ? 'default' :
-													validation.status === 'PENDING' ? 'secondary' :
-														'destructive'
-											} className="text-xs">
-												{validation.status}
-											</Badge>
+					{
+						data.validations && data.validations.length > 0 ? (
+							<div className="space-y-4">
+								{
+									data.validations.slice(0, 5).map((validation) => (
+										<div key={validation.id} className="flex items-center justify-between p-3 border rounded-lg">
+											<div className="flex-1">
+												<h4 className="font-medium line-clamp-1">{validation.postTitle}</h4>
+												<div className="flex items-center gap-2 mt-1">
+													<Badge variant="outline" className="text-xs">
+														{validation.postCategory}
+													</Badge>
+													<Badge variant={
+														validation.status === 'APPROVED' ? 'default' :
+															validation.status === 'PENDING' ? 'secondary' :
+																'destructive'
+													} className="text-xs">
+														{validation.status}
+													</Badge>
+												</div>
+											</div>
+											<div className="text-right">
+												<p className="text-sm font-medium text-green-600">
+													₹{Number(validation.rewardAmount).toFixed(2)}
+												</p>
+												<p className="text-xs text-muted-foreground">
+													{validation.type}
+												</p>
+											</div>
 										</div>
-									</div>
-									<div className="text-right">
-										<p className="text-sm font-medium text-green-600">
-											₹{Number(validation.rewardAmount).toFixed(2)}
-										</p>
-										<p className="text-xs text-muted-foreground">
-											{validation.type}
-										</p>
-									</div>
-								</div>
-							))}
-						</div>
-					) : (
-						<div className="text-center py-8 text-muted-foreground">
-							<MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-							<p className="text-lg font-medium mb-2">No validations yet</p>
-							<p className="text-sm">
-								Start validating posts to earn rewards
-							</p>
-						</div>
-					)}
+									))
+								}
+							</div>
+						) : (
+							<div className="text-center py-8 text-muted-foreground">
+								<MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+								<p className="text-lg font-medium mb-2">No validations yet</p>
+								<p className="text-sm">
+									Start validating posts to earn rewards
+								</p>
+							</div>
+						)
+					}
 				</CardContent>
 			</Card>
 		</div>
@@ -449,11 +449,9 @@ function BothDashboard({ data }: { data: DashboardData }) {
 					Validator
 				</TabsTrigger>
 			</TabsList>
-
 			<TabsContent value="submitter" className="mt-6">
 				<SubmitterDashboard data={data} />
 			</TabsContent>
-
 			<TabsContent value="validator" className="mt-6">
 				<ValidatorDashboard data={{
 					...data,

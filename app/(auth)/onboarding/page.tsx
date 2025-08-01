@@ -154,12 +154,13 @@ export default function OnboardingPage() {
 									<Badge variant="outline">Project Owner</Badge>
 								</div>
 							</div>
-							{formData.userRole === "SUBMITTER" && (
-								<CheckCircle className="h-6 w-6 text-blue-600" />
-							)}
+							{
+								formData.userRole === "SUBMITTER" && (
+									<CheckCircle className="h-6 w-6 text-blue-600" />
+								)
+							}
 						</div>
 					</div>
-
 					<div
 						className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.userRole === "VALIDATOR" ? "border-green-500 bg-green-50 dark:bg-green-950/20" : "border-gray-200"
 							}`}
@@ -179,12 +180,13 @@ export default function OnboardingPage() {
 									<Badge variant="outline">Reward Earner</Badge>
 								</div>
 							</div>
-							{formData.userRole === "VALIDATOR" && (
-								<CheckCircle className="h-6 w-6 text-green-600" />
-							)}
+							{
+								formData.userRole === "VALIDATOR" && (
+									<CheckCircle className="h-6 w-6 text-green-600" />
+								)
+							}
 						</div>
 					</div>
-
 					<div
 						className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.userRole === "BOTH" ? "border-purple-500 bg-purple-50 dark:bg-purple-950/20" : "border-gray-200"
 							}`}
@@ -207,13 +209,14 @@ export default function OnboardingPage() {
 									<Badge variant="outline">Community Member</Badge>
 								</div>
 							</div>
-							{formData.userRole === "BOTH" && (
-								<CheckCircle className="h-6 w-6 text-purple-600" />
-							)}
+							{
+								formData.userRole === "BOTH" && (
+									<CheckCircle className="h-6 w-6 text-purple-600" />
+								)
+							}
 						</div>
 					</div>
 				</div>
-
 				<div className="pt-4 text-center">
 					<Button
 						onClick={handleNext}
@@ -237,47 +240,54 @@ export default function OnboardingPage() {
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-6">
-				{categoriesLoading ? (
-					<div className="text-center py-8">
-						<Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-						<p className="text-muted-foreground">Loading categories...</p>
-					</div>
-				) : (
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-						{categories.map((category) => {
-							const isSelected = formData.selectedCategories.includes(category.id)
+				{
+					categoriesLoading ? (
+						<div className="text-center py-8">
+							<Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+							<p className="text-muted-foreground">Loading categories...</p>
+						</div>
+					) : (
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							{
+								categories.map((category) => {
+									const isSelected = formData.selectedCategories.includes(category.id)
 
-							return (
-								<div
-									key={category.id}
-									className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${isSelected ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20" : "border-gray-200"
-										}`}
-									onClick={() => handleCategoryToggle(category.id)}
-								>
-									<div className="flex items-start gap-3">
-										<div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-											{category.icon ? (
-												<span className="text-lg">{category.icon}</span>
-											) : (
-												<Lightbulb className="h-5 w-5" />
-											)}
+									return (
+										<div
+											key={category.id}
+											className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${isSelected ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20" : "border-gray-200"
+												}`}
+											onClick={() => handleCategoryToggle(category.id)}
+										>
+											<div className="flex items-start gap-3">
+												<div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+													{
+														category.icon ? (
+															<span className="text-lg">{category.icon}</span>
+														) : (
+															<Lightbulb className="h-5 w-5" />
+														)
+													}
+												</div>
+												<div className="flex-1">
+													<h4 className="font-semibold mb-1">{category.name}</h4>
+													<p className="text-sm text-gray-600 dark:text-gray-400">
+														{category.description || "No description available"}
+													</p>
+												</div>
+												{
+													isSelected && (
+														<CheckCircle className="h-5 w-5 text-blue-600" />
+													)
+												}
+											</div>
 										</div>
-										<div className="flex-1">
-											<h4 className="font-semibold mb-1">{category.name}</h4>
-											<p className="text-sm text-gray-600 dark:text-gray-400">
-												{category.description || "No description available"}
-											</p>
-										</div>
-										{isSelected && (
-											<CheckCircle className="h-5 w-5 text-blue-600" />
-										)}
-									</div>
-								</div>
-							)
-						})}
-					</div>
-				)}
-
+									)
+								})
+							}
+						</div>
+					)
+				}
 				<div className="space-y-2">
 					<Label htmlFor="customCategory">Custom Category (Optional)</Label>
 					<Input
@@ -287,7 +297,6 @@ export default function OnboardingPage() {
 						onChange={(e) => setFormData(prev => ({ ...prev, customCategory: e.target.value }))}
 					/>
 				</div>
-
 				<div className="flex gap-3 pt-4">
 					<Button variant="outline" onClick={handlePrevious} className="flex-1">
 						<ArrowLeft className="mr-2 h-4 w-4" /> Previous
@@ -322,7 +331,6 @@ export default function OnboardingPage() {
 						<p className="text-white/70 text-sm">Click to watch the introduction video</p>
 					</div>
 				</div>
-
 				<div className="flex gap-3">
 					<Button variant="outline" onClick={handlePrevious} className="flex-1">
 						<ArrowLeft className="mr-2 h-4 w-4" /> Previous
@@ -356,25 +364,27 @@ export default function OnboardingPage() {
 							{formData.userRole === "BOTH" && "Both Submit & Validate"}
 						</Badge>
 					</div>
-
 					<div>
 						<h4 className="font-semibold mb-2">Selected Categories:</h4>
 						<div className="flex flex-wrap gap-2">
-							{formData.selectedCategories.map(categoryId => {
-								const category = categories.find(c => c.id === categoryId)
-								return (
-									<Badge key={categoryId} variant="secondary">
-										{category?.name || categoryId}
-									</Badge>
+							{
+								formData.selectedCategories.map(categoryId => {
+									const category = categories.find(c => c.id === categoryId)
+									return (
+										<Badge key={categoryId} variant="secondary">
+											{category?.name || categoryId}
+										</Badge>
+									)
+								})
+							}
+							{
+								formData.customCategory && (
+									<Badge variant="secondary">{formData.customCategory}</Badge>
 								)
-							})}
-							{formData.customCategory && (
-								<Badge variant="secondary">{formData.customCategory}</Badge>
-							)}
+							}
 						</div>
 					</div>
 				</div>
-
 				<div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
 					<h4 className="font-semibold mb-2">What happens next?</h4>
 					<p className="text-sm text-gray-600 dark:text-gray-400">
@@ -383,7 +393,6 @@ export default function OnboardingPage() {
 						{formData.userRole === "BOTH" && "You'll be taken to your dashboard with access to both submission and validation features."}
 					</p>
 				</div>
-
 				<div className="flex gap-3 pt-4">
 					<Button variant="outline" onClick={handlePrevious} className="flex-1">
 						<ArrowLeft className="mr-2 h-4 w-4" /> Previous
@@ -393,16 +402,18 @@ export default function OnboardingPage() {
 						className="flex-1"
 						disabled={isLoading}
 					>
-						{isLoading ? (
-							<>
-								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-								Setting up...
-							</>
-						) : (
-							<>
-								Complete Setup <CheckCircle className="ml-2 h-4 w-4" />
-							</>
-						)}
+						{
+							isLoading ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Setting up...
+								</>
+							) : (
+								<>
+									Complete Setup <CheckCircle className="ml-2 h-4 w-4" />
+								</>
+							)
+						}
 					</Button>
 				</div>
 			</CardContent>
@@ -412,23 +423,26 @@ export default function OnboardingPage() {
 	return (
 		<div className="min-h-screen flex flex-col bg-white dark:bg-neutral-900 flex items-center justify-center p-4 py-24 md:py-0">
 			<div className="w-full max-w-4xl">
-				{/* Progress indicator */}
 				<div className="mb-4">
 					<div className="flex items-center justify-center gap-2 mb-4 flex-wrap">
-						{[1, 2, 3, 4].map((step) => (
-							<div key={step} className="flex items-center">
-								<div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step <= currentStep
-									? "bg-blue-600 text-white"
-									: "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
-									}`}>
-									{step}
+						{
+							[1, 2, 3, 4].map((step) => (
+								<div key={step} className="flex items-center">
+									<div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step <= currentStep
+										? "bg-blue-600 text-white"
+										: "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
+										}`}>
+										{step}
+									</div>
+									{
+										step < 4 && (
+											<div className={`w-12 h-1 mx-2 ${step < currentStep ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-700"
+												}`} />
+										)
+									}
 								</div>
-								{step < 4 && (
-									<div className={`w-12 h-1 mx-2 ${step < currentStep ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-700"
-										}`} />
-								)}
-							</div>
-						))}
+							))
+						}
 					</div>
 					<p className="text-center text-sm text-gray-600 dark:text-gray-400">
 						Step {currentStep} of 4

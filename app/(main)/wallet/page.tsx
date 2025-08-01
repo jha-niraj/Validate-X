@@ -12,19 +12,8 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Progress } from '@/components/ui/progress'
 import {
-	Wallet,
-	TrendingUp,
-	ArrowUpRight,
-	ArrowDownLeft,
-	CreditCard,
-	Smartphone,
-	Bitcoin,
-	Eye,
-	EyeOff,
-	Download,
-	Settings,
-	History,
-	PiggyBank
+	Wallet, TrendingUp, ArrowUpRight, ArrowDownLeft, CreditCard, Smartphone,
+	Bitcoin, Eye, EyeOff, Download, Settings, History, PiggyBank
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { getWalletInfo, updatePaymentPreferences, requestCashout, getTransactionHistory, optOutBalance } from '@/actions/wallet.actions'
@@ -263,9 +252,11 @@ export default function WalletPage() {
 				<div className="grid gap-6">
 					<div className="h-32 bg-gray-200 animate-pulse rounded-lg" />
 					<div className="grid md:grid-cols-3 gap-6">
-						{[1, 2, 3].map(i => (
-							<div key={i} className="h-24 bg-gray-200 animate-pulse rounded-lg" />
-						))}
+						{
+							[1, 2, 3].map(i => (
+								<div key={i} className="h-24 bg-gray-200 animate-pulse rounded-lg" />
+							))
+						}
 					</div>
 				</div>
 			</div>
@@ -286,8 +277,7 @@ export default function WalletPage() {
 	}
 
 	return (
-		<div className="container mx-auto p-6 space-y-6">
-			{/* Header */}
+		<div className="max-w-7xl mx-auto p-6 space-y-6">
 			<div className="flex items-center justify-between">
 				<div>
 					<h1 className="text-3xl font-bold flex items-center gap-2">
@@ -328,36 +318,34 @@ export default function WalletPage() {
 										</SelectContent>
 									</Select>
 								</div>
-
-								{/* Show only UPI fields for UPI payment methods */}
-								{(paymentDetails.preferredMethod === 'RAZORPAY' || paymentDetails.preferredMethod === 'PHONEPE') && (
-									<div className="space-y-3">
-										<div>
-											<Label>UPI ID</Label>
-											<Input
-												placeholder="your-upi@bank"
-												value={paymentDetails.upiId}
-												onChange={(e) => setPaymentDetails(prev => ({ ...prev, upiId: e.target.value }))}
-											/>
+								{
+									(paymentDetails.preferredMethod === 'RAZORPAY' || paymentDetails.preferredMethod === 'PHONEPE') && (
+										<div className="space-y-3">
+											<div>
+												<Label>UPI ID</Label>
+												<Input
+													placeholder="your-upi@bank"
+													value={paymentDetails.upiId}
+													onChange={(e) => setPaymentDetails(prev => ({ ...prev, upiId: e.target.value }))}
+												/>
+											</div>
+											<div>
+												<Label>Mobile Number (for PayTM/backup)</Label>
+												<Input
+													placeholder="+91 9876543210"
+													value={paymentDetails.paytmNumber}
+													onChange={(e) => setPaymentDetails(prev => ({ ...prev, paytmNumber: e.target.value }))}
+												/>
+											</div>
 										</div>
-
-										<div>
-											<Label>Mobile Number (for PayTM/backup)</Label>
-											<Input
-												placeholder="+91 9876543210"
-												value={paymentDetails.paytmNumber}
-												onChange={(e) => setPaymentDetails(prev => ({ ...prev, paytmNumber: e.target.value }))}
-											/>
-										</div>
-									</div>
-								)}
-
+									)
+								}
 								<div className="flex gap-2">
 									<Button onClick={handleUpdatePaymentSettings} className="flex-1">
 										Update Settings
 									</Button>
-									<Button 
-										variant="outline" 
+									<Button
+										variant="outline"
 										onClick={() => {
 											setSettingsOpen(false)
 											setBlockchainWalletOpen(true)
@@ -371,8 +359,6 @@ export default function WalletPage() {
 							</div>
 						</DialogContent>
 					</Dialog>
-
-					{/* Blockchain Wallet Dialog */}
 					<Dialog open={blockchainWalletOpen} onOpenChange={setBlockchainWalletOpen}>
 						<DialogContent>
 							<DialogHeader>
@@ -403,8 +389,8 @@ export default function WalletPage() {
 										</div>
 									</div>
 								</div>
-								<Button 
-									variant="outline" 
+								<Button
+									variant="outline"
 									onClick={() => setBlockchainWalletOpen(false)}
 									className="w-full"
 								>
@@ -413,7 +399,6 @@ export default function WalletPage() {
 							</div>
 						</DialogContent>
 					</Dialog>
-
 					<Button
 						variant="outline"
 						size="sm"
@@ -423,8 +408,6 @@ export default function WalletPage() {
 					</Button>
 				</div>
 			</div>
-
-			{/* Balance Cards */}
 			<div className="grid md:grid-cols-4 gap-4">
 				<Card className="col-span-2">
 					<CardHeader className="pb-3">
@@ -444,14 +427,16 @@ export default function WalletPage() {
 							</div>
 							<div className="text-right">
 								<div className="space-y-2">
-									{!walletData.canCashout && walletData.nextCashoutAvailable && (
-										<p className="text-xs text-amber-600">
-											Next cashout: {formatDate(walletData.nextCashoutAvailable)}
-										</p>
-									)}
+									{
+										!walletData.canCashout && walletData.nextCashoutAvailable && (
+											<p className="text-xs text-amber-600">
+												Next cashout: {formatDate(walletData.nextCashoutAvailable)}
+											</p>
+										)
+									}
 									<Dialog open={cashoutOpen} onOpenChange={setCashoutOpen}>
 										<DialogTrigger asChild>
-											<Button 
+											<Button
 												disabled={!walletData.canCashout}
 												variant={walletData.canCashout ? "default" : "secondary"}
 											>
@@ -459,82 +444,77 @@ export default function WalletPage() {
 												{walletData.canCashout ? "Cash Out" : "Cashout Unavailable"}
 											</Button>
 										</DialogTrigger>
-									<DialogContent>
-										<DialogHeader>
-											<DialogTitle>Cash Out Request</DialogTitle>
-										</DialogHeader>
-										<div className="space-y-4">
-											<div>
-												<Label>Amount (₹)</Label>
-												<div className="flex gap-2">
-													<Input
-														type="number"
-														placeholder="100"
-														value={cashoutAmount}
-														onChange={(e) => setCashoutAmount(e.target.value)}
-														className="flex-1"
-													/>
-													<Button 
-														variant="outline" 
-														onClick={() => setCashoutAmount(walletData.availableBalance.toString())}
-														type="button"
-													>
-														Max
-													</Button>
+										<DialogContent>
+											<DialogHeader>
+												<DialogTitle>Cash Out Request</DialogTitle>
+											</DialogHeader>
+											<div className="space-y-4">
+												<div>
+													<Label>Amount (₹)</Label>
+													<div className="flex gap-2">
+														<Input
+															type="number"
+															placeholder="100"
+															value={cashoutAmount}
+															onChange={(e) => setCashoutAmount(e.target.value)}
+															className="flex-1"
+														/>
+														<Button
+															variant="outline"
+															onClick={() => setCashoutAmount(walletData.availableBalance.toString())}
+															type="button"
+														>
+															Max
+														</Button>
+													</div>
+													<p className="text-sm text-gray-500 mt-1">
+														Available: {formatCurrency(walletData.availableBalance)} • Min: ₹100
+													</p>
 												</div>
-												<p className="text-sm text-gray-500 mt-1">
-													Available: {formatCurrency(walletData.availableBalance)} • Min: ₹100
-												</p>
+												<div>
+													<Label>Payment Method</Label>
+													<Select value={cashoutMethod} onValueChange={(value: PaymentMethod) => setCashoutMethod(value)}>
+														<SelectTrigger>
+															<SelectValue />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem value="RAZORPAY">Razorpay (UPI/Cards)</SelectItem>
+															<SelectItem value="PHONEPE">PhonePe UPI</SelectItem>
+														</SelectContent>
+													</Select>
+												</div>
+												<div>
+													<Label>Confirm with Password</Label>
+													<Input
+														type="password"
+														placeholder="Enter your password"
+														value={cashoutPassword}
+														onChange={(e) => setCashoutPassword(e.target.value)}
+													/>
+													<p className="text-sm text-gray-500 mt-1">
+														Required for security verification
+													</p>
+												</div>
+												<div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+													<p className="text-sm text-amber-800">
+														<strong>Processing Time:</strong> Cashout requests are reviewed manually and processed within 1-2 business days.
+													</p>
+												</div>
+												<Button
+													onClick={handleCashout}
+													className="w-full"
+													disabled={!cashoutAmount || !cashoutPassword}
+												>
+													Request Cashout
+												</Button>
 											</div>
-
-											<div>
-												<Label>Payment Method</Label>
-												<Select value={cashoutMethod} onValueChange={(value: PaymentMethod) => setCashoutMethod(value)}>
-													<SelectTrigger>
-														<SelectValue />
-													</SelectTrigger>
-													<SelectContent>
-														<SelectItem value="RAZORPAY">Razorpay (UPI/Cards)</SelectItem>
-														<SelectItem value="PHONEPE">PhonePe UPI</SelectItem>
-													</SelectContent>
-												</Select>
-											</div>
-
-											<div>
-												<Label>Confirm with Password</Label>
-												<Input
-													type="password"
-													placeholder="Enter your password"
-													value={cashoutPassword}
-													onChange={(e) => setCashoutPassword(e.target.value)}
-												/>
-												<p className="text-sm text-gray-500 mt-1">
-													Required for security verification
-												</p>
-											</div>
-
-											<div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-												<p className="text-sm text-amber-800">
-													<strong>Processing Time:</strong> Cashout requests are reviewed manually and processed within 1-2 business days.
-												</p>
-											</div>
-
-											<Button 
-												onClick={handleCashout} 
-												className="w-full"
-												disabled={!cashoutAmount || !cashoutPassword}
-											>
-												Request Cashout
-											</Button>
-										</div>
-									</DialogContent>
-								</Dialog>
+										</DialogContent>
+									</Dialog>
 								</div>
 							</div>
 						</div>
 					</CardContent>
 				</Card>
-
 				<Card>
 					<CardHeader className="pb-3">
 						<CardTitle className="text-sm font-medium text-gray-600">
@@ -552,7 +532,6 @@ export default function WalletPage() {
 						</div>
 					</CardContent>
 				</Card>
-
 				<Card>
 					<CardHeader className="pb-3">
 						<CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
@@ -601,8 +580,6 @@ export default function WalletPage() {
 					</CardContent>
 				</Card>
 			</div>
-
-			{/* Stats Cards */}
 			<div className="grid md:grid-cols-3 gap-4">
 				<Card>
 					<CardContent className="p-4">
@@ -615,7 +592,6 @@ export default function WalletPage() {
 						</div>
 					</CardContent>
 				</Card>
-
 				<Card>
 					<CardContent className="p-4">
 						<div className="flex items-center justify-between">
@@ -627,7 +603,6 @@ export default function WalletPage() {
 						</div>
 					</CardContent>
 				</Card>
-
 				<Card>
 					<CardContent className="p-4">
 						<div className="flex items-center justify-between">
@@ -643,8 +618,6 @@ export default function WalletPage() {
 					</CardContent>
 				</Card>
 			</div>
-
-			{/* Recent Transactions */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -654,38 +627,40 @@ export default function WalletPage() {
 				</CardHeader>
 				<CardContent>
 					<div className="space-y-3">
-						{transactions.length === 0 ? (
-							<p className="text-gray-500 text-center py-8">No transactions yet</p>
-						) : (
-							transactions.map((transaction) => (
-								<div key={transaction.id} className="flex items-center justify-between p-3 border rounded-lg">
-									<div className="flex items-center gap-3">
-										{getTransactionIcon(transaction.type)}
-										<div>
-											<div className="font-medium">{transaction.description}</div>
-											<div className="text-sm text-gray-500">
-												{formatDate(transaction.createdAt)}
+						{
+							transactions.length === 0 ? (
+								<p className="text-gray-500 text-center py-8">No transactions yet</p>
+							) : (
+								transactions.map((transaction) => (
+									<div key={transaction.id} className="flex items-center justify-between p-3 border rounded-lg">
+										<div className="flex items-center gap-3">
+											{getTransactionIcon(transaction.type)}
+											<div>
+												<div className="font-medium">{transaction.description}</div>
+												<div className="text-sm text-gray-500">
+													{formatDate(transaction.createdAt)}
+												</div>
 											</div>
 										</div>
-									</div>
-									<div className="text-right">
-										<div className={`font-bold ${transaction.type === 'VALIDATION_EARNING' || transaction.type === 'BONUS'
+										<div className="text-right">
+											<div className={`font-bold ${transaction.type === 'VALIDATION_EARNING' || transaction.type === 'BONUS'
 												? 'text-green-600'
 												: 'text-red-600'
-											}`}>
-											{transaction.type === 'VALIDATION_EARNING' || transaction.type === 'BONUS' ? '+' : '-'}
-											{formatCurrency(transaction.amount)}
+												}`}>
+												{transaction.type === 'VALIDATION_EARNING' || transaction.type === 'BONUS' ? '+' : '-'}
+												{formatCurrency(transaction.amount)}
+											</div>
+											<Badge
+												variant={transaction.status === 'COMPLETED' ? 'default' : 'secondary'}
+												className="text-xs"
+											>
+												{transaction.status}
+											</Badge>
 										</div>
-										<Badge
-											variant={transaction.status === 'COMPLETED' ? 'default' : 'secondary'}
-											className="text-xs"
-										>
-											{transaction.status}
-										</Badge>
 									</div>
-								</div>
-							))
-						)}
+								))
+							)
+						}
 					</div>
 				</CardContent>
 			</Card>

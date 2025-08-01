@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { MainLanding } from "@/components/main-landing";
+import { MainLanding } from "@/components/mainlanding";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";

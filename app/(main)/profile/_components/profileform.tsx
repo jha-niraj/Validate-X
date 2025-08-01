@@ -155,7 +155,6 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
 	return (
 		<form onSubmit={handleSubmit} className="space-y-6">
-			{/* Profile Image Upload */}
 			<Card className="bg-neutral-50 dark:bg-neutral-900/50 border-neutral-200 dark:border-neutral-800">
 				<CardContent className="pt-6">
 					<div className="flex items-center gap-6">
@@ -181,30 +180,34 @@ export function ProfileForm({ user }: ProfileFormProps) {
 									disabled={imageUploading}
 									className="border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/20"
 								>
-									{imageUploading ? (
-										<>
-											<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-											Uploading...
-										</>
-									) : (
-										<>
-											<Upload className="mr-2 h-4 w-4" />
-											Upload Image
-										</>
-									)}
+									{
+										imageUploading ? (
+											<>
+												<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+												Uploading...
+											</>
+										) : (
+											<>
+												<Upload className="mr-2 h-4 w-4" />
+												Upload Image
+											</>
+										)
+									}
 								</Button>
-								{formData.image && (
-									<Button
-										type="button"
-										variant="outline"
-										size="sm"
-										onClick={handleRemoveImage}
-										className="border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
-									>
-										<X className="mr-2 h-4 w-4" />
-										Remove
-									</Button>
-								)}
+								{
+									formData.image && (
+										<Button
+											type="button"
+											variant="outline"
+											size="sm"
+											onClick={handleRemoveImage}
+											className="border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+										>
+											<X className="mr-2 h-4 w-4" />
+											Remove
+										</Button>
+									)
+								}
 							</div>
 							<input
 								ref={imageInputRef}
@@ -217,8 +220,6 @@ export function ProfileForm({ user }: ProfileFormProps) {
 					</div>
 				</CardContent>
 			</Card>
-
-			{/* Basic Information */}
 			<div className="grid gap-4 md:grid-cols-2">
 				<div className="space-y-2">
 					<Label htmlFor="name" className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
@@ -248,7 +249,6 @@ export function ProfileForm({ user }: ProfileFormProps) {
 					/>
 				</div>
 			</div>
-
 			<div className="grid gap-4 md:grid-cols-2">
 				<div className="space-y-2">
 					<Label htmlFor="website" className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
@@ -278,7 +278,6 @@ export function ProfileForm({ user }: ProfileFormProps) {
 					/>
 				</div>
 			</div>
-
 			<div className="space-y-2">
 				<Label htmlFor="bio" className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
 					Bio
@@ -296,111 +295,116 @@ export function ProfileForm({ user }: ProfileFormProps) {
 					{formData.bio.length}/500 characters
 				</p>
 			</div>
-
-			{/* Skills Section */}
 			<div className="space-y-3">
 				<Label className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
 					Skills (Max 10)
 				</Label>
 				<div className="flex flex-wrap gap-2 mb-2">
-					{formData.skills.map((skill, index) => (
-						<Badge
-							key={index}
-							variant="secondary"
-							className="bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800 cursor-pointer hover:bg-teal-100 dark:hover:bg-teal-900/30"
-							onClick={() => removeSkill(skill)}
-						>
-							{skill}
-							<X className="ml-1 h-3 w-3" />
-						</Badge>
-					))}
+					{
+						formData.skills.map((skill, index) => (
+							<Badge
+								key={index}
+								variant="secondary"
+								className="bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800 cursor-pointer hover:bg-teal-100 dark:hover:bg-teal-900/30"
+								onClick={() => removeSkill(skill)}
+							>
+								{skill}
+								<X className="ml-1 h-3 w-3" />
+							</Badge>
+						))
+					}
 				</div>
-				{formData.skills.length < 10 && (
-					<div className="flex gap-2">
-						<Input
-							value={newSkill}
-							onChange={(e) => setNewSkill(e.target.value)}
-							placeholder="Add a skill..."
-							className="border-neutral-300 dark:border-neutral-700 focus:border-teal-500 dark:focus:border-teal-400"
-							onKeyPress={(e) => {
-								if (e.key === 'Enter') {
-									e.preventDefault()
-									addSkill()
-								}
-							}}
-						/>
-						<Button
-							type="button"
-							variant="outline"
-							onClick={addSkill}
-							disabled={!newSkill.trim()}
-							className="border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/20"
-						>
-							<Plus className="h-4 w-4" />
-						</Button>
-					</div>
-				)}
+				{
+					formData.skills.length < 10 && (
+						<div className="flex gap-2">
+							<Input
+								value={newSkill}
+								onChange={(e) => setNewSkill(e.target.value)}
+								placeholder="Add a skill..."
+								className="border-neutral-300 dark:border-neutral-700 focus:border-teal-500 dark:focus:border-teal-400"
+								onKeyPress={(e) => {
+									if (e.key === 'Enter') {
+										e.preventDefault()
+										addSkill()
+									}
+								}}
+							/>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={addSkill}
+								disabled={!newSkill.trim()}
+								className="border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/20"
+							>
+								<Plus className="h-4 w-4" />
+							</Button>
+						</div>
+					)
+				}
 			</div>
-
-			{/* Interests Section */}
 			<div className="space-y-3">
 				<Label className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
 					Interests (Max 10)
 				</Label>
 				<div className="flex flex-wrap gap-2 mb-2">
-					{formData.interests.map((interest, index) => (
-						<Badge
-							key={index}
-							variant="outline"
-							className="border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-							onClick={() => removeInterest(interest)}
-						>
-							{interest}
-							<X className="ml-1 h-3 w-3" />
-						</Badge>
-					))}
+					{
+						formData.interests.map((interest, index) => (
+							<Badge
+								key={index}
+								variant="outline"
+								className="border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+								onClick={() => removeInterest(interest)}
+							>
+								{interest}
+								<X className="ml-1 h-3 w-3" />
+							</Badge>
+						))
+					}
 				</div>
-				{formData.interests.length < 10 && (
-					<div className="flex gap-2">
-						<Input
-							value={newInterest}
-							onChange={(e) => setNewInterest(e.target.value)}
-							placeholder="Add an interest..."
-							className="border-neutral-300 dark:border-neutral-700 focus:border-teal-500 dark:focus:border-teal-400"
-							onKeyPress={(e) => {
-								if (e.key === 'Enter') {
-									e.preventDefault()
-									addInterest()
-								}
-							}}
-						/>
-						<Button
-							type="button"
-							variant="outline"
-							onClick={addInterest}
-							disabled={!newInterest.trim()}
-							className="border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-						>
-							<Plus className="h-4 w-4" />
-						</Button>
-					</div>
-				)}
+				{
+					formData.interests.length < 10 && (
+						<div className="flex gap-2">
+							<Input
+								value={newInterest}
+								onChange={(e) => setNewInterest(e.target.value)}
+								placeholder="Add an interest..."
+								className="border-neutral-300 dark:border-neutral-700 focus:border-teal-500 dark:focus:border-teal-400"
+								onKeyPress={(e) => {
+									if (e.key === 'Enter') {
+										e.preventDefault()
+										addInterest()
+									}
+								}}
+							/>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={addInterest}
+								disabled={!newInterest.trim()}
+								className="border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+							>
+								<Plus className="h-4 w-4" />
+							</Button>
+						</div>
+					)
+				}
 			</div>
-
 			<div className="flex justify-end pt-4">
 				<Button
 					type="submit"
 					disabled={isLoading || !formData.name.trim()}
 					className="bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white"
 				>
-					{isLoading ? (
-						<>
-							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-							Updating...
-						</>
-					) : (
-						"Update Profile"
-					)}
+					{
+						isLoading ? (
+							<>
+								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+								Updating...
+							</>
+						) : (
+							"Update Profile"
+						)
+					}
 				</Button>
 			</div>
 		</form>

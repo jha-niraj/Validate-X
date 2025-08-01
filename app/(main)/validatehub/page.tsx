@@ -14,28 +14,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Progress } from '@/components/ui/progress'
 import {
-	ThumbsUp,
-	ThumbsDown,
-	MinusCircle,
-	Clock,
-	DollarSign,
-	Filter,
-	Eye,
-	FileText,
-	ExternalLink,
-	Star,
-	Heart,
-	X,
-	CheckCircle,
-	AlertCircle,
-	Upload,
-	RefreshCw
+	ThumbsUp, ThumbsDown, MinusCircle, Clock, Filter,
+	Eye, FileText, ExternalLink, Star, CheckCircle, RefreshCw
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, PanInfo } from 'framer-motion'
 import { getPostsForValidation, getCategories } from '@/actions/post.actions'
 import { createValidation } from '@/actions/validation.actions'
 import { ValidationType } from '@prisma/client'
+import Link from 'next/link'
 
 interface Post {
 	id: string
@@ -274,8 +261,7 @@ export default function ValidateHubPage() {
 	}
 
 	return (
-		<div className="container mx-auto p-6 max-w-4xl">
-			{/* Header */}
+		<div className="max-w-7xl mx-auto p-6">
 			<div className="flex items-center justify-between mb-6">
 				<div>
 					<h1 className="text-3xl font-bold flex items-center gap-2">
@@ -286,7 +272,6 @@ export default function ValidateHubPage() {
 						Swipe or click to validate ideas and earn rewards
 					</p>
 				</div>
-
 				<div className="flex items-center gap-3">
 					<Select value={selectedCategories.join(',')} onValueChange={(value) => setSelectedCategories(value ? value.split(',') : [])}>
 						<SelectTrigger className="w-48">
@@ -295,14 +280,15 @@ export default function ValidateHubPage() {
 						</SelectTrigger>
 						<SelectContent>
 							<SelectItem value="">All Categories</SelectItem>
-							{categories.map(category => (
-								<SelectItem key={category.id} value={category.id}>
-									{category.icon} {category.name}
-								</SelectItem>
-							))}
+							{
+								categories.map(category => (
+									<SelectItem key={category.id} value={category.id}>
+										{category.icon} {category.name}
+									</SelectItem>
+								))
+							}
 						</SelectContent>
 					</Select>
-
 					<Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
 						<DialogTrigger asChild>
 							<Button variant="outline" size="sm">
@@ -325,37 +311,38 @@ export default function ValidateHubPage() {
 								<div className="prose max-w-none">
 									<p>{currentPost.description}</p>
 								</div>
-
-								{currentPost.fileUrl && (
-									<div className="border rounded-lg p-4">
-										<p className="text-sm font-medium mb-2">Attached File:</p>
-										<a
-											href={currentPost.fileUrl}
-											target="_blank"
-											rel="noopener noreferrer"
-											className="flex items-center gap-2 text-blue-600 hover:underline"
-										>
-											<ExternalLink className="h-4 w-4" />
-											{currentPost.fileName || 'View File'}
-										</a>
-									</div>
-								)}
-
-								{currentPost.linkUrl && (
-									<div className="border rounded-lg p-4">
-										<p className="text-sm font-medium mb-2">Reference Link:</p>
-										<a
-											href={currentPost.linkUrl}
-											target="_blank"
-											rel="noopener noreferrer"
-											className="flex items-center gap-2 text-blue-600 hover:underline"
-										>
-											<ExternalLink className="h-4 w-4" />
-											{currentPost.linkUrl}
-										</a>
-									</div>
-								)}
-
+								{
+									currentPost.fileUrl && (
+										<div className="border rounded-lg p-4">
+											<p className="text-sm font-medium mb-2">Attached File:</p>
+											<Link
+												href={currentPost.fileUrl}
+												target="_blank"
+												rel="noopener noreferrer"
+												className="flex items-center gap-2 text-blue-600 hover:underline"
+											>
+												<ExternalLink className="h-4 w-4" />
+												{currentPost.fileName || 'View File'}
+											</Link>
+										</div>
+									)
+								}
+								{
+									currentPost.linkUrl && (
+										<div className="border rounded-lg p-4">
+											<p className="text-sm font-medium mb-2">Reference Link:</p>
+											<Link
+												href={currentPost.linkUrl}
+												target="_blank"
+												rel="noopener noreferrer"
+												className="flex items-center gap-2 text-blue-600 hover:underline"
+											>
+												<ExternalLink className="h-4 w-4" />
+												{currentPost.linkUrl}
+											</Link>
+										</div>
+									)
+								}
 								<div className="flex items-center gap-4 pt-4 border-t">
 									<div className="flex items-center gap-2">
 										<Avatar className="h-8 w-8">
@@ -375,8 +362,6 @@ export default function ValidateHubPage() {
 					</Dialog>
 				</div>
 			</div>
-
-			{/* Progress */}
 			<div className="mb-6">
 				<div className="flex items-center justify-between text-sm text-gray-500 mb-2">
 					<span>Post {currentPostIndex + 1} of {posts.length}</span>
@@ -384,8 +369,6 @@ export default function ValidateHubPage() {
 				</div>
 				<Progress value={(currentPostIndex / posts.length) * 100} className="h-2" />
 			</div>
-
-			{/* Main Card */}
 			<motion.div
 				key={currentPost.id}
 				className="relative"
@@ -415,7 +398,6 @@ export default function ValidateHubPage() {
 									</Badge>
 								</div>
 							</div>
-
 							<div className="flex items-center gap-2">
 								<Avatar className="h-10 w-10">
 									<AvatarImage src={currentPost.author.image} />
@@ -428,31 +410,33 @@ export default function ValidateHubPage() {
 							</div>
 						</div>
 					</CardHeader>
-
 					<CardContent>
 						<div className="space-y-4">
 							<p className="text-gray-700 leading-relaxed line-clamp-4">
 								{currentPost.description}
 							</p>
-
-							{(currentPost.fileUrl || currentPost.linkUrl) && (
-								<div className="flex gap-2">
-									{currentPost.fileUrl && (
-										<Badge variant="outline" className="flex items-center gap-1">
-											<FileText className="h-3 w-3" />
-											File attached
-										</Badge>
-									)}
-									{currentPost.linkUrl && (
-										<Badge variant="outline" className="flex items-center gap-1">
-											<ExternalLink className="h-3 w-3" />
-											Link included
-										</Badge>
-									)}
-								</div>
-							)}
-
-							{/* Rewards */}
+							{
+								(currentPost.fileUrl || currentPost.linkUrl) && (
+									<div className="flex gap-2">
+										{
+											currentPost.fileUrl && (
+												<Badge variant="outline" className="flex items-center gap-1">
+													<FileText className="h-3 w-3" />
+													File attached
+												</Badge>
+											)
+										}
+										{
+											currentPost.linkUrl && (
+												<Badge variant="outline" className="flex items-center gap-1">
+													<ExternalLink className="h-3 w-3" />
+													Link included
+												</Badge>
+											)
+										}
+									</div>
+								)
+							}
 							<div className="grid grid-cols-2 gap-4 pt-4 border-t">
 								<div className="text-center">
 									<div className="text-lg font-bold text-green-600">
@@ -473,8 +457,6 @@ export default function ValidateHubPage() {
 									</div>
 								</div>
 							</div>
-
-							{/* Quick Comment */}
 							<div className="space-y-2">
 								<Label className="text-sm">Quick Comment (Optional)</Label>
 								<Textarea
@@ -489,8 +471,6 @@ export default function ValidateHubPage() {
 					</CardContent>
 				</Card>
 			</motion.div>
-
-			{/* Action Buttons */}
 			<div className="flex items-center justify-center gap-4 mt-6">
 				<Button
 					variant="outline"
@@ -501,7 +481,6 @@ export default function ValidateHubPage() {
 				>
 					<ThumbsDown className="h-5 w-5" />
 				</Button>
-
 				<Button
 					variant="outline"
 					size="lg"
@@ -511,7 +490,6 @@ export default function ValidateHubPage() {
 				>
 					<MinusCircle className="h-5 w-5" />
 				</Button>
-
 				<Button
 					variant="outline"
 					size="lg"
@@ -521,7 +499,6 @@ export default function ValidateHubPage() {
 				>
 					<ThumbsUp className="h-5 w-5" />
 				</Button>
-
 				<Dialog open={validationOpen} onOpenChange={setValidationOpen}>
 					<DialogTrigger asChild>
 						<Button size="lg" className="bg-blue-600 hover:bg-blue-700">
@@ -537,19 +514,20 @@ export default function ValidateHubPage() {
 							<div>
 								<Label>Rating (1-5)</Label>
 								<div className="flex gap-2 mt-2">
-									{[1, 2, 3, 4, 5].map(rating => (
-										<Button
-											key={rating}
-											variant={validationForm.rating >= rating ? "default" : "outline"}
-											size="sm"
-											onClick={() => setValidationForm(prev => ({ ...prev, rating }))}
-										>
-											<Star className="h-4 w-4" />
-										</Button>
-									))}
+									{
+										[1, 2, 3, 4, 5].map(rating => (
+											<Button
+												key={rating}
+												variant={validationForm.rating >= rating ? "default" : "outline"}
+												size="sm"
+												onClick={() => setValidationForm(prev => ({ ...prev, rating }))}
+											>
+												<Star className="h-4 w-4" />
+											</Button>
+										))
+									}
 								</div>
 							</div>
-
 							<div>
 								<Label>Detailed Feedback *</Label>
 								<Textarea
@@ -560,7 +538,6 @@ export default function ValidateHubPage() {
 									rows={4}
 								/>
 							</div>
-
 							<div className="flex items-center space-x-2">
 								<input
 									type="checkbox"
@@ -572,18 +549,19 @@ export default function ValidateHubPage() {
 									I certify this is my original feedback (20% bonus for human-verified content)
 								</Label>
 							</div>
-
 							<div className="flex gap-3">
 								<Button
 									onClick={handleDetailedValidation}
 									className="flex-1"
 									disabled={submitting}
 								>
-									{submitting ? (
-										<RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-									) : (
-										<CheckCircle className="h-4 w-4 mr-2" />
-									)}
+									{
+										submitting ? (
+											<RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+										) : (
+											<CheckCircle className="h-4 w-4 mr-2" />
+										)
+									}
 									Submit Review
 								</Button>
 								<Button
@@ -597,8 +575,6 @@ export default function ValidateHubPage() {
 					</DialogContent>
 				</Dialog>
 			</div>
-
-			{/* Swipe Instructions */}
 			<div className="text-center mt-8 text-sm text-gray-500">
 				<p>💡 Pro tip: Swipe right to like, left to dislike, or up for neutral</p>
 			</div>

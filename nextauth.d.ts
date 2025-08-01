@@ -1,10 +1,11 @@
 import "next-auth";
-import { Role } from "@prisma/client";
+import { Role, UserRole } from "@prisma/client";
 
 declare module "next-auth" {
     interface User {
         role: Role;
         roleExplicitlyChosen: boolean;
+        userRole: UserRole;
     }
 
     interface Session {
@@ -15,6 +16,7 @@ declare module "next-auth" {
             image: string;
             role: Role;
             roleExplicitlyChosen: boolean;
+            userRole: UserRole;
         }
     }
 }

@@ -108,7 +108,6 @@ export function SettingsForm({ user }: SettingsFormProps) {
 
 	return (
 		<div className="space-y-6">
-			{/* Account Information */}
 			<Card className="bg-neutral-50 dark:bg-neutral-900/50 border-neutral-200 dark:border-neutral-800">
 				<CardHeader>
 					<CardTitle className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
@@ -146,8 +145,6 @@ export function SettingsForm({ user }: SettingsFormProps) {
 					</p>
 				</CardContent>
 			</Card>
-
-			{/* Password Change */}
 			<Card className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
 				<CardHeader>
 					<CardTitle className="text-lg font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-2">
@@ -182,15 +179,16 @@ export function SettingsForm({ user }: SettingsFormProps) {
 									className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
 									onClick={() => setShowCurrentPassword(!showCurrentPassword)}
 								>
-									{showCurrentPassword ? (
-										<EyeOff className="h-4 w-4 text-neutral-500" />
-									) : (
-										<Eye className="h-4 w-4 text-neutral-500" />
-									)}
+									{
+										showCurrentPassword ? (
+											<EyeOff className="h-4 w-4 text-neutral-500" />
+										) : (
+											<Eye className="h-4 w-4 text-neutral-500" />
+										)
+									}
 								</Button>
 							</div>
 						</div>
-
 						<div className="space-y-2">
 							<Label htmlFor="newPassword" className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
 								New Password
@@ -213,21 +211,26 @@ export function SettingsForm({ user }: SettingsFormProps) {
 									className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
 									onClick={() => setShowNewPassword(!showNewPassword)}
 								>
-									{showNewPassword ? (
-										<EyeOff className="h-4 w-4 text-neutral-500" />
-									) : (
-										<Eye className="h-4 w-4 text-neutral-500" />
-									)}
+									{
+										showNewPassword ? (
+											<EyeOff className="h-4 w-4 text-neutral-500" />
+										) : (
+											<Eye className="h-4 w-4 text-neutral-500" />
+										)
+									}
 								</Button>
 							</div>
-							{passwordData.newPassword && !isPasswordValid && (
-								<p className="text-xs text-red-500">Password must be at least 6 characters long</p>
-							)}
-							{isSameAsCurrentPassword && (
-								<p className="text-xs text-red-500">New password cannot be the same as your current password</p>
-							)}
+							{
+								passwordData.newPassword && !isPasswordValid && (
+									<p className="text-xs text-red-500">Password must be at least 6 characters long</p>
+								)
+							}
+							{
+								isSameAsCurrentPassword && (
+									<p className="text-xs text-red-500">New password cannot be the same as your current password</p>
+								)
+							}
 						</div>
-
 						<div className="space-y-2">
 							<Label htmlFor="confirmPassword" className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
 								Confirm New Password
@@ -250,39 +253,42 @@ export function SettingsForm({ user }: SettingsFormProps) {
 									className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
 									onClick={() => setShowConfirmPassword(!showConfirmPassword)}
 								>
-									{showConfirmPassword ? (
-										<EyeOff className="h-4 w-4 text-neutral-500" />
-									) : (
-										<Eye className="h-4 w-4 text-neutral-500" />
-									)}
+									{
+										showConfirmPassword ? (
+											<EyeOff className="h-4 w-4 text-neutral-500" />
+										) : (
+											<Eye className="h-4 w-4 text-neutral-500" />
+										)
+									}
 								</Button>
 							</div>
-							{passwordData.confirmPassword && !doPasswordsMatch && (
-								<p className="text-xs text-red-500">Passwords do not match</p>
-							)}
+							{
+								passwordData.confirmPassword && !doPasswordsMatch && (
+									<p className="text-xs text-red-500">Passwords do not match</p>
+								)
+							}
 						</div>
-
 						<div className="flex justify-end pt-4">
 							<Button
 								type="submit"
 								disabled={isLoading || !canSubmit}
 								className="bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white"
 							>
-								{isLoading ? (
-									<>
-										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-										Changing...
-									</>
-								) : (
-									"Change Password"
-								)}
+								{
+									isLoading ? (
+										<>
+											<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+											Changing...
+										</>
+									) : (
+										"Change Password"
+									)
+								}
 							</Button>
 						</div>
 					</form>
 				</CardContent>
 			</Card>
-
-			{/* Delete Account Section */}
 			<Card className="bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800">
 				<CardHeader>
 					<CardTitle className="text-lg font-semibold text-red-800 dark:text-red-200 flex items-center gap-2">
@@ -312,7 +318,6 @@ export function SettingsForm({ user }: SettingsFormProps) {
 								</div>
 							</div>
 						</div>
-
 						<Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
 							<DialogTrigger asChild>
 								<Button
@@ -379,17 +384,19 @@ export function SettingsForm({ user }: SettingsFormProps) {
 											disabled={isDeleteLoading || !canDeleteAccount}
 											className="bg-red-600 hover:bg-red-700"
 										>
-											{isDeleteLoading ? (
-												<>
-													<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-													Deleting...
-												</>
-											) : (
-												<>
-													<Trash2 className="mr-2 h-4 w-4" />
-													Delete Account
-												</>
-											)}
+											{
+												isDeleteLoading ? (
+													<>
+														<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+														Deleting...
+													</>
+												) : (
+													<>
+														<Trash2 className="mr-2 h-4 w-4" />
+														Delete Account
+													</>
+												)
+											}
 										</Button>
 									</DialogFooter>
 								</form>
@@ -398,8 +405,6 @@ export function SettingsForm({ user }: SettingsFormProps) {
 					</div>
 				</CardContent>
 			</Card>
-
-			{/* Security Notice */}
 			<Card className="bg-yellow-50 dark:bg-yellow-900/10 border-yellow-200 dark:border-yellow-800">
 				<CardContent className="pt-6">
 					<div className="flex items-start gap-3">
