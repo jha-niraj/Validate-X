@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { LogOut, ChevronRight, UserPlus, Users, BarChart3, MessageSquare, Settings, Home, Eye, Wallet } from "lucide-react"
+import { LogOut, ChevronRight, UserPlus, Users, BarChart3, MessageSquare, Settings, Eye, Zap } from "lucide-react"
 import Link from "next/link"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "sonner"
@@ -50,19 +50,13 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 		{
 			path: "dashboard",
 			name: "Dashboard",
-			icon: <Home className="h-5 w-5" />,
+			icon: <Zap className="h-5 w-5" />,
 			status: "active"
 		},
 		{
 			path: "validatehub",
 			name: "ValidateHub",
 			icon: <Eye className="h-5 w-5" />,
-			status: "active"
-		},
-		{
-			path: "wallet",
-			name: "Wallet",
-			icon: <Wallet className="h-5 w-5" />,
 			status: "active"
 		},
 		{

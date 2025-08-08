@@ -8,10 +8,8 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Progress } from '@/components/ui/progress'
 import {
 	ThumbsUp, ThumbsDown, MinusCircle, Clock, Filter,
@@ -20,8 +18,7 @@ import {
 import { toast } from 'sonner'
 import { motion, PanInfo } from 'framer-motion'
 import { getPostsForValidation, getCategories } from '@/actions/post.actions'
-import { createValidation } from '@/actions/validation.actions'
-import { ValidationType } from '@prisma/client'
+import { createNormalValidation } from '@/actions/validation.actions'
 import Link from 'next/link'
 
 interface Post {
@@ -62,19 +59,14 @@ export default function ValidateHubPage() {
 	const [currentPostIndex, setCurrentPostIndex] = useState(0)
 	const [loading, setLoading] = useState(true)
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-	const [validationMode, setValidationMode] = useState<'normal' | 'detailed'>('normal')
 	const [detailsOpen, setDetailsOpen] = useState(false)
-	const [validationOpen, setValidationOpen] = useState(false)
+	const [normalVoteDialogOpen, setNormalVoteDialogOpen] = useState(false)
+	const [pendingVote, setPendingVote] = useState<'LIKE' | 'DISLIKE' | 'NEUTRAL' | null>(null)
 	const [submitting, setSubmitting] = useState(false)
 
 	// Validation form state
 	const [validationForm, setValidationForm] = useState({
-		vote: '',
-		shortComment: '',
-		detailedFeedback: '',
-		rating: 3,
-		isOriginal: false,
-		feedbackFile: null as File | null
+		shortComment: ''
 	})
 
 	useEffect(() => {
@@ -133,20 +125,25 @@ export default function ValidateHubPage() {
 		}
 	}
 
-	const handleVote = async (vote: string) => {
-		if (!currentPost) return
+	const handleVote = (vote: 'LIKE' | 'DISLIKE' | 'NEUTRAL') => {
+		setPendingVote(vote)
+		setNormalVoteDialogOpen(true)
+	}
+
+	const confirmNormalVote = async () => {
+		if (!currentPost || !pendingVote) return
 
 		setSubmitting(true)
 		try {
-			const result = await createValidation({
+			const result = await createNormalValidation({
 				postId: currentPost.id,
-				type: ValidationType.NORMAL,
-				vote,
+				vote: pendingVote,
 				shortComment: validationForm.shortComment || undefined
 			})
 
 			if (result.success) {
-				toast.success(`Voted ${vote.toLowerCase()}! ₹${Number(currentPost.normalReward).toFixed(2)} earned`)
+				toast.success(`Voted ${pendingVote.toLowerCase()}! ₹${result.creditedAmount?.toFixed(2) || 0} credited to your wallet`)
+				setNormalVoteDialogOpen(false)
 				nextPost()
 				resetForm()
 			} else {
@@ -159,38 +156,9 @@ export default function ValidateHubPage() {
 		}
 	}
 
-	const handleDetailedValidation = async () => {
-		if (!currentPost) return
-
-		if (!validationForm.detailedFeedback.trim()) {
-			toast.error('Please provide detailed feedback')
-			return
-		}
-
-		setSubmitting(true)
-		try {
-			const result = await createValidation({
-				postId: currentPost.id,
-				type: ValidationType.DETAILED,
-				detailedFeedback: validationForm.detailedFeedback,
-				rating: validationForm.rating,
-				shortComment: validationForm.shortComment || undefined,
-				isOriginal: validationForm.isOriginal
-			})
-
-			if (result.success) {
-				toast.success(`Detailed feedback submitted! ₹${Number(currentPost.detailedReward).toFixed(2)} pending approval`)
-				setValidationOpen(false)
-				nextPost()
-				resetForm()
-			} else {
-				toast.error(result.error)
-			}
-		} catch (error) {
-			toast.error('Failed to submit detailed validation')
-		} finally {
-			setSubmitting(false)
-		}
+	const handleDetailedValidation = (postId: string) => {
+		// Redirect to detailed validation page
+		window.location.href = `/validatehub/${postId}`
 	}
 
 	const nextPost = () => {
@@ -204,12 +172,7 @@ export default function ValidateHubPage() {
 
 	const resetForm = () => {
 		setValidationForm({
-			vote: '',
-			shortComment: '',
-			detailedFeedback: '',
-			rating: 3,
-			isOriginal: false,
-			feedbackFile: null
+			shortComment: ''
 		})
 	}
 
@@ -367,12 +330,12 @@ export default function ValidateHubPage() {
 								<CardContent className="space-y-4">
 									<div>
 										<Label className="text-sm font-medium">Category</Label>
-										<Select value={selectedCategories.join(',')} onValueChange={(value) => setSelectedCategories(value ? value.split(',') : [])}>
+										<Select value={selectedCategories.length > 0 ? selectedCategories.join(',') : 'all'} onValueChange={(value) => setSelectedCategories(value && value !== 'all' ? value.split(',') : [])}>
 											<SelectTrigger>
 												<SelectValue placeholder="All Categories" />
 											</SelectTrigger>
 											<SelectContent>
-												<SelectItem value="">All Categories</SelectItem>
+												<SelectItem value="all">All Categories</SelectItem>
 												{categories.map((category) => (
 													<SelectItem key={category.id} value={category.id}>
 														{category.icon} {category.name}
@@ -489,13 +452,13 @@ export default function ValidateHubPage() {
 					</p>
 				</div>
 				<div className="flex items-center gap-3">
-					<Select value={selectedCategories.join(',')} onValueChange={(value) => setSelectedCategories(value ? value.split(',') : [])}>
+					<Select value={selectedCategories.length > 0 ? selectedCategories.join(',') : 'all'} onValueChange={(value) => setSelectedCategories(value && value !== 'all' ? value.split(',') : [])}>
 						<SelectTrigger className="w-48">
 							<Filter className="h-4 w-4 mr-2" />
 							<SelectValue placeholder="Filter by category" />
 						</SelectTrigger>
 						<SelectContent>
-							<SelectItem value="">All Categories</SelectItem>
+							<SelectItem value="all">All Categories</SelectItem>
 							{
 								categories.map(category => (
 									<SelectItem key={category.id} value={category.id}>
@@ -715,82 +678,68 @@ export default function ValidateHubPage() {
 				>
 					<ThumbsUp className="h-5 w-5" />
 				</Button>
-				<Dialog open={validationOpen} onOpenChange={setValidationOpen}>
-					<DialogTrigger asChild>
-						<Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-							<Star className="h-5 w-5 mr-2" />
-							Detailed Review
-						</Button>
-					</DialogTrigger>
-					<DialogContent className="max-w-2xl">
-						<DialogHeader>
-							<DialogTitle>Detailed Validation</DialogTitle>
-						</DialogHeader>
-						<div className="space-y-4">
-							<div>
-								<Label>Rating (1-5)</Label>
-								<div className="flex gap-2 mt-2">
-									{
-										[1, 2, 3, 4, 5].map(rating => (
-											<Button
-												key={rating}
-												variant={validationForm.rating >= rating ? "default" : "outline"}
-												size="sm"
-												onClick={() => setValidationForm(prev => ({ ...prev, rating }))}
-											>
-												<Star className="h-4 w-4" />
-											</Button>
-										))
-									}
-								</div>
-							</div>
-							<div>
-								<Label>Detailed Feedback *</Label>
-								<Textarea
-									placeholder="Provide detailed feedback, suggestions, or analysis..."
-									value={validationForm.detailedFeedback}
-									onChange={(e) => setValidationForm(prev => ({ ...prev, detailedFeedback: e.target.value }))}
-									className="mt-2"
-									rows={4}
-								/>
-							</div>
-							<div className="flex items-center space-x-2">
-								<input
-									type="checkbox"
-									id="original"
-									checked={validationForm.isOriginal}
-									onChange={(e) => setValidationForm(prev => ({ ...prev, isOriginal: e.target.checked }))}
-								/>
-								<Label htmlFor="original" className="text-sm">
-									I certify this is my original feedback (20% bonus for human-verified content)
-								</Label>
-							</div>
-							<div className="flex gap-3">
-								<Button
-									onClick={handleDetailedValidation}
-									className="flex-1"
-									disabled={submitting}
-								>
-									{
-										submitting ? (
-											<RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-										) : (
-											<CheckCircle className="h-4 w-4 mr-2" />
-										)
-									}
-									Submit Review
-								</Button>
-								<Button
-									variant="outline"
-									onClick={() => setValidationOpen(false)}
-								>
-									Cancel
-								</Button>
-							</div>
-						</div>
-					</DialogContent>
-				</Dialog>
+				<Link href={`/validatehub/${currentPost.id}`}>
+					<Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+						<Star className="h-5 w-5 mr-2" />
+						Detailed Review
+					</Button>
+				</Link>
 			</div>
+
+			{/* Normal Vote Dialog */}
+			<Dialog open={normalVoteDialogOpen} onOpenChange={setNormalVoteDialogOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>
+							Quick Validation - {pendingVote}
+						</DialogTitle>
+					</DialogHeader>
+					<div className="space-y-4">
+						<div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+							<div className="w-2 h-2 rounded-full bg-green-500"></div>
+							<span className="text-sm text-green-700">
+								You'll earn ₹{currentPost ? Number(currentPost.normalReward).toFixed(2) : '0'} immediately upon submission
+							</span>
+						</div>
+						
+						<div>
+							<Label>Why did you choose "{pendingVote?.toLowerCase()}"? (Optional)</Label>
+							<Textarea
+								placeholder="Share your reasoning briefly..."
+								value={validationForm.shortComment}
+								onChange={(e) => setValidationForm(prev => ({ ...prev, shortComment: e.target.value }))}
+								className="mt-2"
+								rows={3}
+							/>
+						</div>
+
+						<div className="flex gap-3">
+							<Button
+								onClick={confirmNormalVote}
+								className="flex-1"
+								disabled={submitting}
+							>
+								{submitting ? (
+									<RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+								) : (
+									<CheckCircle className="h-4 w-4 mr-2" />
+								)}
+								Submit & Earn ₹{currentPost ? Number(currentPost.normalReward).toFixed(2) : '0'}
+							</Button>
+							<Button
+								variant="outline"
+								onClick={() => {
+									setNormalVoteDialogOpen(false)
+									setPendingVote(null)
+								}}
+							>
+								Cancel
+							</Button>
+						</div>
+					</div>
+				</DialogContent>
+			</Dialog>
+
 			<div className="text-center mt-8 text-sm text-gray-500">
 				<p>💡 Pro tip: Swipe right to like, left to dislike, or up for neutral</p>
 			</div>

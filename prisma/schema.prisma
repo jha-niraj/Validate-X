@@ -33,9 +33,11 @@ enum ValidationStatus {
 }
 
 enum PaymentMethod {
-    RAZORPAY      // UPI/Cards via Razorpay
-    PHONEPE       // UPI via PhonePe
-    POLYGON       // Crypto via Polygon blockchain
+    UPI           // UPI payment method
+    BLOCKCHAIN    // Blockchain wallet payment
+    RAZORPAY      // UPI/Cards via Razorpay (deprecated)
+    PHONEPE       // UPI via PhonePe (deprecated)
+    POLYGON       // Crypto via Polygon blockchain (deprecated)
 }
 
 enum TransactionType {
@@ -159,6 +161,8 @@ model Post {
     // Settings
     allowAIFeedback       Boolean    @default(true)
     detailedApprovalRequired Boolean @default(true)
+    enableDetailedFeedback Boolean   @default(false)
+    detailedFeedbackStructure String? // JSON string of feedback questions/categories
     
     // Status and timing
     status                PostStatus @default(DRAFT)
@@ -189,6 +193,7 @@ model Validation {
     
     // Detailed validation data
     detailedFeedback  String?
+    detailedResponses String?          // JSON string of structured responses
     rating            Int?             // 1-5 scale
     feedbackFileUrl   String?
     feedbackFileName  String?

@@ -147,10 +147,13 @@ export async function redirectAfterOnboarding(role: string) {
 	switch (role) {
 		case 'USER':
 			redirect('/validatehub');
+			break;
 		case 'SUBMITTER':
 			redirect('/dashboard?createPost=true');
+			break;
 		default:
 			redirect('/dashboard');
+			break;
 	}
 }
 

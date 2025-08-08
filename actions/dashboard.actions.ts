@@ -99,9 +99,9 @@ export async function getSubmitterDashboard() {
 				category: post.category.name,
 				validationCount: post._count.validations,
 				createdAt: post.createdAt,
-				totalBudget: post.totalBudget,
-				normalReward: post.normalReward,
-				detailedReward: post.detailedReward
+				totalBudget: Number(post.totalBudget),
+				normalReward: Number(post.normalReward),
+				detailedReward: Number(post.detailedReward)
 			})),
 			analytics: {
 				totalPosts,
@@ -265,7 +265,7 @@ export async function getValidatorDashboard() {
 				status: validation.status,
 				rating: validation.rating,
 				createdAt: validation.createdAt,
-				rewardAmount: validation.rewardAmount
+				rewardAmount: Number(validation.rewardAmount)
 			})),
 			availablePosts: availablePosts.map(post => ({
 				id: post.id,
@@ -274,8 +274,8 @@ export async function getValidatorDashboard() {
 				authorName: post.author.name,
 				authorImage: post.author.image,
 				validationCount: post._count.validations,
-				normalReward: post.normalReward,
-				detailedReward: post.detailedReward,
+				normalReward: Number(post.normalReward),
+				detailedReward: Number(post.detailedReward),
 				createdAt: post.createdAt
 			})),
 			analytics: {

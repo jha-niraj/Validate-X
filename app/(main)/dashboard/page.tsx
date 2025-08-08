@@ -10,9 +10,12 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
 	Plus, Lightbulb, Star, MessageSquare, Eye, CheckCircle,
-	PenTool, DollarSign, Zap, BookOpen
+	PenTool, DollarSign, Zap, BookOpen, TrendingUp, Users,
+	Calendar, Award, Clock, Target, BarChart3, ArrowUpRight, User
 } from "lucide-react"
 import { toast } from "sonner"
+import { motion, AnimatePresence } from "framer-motion"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts'
 import { getSubmitterDashboard, getValidatorDashboard } from "@/actions/dashboard.actions"
 import Link from "next/link"
 
@@ -40,6 +43,7 @@ export default function DashboardPage() {
 	const { data: session, status } = useSession()
 	const searchParams = useSearchParams()
 	const [showCreatePrompt, setShowCreatePrompt] = useState(false)
+	const [showPostedAnimation, setShowPostedAnimation] = useState(false)
 	const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
 	const [loading, setLoading] = useState(true)
 
@@ -48,6 +52,14 @@ export default function DashboardPage() {
 		if (searchParams.get('createPost') === 'true') {
 			setShowCreatePrompt(true)
 			toast.success("Welcome! Ready to submit your first idea?")
+		}
+		
+		// Check if user came back from posting
+		if (searchParams.get('posted') === 'true') {
+			setShowPostedAnimation(true)
+			toast.success("🎉 Your idea has been submitted successfully!")
+			// Hide animation after 3 seconds
+			setTimeout(() => setShowPostedAnimation(false), 3000)
 		}
 	}, [searchParams])
 
@@ -150,6 +162,66 @@ export default function DashboardPage() {
 						{user.role === 'ADMIN' && "Manage the platform and moderate content"}
 					</p>
 				</div>
+				
+				{/* Posted Success Animation */}
+				<AnimatePresence>
+					{showPostedAnimation && (
+						<motion.div
+							initial={{ opacity: 0, y: -50, scale: 0.9 }}
+							animate={{ opacity: 1, y: 0, scale: 1 }}
+							exit={{ opacity: 0, y: -50, scale: 0.9 }}
+							transition={{ duration: 0.5, type: "spring", bounce: 0.3 }}
+							className="mb-8"
+						>
+							<Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 dark:border-green-800">
+								<CardContent className="p-6">
+									<div className="flex items-center gap-4">
+										<motion.div
+											animate={{ rotate: 360 }}
+											transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+											className="p-3 bg-green-100 dark:bg-green-900 rounded-full"
+										>
+											<CheckCircle className="h-8 w-8 text-green-600" />
+										</motion.div>
+										<div className="flex-1">
+											<motion.h3
+												initial={{ opacity: 0, x: -20 }}
+												animate={{ opacity: 1, x: 0 }}
+												transition={{ delay: 0.2 }}
+												className="text-xl font-bold text-green-800 dark:text-green-200 mb-2"
+											>
+												🎉 Idea Submitted Successfully!
+											</motion.h3>
+											<motion.p
+												initial={{ opacity: 0, x: -20 }}
+												animate={{ opacity: 1, x: 0 }}
+												transition={{ delay: 0.4 }}
+												className="text-green-700 dark:text-green-300"
+											>
+												Your idea is now live and ready for validation. You'll receive notifications as validators provide feedback.
+											</motion.p>
+											<motion.div
+												initial={{ opacity: 0, y: 20 }}
+												animate={{ opacity: 1, y: 0 }}
+												transition={{ delay: 0.6 }}
+												className="flex gap-3 mt-4"
+											>
+												<Button size="sm" variant="outline" className="border-green-300 text-green-700 hover:bg-green-100">
+													<Eye className="h-4 w-4 mr-2" />
+													View Your Post
+												</Button>
+												<Button size="sm" variant="ghost" onClick={() => setShowPostedAnimation(false)}>
+													Dismiss
+												</Button>
+											</motion.div>
+										</div>
+									</div>
+								</CardContent>
+							</Card>
+						</motion.div>
+					)}
+				</AnimatePresence>
+				
 				{
 					showCreatePrompt && user.role === 'SUBMITTER' && (
 						<Card className="mb-8 border-green-200 bg-green-50 dark:bg-green-950/20 dark:border-green-800">
@@ -164,7 +236,7 @@ export default function DashboardPage() {
 											Get valuable feedback from our community of validators and improve your concepts.
 										</p>
 										<div className="flex gap-3">
-											<Link href="/post/create">
+											<Link href="/validation/create">
 												<Button className="flex items-center gap-2">
 													<Plus className="h-4 w-4" />
 													Create Your First Post
@@ -278,8 +350,26 @@ export default function DashboardPage() {
 
 // Submitter Dashboard Component
 function SubmitterDashboard({ data }: { data: DashboardData }) {
+	// Mock chart data - replace with real data from analytics
+	const validationTrendData = [
+		{ date: '2024-01-01', validations: 5 },
+		{ date: '2024-01-02', validations: 8 },
+		{ date: '2024-01-03', validations: 12 },
+		{ date: '2024-01-04', validations: 15 },
+		{ date: '2024-01-05', validations: 10 },
+		{ date: '2024-01-06', validations: 18 },
+		{ date: '2024-01-07', validations: 22 }
+	]
+
+	const postStatusData = [
+		{ name: 'Open', value: data.posts?.filter(p => p.status === 'OPEN').length || 0, color: '#22c55e' },
+		{ name: 'Closed', value: data.posts?.filter(p => p.status === 'CLOSED').length || 0, color: '#94a3b8' },
+		{ name: 'Pending', value: data.posts?.filter(p => p.status === 'PENDING').length || 0, color: '#f59e0b' }
+	]
+
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+		<div className="space-y-8">
+			{/* Quick Actions */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -291,20 +381,88 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<Link href="/post/create">
+					<Link href="/validation/create">
 						<Button className="w-full justify-start" size="lg">
 							<Plus className="mr-2 h-5 w-5" />
 							Submit New Idea
 						</Button>
 					</Link>
-					<Link href="/wallet">
+					<Link href="/profile">
 						<Button variant="outline" className="w-full justify-start" size="lg">
-							<DollarSign className="mr-2 h-5 w-5" />
-							View Wallet
+							<User className="mr-2 h-5 w-5" />
+							Edit Profile
 						</Button>
 					</Link>
 				</CardContent>
 			</Card>
+
+			{/* Analytics Section */}
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+				{/* Validation Trend Chart */}
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<TrendingUp className="h-5 w-5" />
+							Validation Trends
+						</CardTitle>
+						<CardDescription>
+							Daily validation activity on your posts
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="h-[300px]">
+							<ResponsiveContainer width="100%" height="100%">
+								<LineChart data={validationTrendData}>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="date" tickFormatter={(value) => new Date(value).toLocaleDateString()} />
+									<YAxis />
+									<Tooltip 
+										labelFormatter={(value) => new Date(value).toLocaleDateString()}
+										formatter={(value) => [value, 'Validations']}
+									/>
+									<Line type="monotone" dataKey="validations" stroke="#3b82f6" strokeWidth={2} />
+								</LineChart>
+							</ResponsiveContainer>
+						</div>
+					</CardContent>
+				</Card>
+
+				{/* Post Status Distribution */}
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<BarChart3 className="h-5 w-5" />
+							Post Status Distribution
+						</CardTitle>
+						<CardDescription>
+							Overview of your post statuses
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="h-[300px]">
+							<ResponsiveContainer width="100%" height="100%">
+								<PieChart>
+									<Pie
+										data={postStatusData}
+										cx="50%"
+										cy="50%"
+										outerRadius={80}
+										dataKey="value"
+										label={({ name, value }) => `${name}: ${value}`}
+									>
+										{postStatusData.map((entry, index) => (
+											<Cell key={`cell-${index}`} fill={entry.color} />
+										))}
+									</Pie>
+									<Tooltip />
+								</PieChart>
+							</ResponsiveContainer>
+						</div>
+					</CardContent>
+				</Card>
+			</div>
+
+			{/* Recent Posts with Links */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -321,29 +479,43 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 							<div className="space-y-4">
 								{
 									data.posts.slice(0, 5).map((post) => (
-										<div key={post.id} className="flex items-center justify-between p-3 border rounded-lg">
-											<div className="flex-1">
-												<h4 className="font-medium line-clamp-1">{post.title}</h4>
-												<div className="flex items-center gap-2 mt-1">
-													<Badge variant="outline" className="text-xs">
-														{post.category}
-													</Badge>
-													<Badge variant={
-														post.status === 'OPEN' ? 'default' :
-															post.status === 'CLOSED' ? 'secondary' :
-																'outline'
-													} className="text-xs">
-														{post.status}
-													</Badge>
+										<motion.div 
+											key={post.id}
+											initial={{ opacity: 0, y: 20 }}
+											animate={{ opacity: 1, y: 0 }}
+											whileHover={{ scale: 1.02 }}
+											transition={{ duration: 0.2 }}
+										>
+											<Link href={`/validation/${post.id}/details`}>
+												<div className="flex items-center justify-between p-4 border rounded-lg hover:shadow-md transition-all cursor-pointer bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750">
+													<div className="flex-1">
+														<h4 className="font-medium line-clamp-1 mb-2">{post.title}</h4>
+														<div className="flex items-center gap-2">
+															<Badge variant="outline" className="text-xs">
+																{post.category}
+															</Badge>
+															<Badge variant={
+																post.status === 'OPEN' ? 'default' :
+																	post.status === 'CLOSED' ? 'secondary' :
+																		'outline'
+															} className="text-xs">
+																{post.status}
+															</Badge>
+														</div>
+													</div>
+													<div className="text-right">
+														<div className="flex items-center gap-2 mb-1">
+															<Eye className="h-4 w-4 text-muted-foreground" />
+															<span className="text-sm font-medium">{post.validationCount} validations</span>
+															<ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+														</div>
+														<p className="text-xs text-muted-foreground">
+															₹{Number(post.totalBudget).toFixed(0)} budget
+														</p>
+													</div>
 												</div>
-											</div>
-											<div className="text-right">
-												<p className="text-sm font-medium">{post.validationCount} validations</p>
-												<p className="text-xs text-muted-foreground">
-													₹{Number(post.totalBudget).toFixed(0)} budget
-												</p>
-											</div>
-										</div>
+											</Link>
+										</motion.div>
 									))
 								}
 							</div>
@@ -365,121 +537,217 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 
 // Validator Dashboard Component  
 function ValidatorDashboard({ data }: { data: DashboardData }) {
+	// Mock earnings data for chart
+	const earningsData = [
+		{ date: '2024-01-01', earnings: 25 },
+		{ date: '2024-01-02', earnings: 50 },
+		{ date: '2024-01-03', earnings: 75 },
+		{ date: '2024-01-04', earnings: 100 },
+		{ date: '2024-01-05', earnings: 60 },
+		{ date: '2024-01-06', earnings: 125 },
+		{ date: '2024-01-07', earnings: 150 }
+	]
+
+	const validationTypeData = [
+		{ name: 'Normal', value: data.validations?.filter(v => v.type === 'NORMAL').length || 0, color: '#22c55e' },
+		{ name: 'Detailed', value: data.validations?.filter(v => v.type === 'DETAILED').length || 0, color: '#3b82f6' }
+	]
+
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-			<Card>
-				<CardHeader>
-					<CardTitle className="flex items-center gap-2">
-						<Zap className="h-5 w-5" />
-						Available for Validation
-					</CardTitle>
-					<CardDescription>
-						Posts waiting for your expert feedback
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					{
-						data.availablePosts && data.availablePosts.length > 0 ? (
-							<div className="space-y-4">
-								{
-									data.availablePosts.slice(0, 5).map((post) => (
-										<div key={post.id} className="flex items-center justify-between p-3 border rounded-lg">
-											<div className="flex-1">
-												<h4 className="font-medium line-clamp-1">{post.title}</h4>
-												<div className="flex items-center gap-2 mt-1">
-													<Badge variant="outline" className="text-xs">
-														{post.category}
-													</Badge>
-													<p className="text-xs text-muted-foreground">
-														by {post.authorName}
-													</p>
+		<div className="space-y-8">
+			{/* Analytics Section */}
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+				{/* Earnings Trend Chart */}
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<TrendingUp className="h-5 w-5" />
+							Earnings Trend
+						</CardTitle>
+						<CardDescription>
+							Your daily validation earnings
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="h-[300px]">
+							<ResponsiveContainer width="100%" height="100%">
+								<LineChart data={earningsData}>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="date" tickFormatter={(value) => new Date(value).toLocaleDateString()} />
+									<YAxis />
+									<Tooltip 
+										labelFormatter={(value) => new Date(value).toLocaleDateString()}
+										formatter={(value) => [`₹${value}`, 'Earnings']}
+									/>
+									<Line type="monotone" dataKey="earnings" stroke="#22c55e" strokeWidth={2} />
+								</LineChart>
+							</ResponsiveContainer>
+						</div>
+					</CardContent>
+				</Card>
+
+				{/* Validation Type Distribution */}
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<BarChart3 className="h-5 w-5" />
+							Validation Types
+						</CardTitle>
+						<CardDescription>
+							Distribution of your validation types
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="h-[300px]">
+							<ResponsiveContainer width="100%" height="100%">
+								<BarChart data={validationTypeData}>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="name" />
+									<YAxis />
+									<Tooltip formatter={(value) => [value, 'Validations']} />
+									<Bar dataKey="value" fill="#3b82f6" />
+								</BarChart>
+							</ResponsiveContainer>
+						</div>
+					</CardContent>
+				</Card>
+			</div>
+
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+				{/* Available Posts */}
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<Zap className="h-5 w-5" />
+							Available for Validation
+						</CardTitle>
+						<CardDescription>
+							Posts waiting for your expert feedback
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						{
+							data.availablePosts && data.availablePosts.length > 0 ? (
+								<div className="space-y-4">
+									{
+										data.availablePosts.slice(0, 5).map((post) => (
+											<motion.div
+												key={post.id}
+												initial={{ opacity: 0, y: 20 }}
+												animate={{ opacity: 1, y: 0 }}
+												whileHover={{ scale: 1.02 }}
+												transition={{ duration: 0.2 }}
+											>
+												<Link href={`/validatehub`}>
+													<div className="flex items-center justify-between p-3 border rounded-lg hover:shadow-md transition-all cursor-pointer bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750">
+														<div className="flex-1">
+															<h4 className="font-medium line-clamp-1">{post.title}</h4>
+															<div className="flex items-center gap-2 mt-1">
+																<Badge variant="outline" className="text-xs">
+																	{post.category}
+																</Badge>
+																<p className="text-xs text-muted-foreground">
+																	by {post.authorName}
+																</p>
+															</div>
+														</div>
+														<div className="text-right">
+															<p className="text-sm font-medium text-green-600">
+																₹{Number(post.normalReward).toFixed(0)} - ₹{Number(post.detailedReward).toFixed(0)}
+															</p>
+															<p className="text-xs text-muted-foreground">
+																{post.validationCount} validations
+															</p>
+														</div>
+													</div>
+												</Link>
+											</motion.div>
+										))
+									}
+									<Link href="/validatehub">
+										<Button className="w-full mt-4">
+											View All Available Posts
+										</Button>
+									</Link>
+								</div>
+							) : (
+								<div className="text-center py-8 text-muted-foreground">
+									<Eye className="h-12 w-12 mx-auto mb-4 opacity-50" />
+									<p className="text-lg font-medium mb-2">No posts available</p>
+									<p className="text-sm">
+										Check back later for new validation opportunities
+									</p>
+								</div>
+							)
+						}
+					</CardContent>
+				</Card>
+
+				{/* Recent Validations */}
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<CheckCircle className="h-5 w-5" />
+							Recent Validations
+						</CardTitle>
+						<CardDescription>
+							Your validation history and earnings
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						{
+							data.validations && data.validations.length > 0 ? (
+								<div className="space-y-4">
+									{
+										data.validations.slice(0, 5).map((validation, index) => (
+											<motion.div
+												key={validation.id}
+												initial={{ opacity: 0, y: 20 }}
+												animate={{ opacity: 1, y: 0 }}
+												transition={{ delay: index * 0.1 }}
+											>
+												<div className="flex items-center justify-between p-3 border rounded-lg">
+													<div className="flex-1">
+														<h4 className="font-medium line-clamp-1">{validation.postTitle}</h4>
+														<div className="flex items-center gap-2 mt-1">
+															<Badge variant="outline" className="text-xs">
+																{validation.postCategory}
+															</Badge>
+															<Badge variant={
+																validation.status === 'APPROVED' ? 'default' :
+																	validation.status === 'PENDING' ? 'secondary' :
+																		'destructive'
+															} className="text-xs">
+																{validation.status}
+															</Badge>
+														</div>
+													</div>
+													<div className="text-right">
+														<p className="text-sm font-medium text-green-600">
+															₹{Number(validation.rewardAmount).toFixed(2)}
+														</p>
+														<p className="text-xs text-muted-foreground">
+															{validation.type}
+														</p>
+													</div>
 												</div>
-											</div>
-											<div className="text-right">
-												<p className="text-sm font-medium text-green-600">
-													₹{Number(post.normalReward).toFixed(0)} - ₹{Number(post.detailedReward).toFixed(0)}
-												</p>
-												<p className="text-xs text-muted-foreground">
-													{post.validationCount} validations
-												</p>
-											</div>
-										</div>
-									))
-								}
-								<Link href="/validatehub">
-									<Button className="w-full mt-4">
-										View All Available Posts
-									</Button>
-								</Link>
-							</div>
-						) : (
-							<div className="text-center py-8 text-muted-foreground">
-								<Eye className="h-12 w-12 mx-auto mb-4 opacity-50" />
-								<p className="text-lg font-medium mb-2">No posts available</p>
-								<p className="text-sm">
-									Check back later for new validation opportunities
-								</p>
-							</div>
-						)
-					}
-				</CardContent>
-			</Card>
-			<Card>
-				<CardHeader>
-					<CardTitle className="flex items-center gap-2">
-						<CheckCircle className="h-5 w-5" />
-						Recent Validations
-					</CardTitle>
-					<CardDescription>
-						Your validation history and earnings
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					{
-						data.validations && data.validations.length > 0 ? (
-							<div className="space-y-4">
-								{
-									data.validations.slice(0, 5).map((validation) => (
-										<div key={validation.id} className="flex items-center justify-between p-3 border rounded-lg">
-											<div className="flex-1">
-												<h4 className="font-medium line-clamp-1">{validation.postTitle}</h4>
-												<div className="flex items-center gap-2 mt-1">
-													<Badge variant="outline" className="text-xs">
-														{validation.postCategory}
-													</Badge>
-													<Badge variant={
-														validation.status === 'APPROVED' ? 'default' :
-															validation.status === 'PENDING' ? 'secondary' :
-																'destructive'
-													} className="text-xs">
-														{validation.status}
-													</Badge>
-												</div>
-											</div>
-											<div className="text-right">
-												<p className="text-sm font-medium text-green-600">
-													₹{Number(validation.rewardAmount).toFixed(2)}
-												</p>
-												<p className="text-xs text-muted-foreground">
-													{validation.type}
-												</p>
-											</div>
-										</div>
-									))
-								}
-							</div>
-						) : (
-							<div className="text-center py-8 text-muted-foreground">
-								<MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-								<p className="text-lg font-medium mb-2">No validations yet</p>
-								<p className="text-sm">
-									Start validating posts to earn rewards
-								</p>
-							</div>
-						)
-					}
-				</CardContent>
-			</Card>
+											</motion.div>
+										))
+									}
+								</div>
+							) : (
+								<div className="text-center py-8 text-muted-foreground">
+									<MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+									<p className="text-lg font-medium mb-2">No validations yet</p>
+									<p className="text-sm">
+										Start validating posts to earn rewards
+									</p>
+								</div>
+							)
+						}
+					</CardContent>
+				</Card>
+			</div>
 		</div>
 	)
 }

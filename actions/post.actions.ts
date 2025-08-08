@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/auth"
 import { revalidatePath } from "next/cache"
-import { PostStatus, ValidationType } from "@prisma/client"
+import { PostStatus, ValidationType, ValidationStatus } from "@prisma/client"
 import { Decimal } from "@prisma/client/runtime/library"
 
 interface CreatePostData {
@@ -17,9 +17,15 @@ interface CreatePostData {
 	normalValidatorCount: number
 	detailedValidatorCount: number
 	totalBudget: number
+	normalReward: number
+	detailedReward: number
+	platformFee: number
 	allowAIFeedback: boolean
 	detailedApprovalRequired: boolean
-	expiryDays: number
+	enableDetailedFeedback: boolean
+	detailedFeedbackStructure?: string
+	expiryDate: string
+	file?: File | null
 }
 
 export async function createPost(data: CreatePostData) {
@@ -29,21 +35,21 @@ export async function createPost(data: CreatePostData) {
 			return { success: false, error: "Unauthorized" }
 		}
 
-		// Calculate rewards and fees
-		const platformFeeRate = 0.1 // 10% platform fee
-		const totalAfterFee = data.totalBudget * (1 - platformFeeRate)
-		const totalValidators = data.normalValidatorCount + data.detailedValidatorCount
+		// Check if user has sufficient balance
+		const user = await prisma.user.findUnique({
+			where: { id: session.user.id },
+			select: { availableBalance: true }
+		})
 
-		// Calculate rewards per validation
-		const normalReward = totalValidators > 0
-			? (totalAfterFee * 0.6) / data.normalValidatorCount
-			: 0
-		const detailedReward = totalValidators > 0
-			? (totalAfterFee * 0.4) / data.detailedValidatorCount
-			: 0
+		if (!user) {
+			return { success: false, error: "User not found" }
+		}
 
-		const expiryDate = new Date()
-		expiryDate.setDate(expiryDate.getDate() + data.expiryDays)
+		if (user.availableBalance.toNumber() < data.totalBudget) {
+			return { success: false, error: "Insufficient balance" }
+		}
+
+		const expiryDate = new Date(data.expiryDate)
 
 		const post = await prisma.post.create({
 			data: {
@@ -58,11 +64,13 @@ export async function createPost(data: CreatePostData) {
 				normalValidatorCount: data.normalValidatorCount,
 				detailedValidatorCount: data.detailedValidatorCount,
 				totalBudget: new Decimal(data.totalBudget),
-				normalReward: new Decimal(normalReward),
-				detailedReward: new Decimal(detailedReward),
-				platformFee: new Decimal(data.totalBudget * platformFeeRate),
+				normalReward: new Decimal(data.normalReward),
+				detailedReward: new Decimal(data.detailedReward),
+				platformFee: new Decimal(data.platformFee),
 				allowAIFeedback: data.allowAIFeedback,
 				detailedApprovalRequired: data.detailedApprovalRequired,
+				enableDetailedFeedback: data.enableDetailedFeedback,
+				detailedFeedbackStructure: data.detailedFeedbackStructure,
 				expiryDate,
 				status: PostStatus.OPEN
 			},
@@ -77,13 +85,20 @@ export async function createPost(data: CreatePostData) {
 			}
 		})
 
+		// Deduct from user's available balance
+		await prisma.user.update({
+			where: { id: session.user.id },
+			data: {
+				availableBalance: { decrement: data.totalBudget }
+			}
+		})
+
 		// Create payment transaction record
 		await prisma.transaction.create({
 			data: {
 				userId: session.user.id,
-				amount: new Decimal(data.totalBudget),
+				amount: new Decimal(-data.totalBudget),
 				type: "POST_PAYMENT",
-				postId: post.id,
 				description: `Payment for post: ${data.title}`,
 				status: "COMPLETED"
 			}
@@ -337,5 +352,171 @@ export async function getCategories() {
 	} catch (error) {
 		console.error("Error fetching categories:", error)
 		return { success: false, error: "Failed to fetch categories" }
+	}
+}
+
+export async function getPostDetails(postId: string) {
+	try {
+		const session = await auth()
+		if (!session?.user?.id) {
+			return { success: false, error: "Unauthorized" }
+		}
+
+		const post = await prisma.post.findUnique({
+			where: { id: postId },
+			include: {
+				category: {
+					select: { name: true, icon: true }
+				},
+				author: {
+					select: { name: true, image: true }
+				},
+				validations: {
+					include: {
+						validator: {
+							select: { name: true, image: true }
+						}
+					},
+					orderBy: { createdAt: 'desc' }
+				}
+			}
+		})
+
+		if (!post) {
+			return { success: false, error: "Post not found" }
+		}
+
+		// Check if user is the author
+		if (post.authorId !== session.user.id) {
+			return { success: false, error: "Access denied" }
+		}
+
+		// Transform the data for frontend
+		const transformedPost = {
+			...post,
+			category: {
+				...post.category,
+				icon: post.category.icon || undefined
+			},
+			author: {
+				...post.author,
+				image: post.author.image || undefined
+			},
+			createdAt: post.createdAt.toISOString(),
+			expiryDate: post.expiryDate.toISOString(),
+			fileUrl: post.fileUrl || undefined,
+			fileName: post.fileName || undefined,
+			linkUrl: post.linkUrl || undefined,
+			totalBudget: Number(post.totalBudget),
+			normalReward: Number(post.normalReward),
+			detailedReward: Number(post.detailedReward),
+			validations: {
+				normal: post.validations
+					.filter(v => v.type === ValidationType.NORMAL)
+					.map(v => ({
+						id: v.id,
+						vote: v.vote,
+						comment: v.shortComment,
+						validator: {
+							...v.validator,
+							image: v.validator.image || undefined
+						},
+						createdAt: v.createdAt.toISOString()
+					})),
+				detailed: post.validations
+					.filter(v => v.type === ValidationType.DETAILED)
+					.map(v => ({
+						id: v.id,
+						feedback: v.detailedFeedback || '',
+						rating: v.rating || 0,
+						status: v.status,
+						validator: {
+							...v.validator,
+							image: v.validator.image || undefined
+						},
+						createdAt: v.createdAt.toISOString(),
+						isOriginal: v.isOriginal || false
+					}))
+			}
+		}
+
+		return { success: true, post: transformedPost }
+	} catch (error) {
+		console.error('Error fetching post details:', error)
+		return { success: false, error: "Failed to fetch post details" }
+	}
+}
+
+export async function getDetailedValidations(postId: string) {
+	try {
+		const session = await auth()
+		if (!session?.user?.id) {
+			return { success: false, error: "Unauthorized" }
+		}
+
+		const post = await prisma.post.findUnique({
+			where: { id: postId },
+			select: { 
+				id: true, 
+				title: true, 
+				description: true, 
+				authorId: true 
+			}
+		})
+
+		if (!post) {
+			return { success: false, error: "Post not found" }
+		}
+
+		// Check if user is the author
+		if (post.authorId !== session.user.id) {
+			return { success: false, error: "Access denied" }
+		}
+
+		const validations = await prisma.validation.findMany({
+			where: {
+				postId: postId,
+				type: ValidationType.DETAILED,
+				status: ValidationStatus.PENDING
+			},
+			include: {
+				validator: {
+					select: { 
+						name: true, 
+						image: true,
+						reputationScore: true
+					}
+				}
+			},
+			orderBy: { createdAt: 'desc' }
+		})
+
+		const transformedValidations = validations.map(v => ({
+			id: v.id,
+			feedback: v.detailedFeedback || '',
+			rating: v.rating || 0,
+			status: v.status,
+			validator: {
+				...v.validator,
+				image: v.validator.image || undefined,
+				reputationScore: Number(v.validator.reputationScore)
+			},
+			createdAt: v.createdAt.toISOString(),
+			isOriginal: v.isOriginal || false,
+			originalityScore: v.isOriginal ? 0.8 + Math.random() * 0.2 : 0.5 + Math.random() * 0.3
+		}))
+
+		return { 
+			success: true, 
+			validations: transformedValidations,
+			postInfo: {
+				id: post.id,
+				title: post.title,
+				description: post.description
+			}
+		}
+	} catch (error) {
+		console.error('Error fetching detailed validations:', error)
+		return { success: false, error: "Failed to fetch validations" }
 	}
 }

@@ -389,3 +389,160 @@ export async function optOutBalance(amount: number) {
 		return { success: false, error: "Failed to opt out balance" }
 	}
 }
+
+export async function getUserWallet() {
+	try {
+		const session = await auth()
+		if (!session?.user?.id) {
+			throw new Error("Unauthorized")
+		}
+
+		const user = await prisma.user.findUnique({
+			where: { id: session.user.id },
+			select: {
+				totalBalance: true,
+				availableBalance: true,
+				role: true,
+				totalValidations: true,
+				totalIdeasSubmitted: true
+			}
+		})
+
+		if (!user) {
+			throw new Error("User not found")
+		}
+
+		// Get withdrawal requests
+		const withdrawalRequests = await prisma.cashoutRequest.findMany({
+			where: { userId: session.user.id },
+			orderBy: { createdAt: 'desc' },
+			take: 10
+		})
+
+		// Calculate total earned/spent based on role
+		let totalEarned = 0
+		let totalSpent = 0
+
+		if (user.role === 'USER') {
+			const earnings = await prisma.transaction.aggregate({
+				where: {
+					userId: session.user.id,
+					type: { in: ['VALIDATION_EARNING', 'BONUS'] }
+				},
+				_sum: { amount: true }
+			})
+			totalEarned = earnings._sum?.amount?.toNumber() || 0
+		} else if (user.role === 'SUBMITTER') {
+			const spending = await prisma.transaction.aggregate({
+				where: {
+					userId: session.user.id,
+					type: 'POST_PAYMENT'
+				},
+				_sum: { amount: true }
+			})
+			totalSpent = spending._sum?.amount?.toNumber() || 0
+		}
+
+		return {
+			balance: user.availableBalance.toNumber(),
+			role: user.role,
+			totalEarned,
+			totalSpent,
+			withdrawalRequests: withdrawalRequests.map(req => ({
+				id: req.id,
+				amount: req.amount.toNumber(),
+				status: req.status,
+				createdAt: req.createdAt.toISOString(),
+				paymentMethod: req.method,
+				details: {
+					upiId: req.upiId,
+					paytmNumber: req.paytmNumber,
+					walletAddress: req.walletAddress
+				}
+			}))
+		}
+	} catch (error) {
+		console.error("Error fetching user wallet:", error)
+		throw error
+	}
+}
+
+export async function createWithdrawalRequest({
+	amount,
+	paymentMethod,
+	details
+}: {
+	amount: number
+	paymentMethod: 'UPI' | 'BLOCKCHAIN'
+	details: { upiId?: string; walletAddress?: string }
+}) {
+	try {
+		const session = await auth()
+		if (!session?.user?.id) {
+			throw new Error("Unauthorized")
+		}
+
+		const user = await prisma.user.findUnique({
+			where: { id: session.user.id },
+			select: { availableBalance: true }
+		})
+
+		if (!user) {
+			throw new Error("User not found")
+		}
+
+		if (user.availableBalance.toNumber() < amount) {
+			throw new Error("Insufficient balance")
+		}
+
+		if (amount < 100) {
+			throw new Error("Minimum withdrawal amount is ₹100")
+		}
+
+		// Map payment method to Prisma enum
+		const prismaPaymentMethod = paymentMethod === 'UPI' ? PaymentMethod.RAZORPAY : PaymentMethod.BLOCKCHAIN
+
+		const withdrawalRequest = await prisma.cashoutRequest.create({
+			data: {
+				userId: session.user.id,
+				amount: new Decimal(amount),
+				method: prismaPaymentMethod,
+				upiId: details.upiId,
+				walletAddress: details.walletAddress,
+				status: CashoutStatus.PENDING
+			}
+		})
+
+		// Deduct amount from available balance
+		await prisma.user.update({
+			where: { id: session.user.id },
+			data: {
+				availableBalance: { decrement: amount }
+			}
+		})
+
+		// Create transaction record
+		await prisma.transaction.create({
+			data: {
+				userId: session.user.id,
+				amount: new Decimal(-amount),
+				type: "CASHOUT",
+				description: `Withdrawal request of ₹${amount} via ${paymentMethod}`,
+				status: "PENDING"
+			}
+		})
+
+		revalidatePath('/wallet')
+
+		return {
+			id: withdrawalRequest.id,
+			amount: withdrawalRequest.amount.toNumber(),
+			status: withdrawalRequest.status,
+			createdAt: withdrawalRequest.createdAt.toISOString(),
+			paymentMethod: withdrawalRequest.method
+		}
+	} catch (error) {
+		console.error("Error creating withdrawal request:", error)
+		throw error
+	}
+}

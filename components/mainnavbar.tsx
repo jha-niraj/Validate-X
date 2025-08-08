@@ -3,7 +3,7 @@
 import { useTheme } from "next-themes"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Moon, Sun, Home, User, LogOut, Shield, LogIn } from "lucide-react"
+import { Moon, Sun, Home, User, LogOut, Shield, LogIn, DollarSign, Wallet } from "lucide-react"
 import { Button } from "./ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -83,6 +83,22 @@ const MainNavbar = ({ isCollapsed }: { isCollapsed: boolean }) => {
                         </div>
                     </div>
                     <div className="flex items-center gap-2 sm:gap-3">
+                        {/* Show balance only for validators (USER role) */}
+                        {session?.user?.role === 'USER' && (
+                            <div className="hidden md:flex items-center gap-2 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg px-3 py-1">
+                                <DollarSign className="h-4 w-4 text-green-600" />
+                                <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                                    ₹234.50
+                                </span>
+                                <Link href="/wallet">
+                                    <Button variant="ghost" size="sm" className="h-6 px-2 text-xs hover:bg-green-100 dark:hover:bg-green-900">
+                                        <Wallet className="h-3 w-3 mr-1" />
+                                        Wallet
+                                    </Button>
+                                </Link>
+                            </div>
+                        )}
+                        
                         <div className="hidden md:flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1 border border-gray-200 dark:border-gray-700">
                             <Button
                                 variant="ghost"
