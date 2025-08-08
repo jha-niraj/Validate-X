@@ -6,7 +6,7 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 
 const onboardingSchema = z.object({
-	userRole: z.enum(["SUBMITTER", "VALIDATOR", "BOTH"]),
+	role: z.enum(["SUBMITTER", "USER"]),
 	categories: z.array(z.string()).min(1, "Please select at least one category"),
 	customCategory: z.string().optional(),
 });
@@ -22,7 +22,7 @@ export async function completeOnboarding(data: OnboardingInput) {
 		}
 
 		const validatedData = onboardingSchema.parse(data);
-		const { userRole, categories: inputCategories, customCategory } = validatedData;
+		const { role, categories: inputCategories, customCategory } = validatedData;
 
 		// Ensure default categories exist in database
 		const existingCategories = await seedDefaultCategories();
@@ -84,7 +84,7 @@ export async function completeOnboarding(data: OnboardingInput) {
 		const user = await prisma.user.update({
 			where: { id: session.user.id },
 			data: {
-				userRole: validatedData.userRole,
+				role: validatedData.role,
 				onboardingCompleted: true,
 				updatedAt: new Date(),
 			}
@@ -125,7 +125,7 @@ export async function checkOnboardingStatus() {
 			where: { id: session.user.id },
 			select: {
 				onboardingCompleted: true,
-				userRole: true,
+				role: true,
 			}
 		});
 
@@ -135,7 +135,7 @@ export async function checkOnboardingStatus() {
 
 		return {
 			needsOnboarding: false,
-			userRole: user.userRole
+			role: user.role
 		};
 	} catch (error) {
 		console.error("Error checking onboarding status:", error);
@@ -143,14 +143,12 @@ export async function checkOnboardingStatus() {
 	}
 }
 
-export async function redirectAfterOnboarding(userRole: string) {
-	switch (userRole) {
-		case 'VALIDATOR':
+export async function redirectAfterOnboarding(role: string) {
+	switch (role) {
+		case 'USER':
 			redirect('/validatehub');
 		case 'SUBMITTER':
 			redirect('/dashboard?createPost=true');
-		case 'BOTH':
-			redirect('/dashboard');
 		default:
 			redirect('/dashboard');
 	}

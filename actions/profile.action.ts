@@ -5,6 +5,8 @@ import { auth } from "@/auth";
 import { z } from "zod";
 import cloudinary from "@/lib/cloudinary";
 import bcrypt from "bcryptjs";
+import { Role } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 const updateProfileSchema = z.object({
 	name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name must be less than 50 characters").optional(),
@@ -385,5 +387,28 @@ export async function deleteAccount(data: DeleteAccountInput) {
 		}
 
 		return { success: false, error: "Failed to delete account" };
+	}
+}
+
+// Function to get fresh user data for session refresh
+export async function getUserForSession(userId: string) {
+	try {
+		const user = await prisma.user.findUnique({
+			where: { id: userId },
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				image: true,
+				role: true,
+				roleExplicitlyChosen: true,
+				onboardingCompleted: true
+			}
+		});
+
+		return user;
+	} catch (error) {
+		console.error("Error fetching user for session:", error);
+		return null;
 	}
 }

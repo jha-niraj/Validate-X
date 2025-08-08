@@ -246,15 +246,231 @@ export default function ValidateHubPage() {
 
 	if (!currentPost) {
 		return (
-			<div className="container mx-auto p-6">
-				<div className="text-center py-12">
-					<CheckCircle className="h-16 w-16 mx-auto mb-4 text-green-500" />
-					<h2 className="text-2xl font-bold mb-2">All caught up!</h2>
-					<p className="text-gray-600 mb-4">No more posts available for validation right now.</p>
-					<Button onClick={loadPosts}>
-						<RefreshCw className="h-4 w-4 mr-2" />
-						Refresh
-					</Button>
+			<div className="max-w-7xl mx-auto p-6">
+				{/* Header */}
+				<div className="flex items-center justify-between mb-6">
+					<div>
+						<h1 className="text-3xl font-bold flex items-center gap-2">
+							<Eye className="h-8 w-8" />
+							ValidateHub
+						</h1>
+						<p className="text-gray-600 mt-1">
+							Swipe or click to validate ideas and earn rewards
+						</p>
+					</div>
+				</div>
+
+				<div className="grid lg:grid-cols-3 gap-6">
+					{/* Main Content Area - 2/3 width */}
+					<div className="lg:col-span-2">
+						{/* Preview Card */}
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6 }}
+						>
+							<Card className="h-[600px] flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
+								<div className="text-center space-y-6 max-w-md">
+									<motion.div
+										animate={{ 
+											scale: [1, 1.1, 1],
+											rotate: [0, 5, -5, 0]
+										}}
+										transition={{ 
+											duration: 4,
+											repeat: Infinity,
+											ease: "easeInOut"
+										}}
+									>
+										<CheckCircle className="h-24 w-24 mx-auto text-green-500" />
+									</motion.div>
+									
+									<div className="space-y-3">
+										<h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200">All Caught Up!</h2>
+										<p className="text-lg text-gray-600 dark:text-gray-400">
+											No validation opportunities available right now
+										</p>
+										<p className="text-sm text-gray-500 dark:text-gray-500">
+											Check back later or try adjusting your filters
+										</p>
+									</div>
+
+									{/* Demo Actions */}
+									<div className="flex justify-center gap-4">
+										<motion.div
+											whileHover={{ scale: 1.05 }}
+											whileTap={{ scale: 0.95 }}
+										>
+											<Button 
+												onClick={loadPosts}
+												className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+											>
+												<RefreshCw className="h-4 w-4 mr-2" />
+												Refresh Posts
+											</Button>
+										</motion.div>
+									</div>
+
+									{/* Demo Validation Actions (Preview) */}
+									<div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+										<p className="text-xs text-gray-500 mb-3">Preview: How validation works</p>
+										<div className="flex justify-center gap-3 opacity-60">
+											<motion.div
+												whileHover={{ y: -2 }}
+												className="flex flex-col items-center gap-1"
+											>
+												<Button size="sm" variant="outline" className="text-green-600 border-green-300">
+													<ThumbsUp className="h-4 w-4" />
+												</Button>
+												<span className="text-xs">Approve</span>
+											</motion.div>
+											<motion.div
+												whileHover={{ y: -2 }}
+												className="flex flex-col items-center gap-1"
+											>
+												<Button size="sm" variant="outline" className="text-gray-600 border-gray-300">
+													<MinusCircle className="h-4 w-4" />
+												</Button>
+												<span className="text-xs">Neutral</span>
+											</motion.div>
+											<motion.div
+												whileHover={{ y: -2 }}
+												className="flex flex-col items-center gap-1"
+											>
+												<Button size="sm" variant="outline" className="text-red-600 border-red-300">
+													<ThumbsDown className="h-4 w-4" />
+												</Button>
+												<span className="text-xs">Reject</span>
+											</motion.div>
+										</div>
+									</div>
+								</div>
+							</Card>
+						</motion.div>
+					</div>
+
+					{/* Sidebar - Filters & Info */}
+					<div className="lg:col-span-1 space-y-6">
+						{/* Filters Card */}
+						<motion.div
+							initial={{ opacity: 0, x: 20 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ duration: 0.6, delay: 0.2 }}
+						>
+							<Card>
+								<CardHeader>
+									<CardTitle className="flex items-center gap-2">
+										<Filter className="h-5 w-5" />
+										Filters
+									</CardTitle>
+								</CardHeader>
+								<CardContent className="space-y-4">
+									<div>
+										<Label className="text-sm font-medium">Category</Label>
+										<Select value={selectedCategories.join(',')} onValueChange={(value) => setSelectedCategories(value ? value.split(',') : [])}>
+											<SelectTrigger>
+												<SelectValue placeholder="All Categories" />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectItem value="">All Categories</SelectItem>
+												{categories.map((category) => (
+													<SelectItem key={category.id} value={category.id}>
+														{category.icon} {category.name}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+									</div>
+									
+									<div>
+										<Label className="text-sm font-medium">Validation Type</Label>
+										<Select defaultValue="all">
+											<SelectTrigger>
+												<SelectValue />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectItem value="all">All Types</SelectItem>
+												<SelectItem value="normal">Quick Validation</SelectItem>
+												<SelectItem value="detailed">Detailed Review</SelectItem>
+											</SelectContent>
+										</Select>
+									</div>
+
+									<div>
+										<Label className="text-sm font-medium">Reward Range</Label>
+										<Select defaultValue="all">
+											<SelectTrigger>
+												<SelectValue />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectItem value="all">All Rewards</SelectItem>
+												<SelectItem value="low">₹10 - ₹50</SelectItem>
+												<SelectItem value="medium">₹50 - ₹100</SelectItem>
+												<SelectItem value="high">₹100+</SelectItem>
+											</SelectContent>
+										</Select>
+									</div>
+								</CardContent>
+							</Card>
+						</motion.div>
+
+						{/* Stats Card */}
+						<motion.div
+							initial={{ opacity: 0, x: 20 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ duration: 0.6, delay: 0.4 }}
+						>
+							<Card>
+								<CardHeader>
+									<CardTitle className="flex items-center gap-2">
+										<Star className="h-5 w-5" />
+										Your Stats
+									</CardTitle>
+								</CardHeader>
+								<CardContent className="space-y-3">
+									<div className="flex justify-between">
+										<span className="text-sm text-gray-600">Total Validations</span>
+										<span className="font-medium">0</span>
+									</div>
+									<div className="flex justify-between">
+										<span className="text-sm text-gray-600">Earnings Today</span>
+										<span className="font-medium text-green-600">₹0</span>
+									</div>
+									<div className="flex justify-between">
+										<span className="text-sm text-gray-600">Success Rate</span>
+										<span className="font-medium">-</span>
+									</div>
+								</CardContent>
+							</Card>
+						</motion.div>
+
+						{/* Info Card */}
+						<motion.div
+							initial={{ opacity: 0, x: 20 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ duration: 0.6, delay: 0.6 }}
+						>
+							<Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+								<CardHeader>
+									<CardTitle className="text-blue-700 dark:text-blue-300">How it Works</CardTitle>
+								</CardHeader>
+								<CardContent className="space-y-2 text-sm text-blue-600 dark:text-blue-400">
+									<div className="flex items-start gap-2">
+										<CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+										<span>Review ideas and provide feedback</span>
+									</div>
+									<div className="flex items-start gap-2">
+										<CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+										<span>Earn rewards for quality validations</span>
+									</div>
+									<div className="flex items-start gap-2">
+										<CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+										<span>Build your reputation score</span>
+									</div>
+								</CardContent>
+							</Card>
+						</motion.div>
+					</div>
 				</div>
 			</div>
 		)

@@ -8,14 +8,9 @@ datasource db {
 }
 
 enum Role {
-    USER
-    ADMIN
-}
-
-enum UserRole {
-    SUBMITTER     // Sam - Submit ideas
-    VALIDATOR     // Elina - Validate ideas
-    BOTH          // Both submit and validate
+    USER        // Validator - Can validate ideas
+    SUBMITTER   // Can submit ideas for validation
+    ADMIN       // Admin privileges
 }
 
 enum PostStatus {
@@ -66,7 +61,6 @@ model User {
     role                 Role      @default(USER)
     
     // Onboarding fields
-    userRole             UserRole? // Submitter, Validator, or Both
     selectedCategories   CategorySelection[]
     onboardingCompleted  Boolean   @default(false)
     

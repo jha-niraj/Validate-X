@@ -92,6 +92,7 @@ export default auth((req) => {
 		}
 	}
 
+	// Prevent infinite redirects by allowing the request to proceed
 	return NextResponse.next()
 })
 

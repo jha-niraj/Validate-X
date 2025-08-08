@@ -80,14 +80,6 @@ const MainNavbar = ({ isCollapsed }: { isCollapsed: boolean }) => {
                             >
                                 {getPageTitle()}
                             </motion.h1>
-                            {
-                                session?.user && (
-                                    <Badge variant="secondary" className="hidden sm:flex bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700">
-                                        <Shield className="h-3 w-3 mr-1" />
-                                        {session.user.role}
-                                    </Badge>
-                                )
-                            }
                         </div>
                     </div>
                     <div className="flex items-center gap-2 sm:gap-3">

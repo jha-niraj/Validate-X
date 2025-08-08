@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // Combined component for 404 page
@@ -17,6 +18,7 @@ export default function NotFoundPage() {
 function MessageDisplay() {
     // const navigate = useNavigate();
     const [isVisible, setIsVisible] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -43,7 +45,7 @@ function MessageDisplay() {
                 </div>
                 <div className="flex gap-6 mt-8">
                     <button
-                        // onClick={() => navigate(-1)}
+                        onClick={() => router.push("/")}
                         className="text-black border-2 border-black hover:bg-black hover:text-white transition-all duration-300 ease-in-out px-6 py-2 h-auto text-base font-medium flex items-center gap-2 hover:scale-105"
                     >
                         <svg
@@ -64,7 +66,7 @@ function MessageDisplay() {
                         Go Back
                     </button>
                     <button
-                        // onClick={() => navigate("/")}
+                        onClick={() => router.push("/")}
                         className="bg-black text-white hover:bg-gray-900 transition-all duration-300 ease-in-out px-6 py-2 h-auto text-base font-medium flex items-center gap-2 hover:scale-105"
                     >
                         <svg

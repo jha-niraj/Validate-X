@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import NextAuth from "next-auth";
-import { Role, UserRole } from '@prisma/client';
+import { Role } from '@prisma/client';
 import bcrypt from "bcryptjs";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
@@ -54,8 +54,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 								image: freshUser.image,
 								role: freshUser.role,
 								roleExplicitlyChosen: freshUser.roleExplicitlyChosen,
-								onboardingCompleted: freshUser.onboardingCompleted,
-								userRole: freshUser.userRole!
+								onboardingCompleted: freshUser.onboardingCompleted
 							};
 						} else {
 							throw new Error("Email verification not completed");
@@ -80,8 +79,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 						name: user.name,
 						image: user.image,
 						role: user.role,
-						roleExplicitlyChosen: user.roleExplicitlyChosen,
-						userRole: user.userRole!
+						roleExplicitlyChosen: user.roleExplicitlyChosen
 					};
 				} catch (error) {
 					console.error("Authorization error:", error);
@@ -100,26 +98,13 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 				token.id = user.id!;
 				token.role = user.role;
 				token.roleExplicitlyChosen = user.roleExplicitlyChosen;
-				token.userRole = user.userRole;
 			}
 
-			// Only fetch from database during session updates or when explicitly triggered
-			// This prevents Prisma from running in Edge Runtime during middleware execution
-			if (token && !token.roleExplicitlyChosen && (trigger === "update" || trigger === "signIn")) {
-				try {
-					// Check if we're in Edge Runtime by trying to access process
-					if (typeof process !== 'undefined' && process.env) {
-						const dbUser = await prisma.user.findUnique({
-							where: { id: token.id as string },
-							select: { roleExplicitlyChosen: true }
-						});
-						if (dbUser) {
-							token.roleExplicitlyChosen = dbUser.roleExplicitlyChosen;
-						}
-					}
-				} catch (error) {
-					// Silently fail if running in Edge Runtime (middleware)
-					console.log("JWT callback: Skipping database query in Edge Runtime");
+			// Handle session updates from client-side
+			if (trigger === "update" && session) {
+				// Update token with new session data
+				if (session.role) {
+					token.role = session.role;
 				}
 			}
 
@@ -130,7 +115,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 				session.user.id = token.id as string;
 				session.user.role = token.role as Role
 				session.user.roleExplicitlyChosen = Boolean(token.roleExplicitlyChosen);
-				session.user.userRole = token.userRole as UserRole | undefined;
 			}
 			return session;
 		},

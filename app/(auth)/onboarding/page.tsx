@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -8,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { ArrowRight, ArrowLeft, CheckCircle, Users, Lightbulb, Play, SkipForward, Loader2 } from "lucide-react"
-import { completeOnboarding, redirectAfterOnboarding } from "@/actions/onboarding.actions"
+import { completeOnboarding, redirectAfterOnboarding, checkOnboardingStatus } from "@/actions/onboarding.actions"
 import { getCategories } from "@/actions/post.actions"
 
 interface Category {
@@ -28,20 +30,42 @@ const FALLBACK_CATEGORIES = [
 ]
 
 export default function OnboardingPage() {
+	const { data: session } = useSession()
+	const router = useRouter()
 	const [currentStep, setCurrentStep] = useState(1)
 	const [isLoading, setIsLoading] = useState(false)
+	const [checkingStatus, setCheckingStatus] = useState(true)
 	const [categories, setCategories] = useState<Category[]>([])
 	const [categoriesLoading, setCategoriesLoading] = useState(true)
 	const [formData, setFormData] = useState({
-		userRole: "" as "SUBMITTER" | "VALIDATOR" | "BOTH" | "",
+		role: "" as "SUBMITTER" | "USER" | "",
 		selectedCategories: [] as string[],
 		customCategory: "",
 		watchedVideo: false
 	})
 
 	useEffect(() => {
+		checkOnboardingStatusAndRedirect()
 		fetchCategories()
 	}, [])
+
+	const checkOnboardingStatusAndRedirect = async () => {
+		try {
+			setCheckingStatus(true)
+			const result = await checkOnboardingStatus()
+			
+			if (!result.needsOnboarding) {
+				// User has already completed onboarding, redirect to dashboard
+				toast.success("You've already completed onboarding!")
+				router.replace('/dashboard')
+				return
+			}
+		} catch (error) {
+			console.error("Error checking onboarding status:", error)
+		} finally {
+			setCheckingStatus(false)
+		}
+	}
 
 	const fetchCategories = async () => {
 		try {
@@ -63,8 +87,8 @@ export default function OnboardingPage() {
 		}
 	}
 
-	const handleRoleSelection = (role: "SUBMITTER" | "VALIDATOR" | "BOTH") => {
-		setFormData(prev => ({ ...prev, userRole: role }))
+	const handleRoleSelection = (role: "SUBMITTER" | "USER") => {
+		setFormData(prev => ({ ...prev, role: role }))
 	}
 
 	const handleCategoryToggle = (categoryId: string) => {
@@ -77,7 +101,7 @@ export default function OnboardingPage() {
 	}
 
 	const handleNext = () => {
-		if (currentStep === 1 && !formData.userRole) {
+		if (currentStep === 1 && !formData.role) {
 			toast.error("Please select a role to continue")
 			return
 		}
@@ -105,7 +129,7 @@ export default function OnboardingPage() {
 		setIsLoading(true)
 		try {
 			const result = await completeOnboarding({
-				userRole: formData.userRole as "SUBMITTER" | "VALIDATOR" | "BOTH",
+				role: formData.role as "SUBMITTER" | "USER",
 				categories: formData.selectedCategories,
 				customCategory: formData.customCategory
 			})
@@ -113,7 +137,7 @@ export default function OnboardingPage() {
 			if (result.success) {
 				toast.success("Welcome to ValidateX!")
 				// Redirect based on role
-				await redirectAfterOnboarding(formData.userRole)
+				await redirectAfterOnboarding(formData.role)
 			} else {
 				toast.error(result.error || "Failed to complete onboarding")
 			}
@@ -134,9 +158,9 @@ export default function OnboardingPage() {
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="flex flex-col gap-4">
-				<div className="flex gap-4">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 					<div
-						className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.userRole === "SUBMITTER" ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20" : "border-gray-200"
+						className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.role === "SUBMITTER" ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20" : "border-gray-200"
 							}`}
 						onClick={() => handleRoleSelection("SUBMITTER")}
 					>
@@ -155,16 +179,16 @@ export default function OnboardingPage() {
 								</div>
 							</div>
 							{
-								formData.userRole === "SUBMITTER" && (
+								formData.role === "SUBMITTER" && (
 									<CheckCircle className="h-6 w-6 text-blue-600" />
 								)
 							}
 						</div>
 					</div>
 					<div
-						className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.userRole === "VALIDATOR" ? "border-green-500 bg-green-50 dark:bg-green-950/20" : "border-gray-200"
+						className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.role === "USER" ? "border-green-500 bg-green-50 dark:bg-green-950/20" : "border-gray-200"
 							}`}
-						onClick={() => handleRoleSelection("VALIDATOR")}
+						onClick={() => handleRoleSelection("USER")}
 					>
 						<div className="flex items-start gap-4">
 							<div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
@@ -181,37 +205,8 @@ export default function OnboardingPage() {
 								</div>
 							</div>
 							{
-								formData.userRole === "VALIDATOR" && (
+								formData.role === "USER" && (
 									<CheckCircle className="h-6 w-6 text-green-600" />
-								)
-							}
-						</div>
-					</div>
-					<div
-						className={`border-2 rounded-lg p-6 cursor-pointer transition-all hover:shadow-md ${formData.userRole === "BOTH" ? "border-purple-500 bg-purple-50 dark:bg-purple-950/20" : "border-gray-200"
-							}`}
-						onClick={() => handleRoleSelection("BOTH")}
-					>
-						<div className="flex items-start gap-4">
-							<div className="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
-								<div className="flex items-center gap-1">
-									<Lightbulb className="h-4 w-4 text-purple-600" />
-									<Users className="h-4 w-4 text-purple-600" />
-								</div>
-							</div>
-							<div className="flex-1">
-								<h3 className="text-lg font-semibold mb-2">Both Submit & Validate</h3>
-								<p className="text-gray-600 dark:text-gray-400">
-									Get the full ValidateX experience - submit your ideas and help validate others
-								</p>
-								<div className="flex items-center gap-2 mt-3">
-									<Badge variant="outline">Complete Experience</Badge>
-									<Badge variant="outline">Community Member</Badge>
-								</div>
-							</div>
-							{
-								formData.userRole === "BOTH" && (
-									<CheckCircle className="h-6 w-6 text-purple-600" />
 								)
 							}
 						</div>
@@ -222,7 +217,7 @@ export default function OnboardingPage() {
 						onClick={handleNext}
 						className="w-fit mx-auto"
 						size="lg"
-						disabled={!formData.userRole}
+						disabled={!formData.role}
 					>
 						Continue <ArrowRight className="ml-2 h-4 w-4" />
 					</Button>
@@ -359,9 +354,8 @@ export default function OnboardingPage() {
 					<div>
 						<h4 className="font-semibold mb-2">Your Role:</h4>
 						<Badge variant="outline" className="text-base px-3 py-1">
-							{formData.userRole === "SUBMITTER" && "Idea Submitter"}
-							{formData.userRole === "VALIDATOR" && "Idea Validator"}
-							{formData.userRole === "BOTH" && "Both Submit & Validate"}
+							{formData.role === "SUBMITTER" && "Idea Submitter"}
+							{formData.role === "USER" && "Idea Validator"}
 						</Badge>
 					</div>
 					<div>
@@ -388,9 +382,8 @@ export default function OnboardingPage() {
 				<div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
 					<h4 className="font-semibold mb-2">What happens next?</h4>
 					<p className="text-sm text-gray-600 dark:text-gray-400">
-						{formData.userRole === "VALIDATOR" && "You'll be taken to the ValidateHub where you can start reviewing ideas and earning rewards."}
-						{formData.userRole === "SUBMITTER" && "You'll be taken to your dashboard where you can create your first post."}
-						{formData.userRole === "BOTH" && "You'll be taken to your dashboard with access to both submission and validation features."}
+						{formData.role === "USER" && "You'll be taken to the ValidateHub where you can start reviewing ideas and earning rewards."}
+						{formData.role === "SUBMITTER" && "You'll be taken to your dashboard where you can create your first post."}
 					</p>
 				</div>
 				<div className="flex gap-3 pt-4">
@@ -419,6 +412,18 @@ export default function OnboardingPage() {
 			</CardContent>
 		</Card>
 	)
+
+	// Show loading screen while checking onboarding status
+	if (checkingStatus) {
+		return (
+			<div className="min-h-screen flex items-center justify-center bg-white dark:bg-neutral-900">
+				<div className="text-center">
+					<Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+					<p className="text-lg text-gray-600 dark:text-gray-400">Checking your account status...</p>
+				</div>
+			</div>
+		)
+	}
 
 	return (
 		<div className="min-h-screen flex flex-col bg-white dark:bg-neutral-900 flex items-center justify-center p-4 py-24 md:py-0">

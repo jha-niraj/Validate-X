@@ -202,7 +202,7 @@ export function MainProfile({ user, stats }: MainProfileProps) {
 									Settings
 								</TabsTrigger>
 							</TabsList>
-							<TabsContent value="profile" className="mt-6">
+							<TabsContent value="profile" className="mt-3">
 								<Card className="bg-white/80 dark:bg-black/80 backdrop-blur-xl border border-neutral-200/20 dark:border-neutral-800/20">
 									<CardHeader>
 										<CardTitle className="text-neutral-900 dark:text-white">
@@ -217,7 +217,7 @@ export function MainProfile({ user, stats }: MainProfileProps) {
 									</CardContent>
 								</Card>
 							</TabsContent>
-							<TabsContent value="settings" className="mt-6">
+							<TabsContent value="settings" className="mt-3">
 								<Card className="bg-white/80 dark:bg-black/80 backdrop-blur-xl border border-neutral-200/20 dark:border-neutral-800/20">
 									<CardHeader>
 										<CardTitle className="text-neutral-900 dark:text-white">

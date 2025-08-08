@@ -84,9 +84,10 @@ export async function getSubmitterDashboard() {
 		return {
 			user: {
 				name: user.name,
-				userRole: user.userRole,
-				totalBalance: user.totalBalance,
-				availableBalance: user.availableBalance,
+				role: user.role,
+				totalBalance: user.totalBalance.toNumber(),
+				availableBalance: user.availableBalance.toNumber(),
+				totalSpent: (user.totalBalance.toNumber() - user.availableBalance.toNumber()),
 				reputationScore: user.reputationScore,
 				totalIdeasSubmitted: user.totalIdeasSubmitted,
 				totalValidations: user.totalValidations
@@ -246,12 +247,13 @@ export async function getValidatorDashboard() {
 		return {
 			user: {
 				name: user.name,
-				userRole: user.userRole,
-				totalBalance: user.totalBalance,
-				availableBalance: user.availableBalance,
+				role: user.role,
+				totalBalance: user.totalBalance.toNumber(),
+				availableBalance: user.availableBalance.toNumber(),
+				totalSpent: (user.totalBalance.toNumber() - user.availableBalance.toNumber()),
 				reputationScore: user.reputationScore,
-				totalValidations: user.totalValidations,
-				totalIdeasSubmitted: user.totalIdeasSubmitted
+				totalIdeasSubmitted: user.totalIdeasSubmitted,
+				totalValidations: user.totalValidations
 			},
 			validations: user.validations.slice(0, 10).map(validation => ({
 				id: validation.id,
@@ -291,34 +293,6 @@ export async function getValidatorDashboard() {
 		}
 	} catch (error) {
 		console.error("Error fetching validator dashboard:", error)
-		throw new Error("Failed to fetch dashboard data")
-	}
-}
-
-// Get dashboard data for users with BOTH role
-export async function getBothDashboard() {
-	const session = await auth()
-	if (!session?.user?.id) {
-		redirect("/signin")
-	}
-
-	try {
-		// Get both submitter and validator data
-		const [submitterData, validatorData] = await Promise.all([
-			getSubmitterDashboard(),
-			getValidatorDashboard()
-		])
-
-		return {
-			...submitterData,
-			validatorData: {
-				validations: validatorData.validations,
-				availablePosts: validatorData.availablePosts,
-				validatorAnalytics: validatorData.analytics
-			}
-		}
-	} catch (error) {
-		console.error("Error fetching both dashboard:", error)
 		throw new Error("Failed to fetch dashboard data")
 	}
 }

@@ -10,12 +10,14 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { toast } from "sonner"
 import { Loader2, Shield, Eye, EyeOff, Trash2, AlertTriangle } from "lucide-react"
 import { signOut } from "next-auth/react"
+import { Role } from "@prisma/client"
 
 interface SettingsFormProps {
 	user: {
 		id: string
 		name: string | null
 		email: string | null
+		role: Role | null
 	}
 }
 
@@ -145,6 +147,74 @@ export function SettingsForm({ user }: SettingsFormProps) {
 					</p>
 				</CardContent>
 			</Card>
+
+			{/* Role Change Section - Temporarily Commented Out
+			<Card className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
+				<CardHeader>
+					<CardTitle className="text-lg font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-2">
+						<UserCheck className="h-5 w-5 text-blue-500" />
+						Change Role
+					</CardTitle>
+					<CardDescription className="text-neutral-600 dark:text-neutral-400">
+						Update your role to access different features
+					</CardDescription>
+				</CardHeader>
+				<CardContent className="space-y-4">
+					<div className="space-y-2">
+						<Label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+							Current Role: <span className="capitalize">{user.userRole?.toLowerCase().replace('_', ' ') || 'Not set'}</span>
+						</Label>
+						<Select value={selectedRole} onValueChange={(value: UserRole) => setSelectedRole(value)}>
+							<SelectTrigger className="w-full">
+								<SelectValue placeholder="Select your role" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value={UserRole.SUBMITTER}>
+									<div className="flex flex-col">
+										<span className="font-medium">Submitter</span>
+										<span className="text-xs text-muted-foreground">Submit ideas for validation</span>
+									</div>
+								</SelectItem>
+								<SelectItem value={UserRole.VALIDATOR}>
+									<div className="flex flex-col">
+										<span className="font-medium">Validator</span>
+										<span className="text-xs text-muted-foreground">Validate others' ideas and earn rewards</span>
+									</div>
+								</SelectItem>
+								<SelectItem value={UserRole.BOTH}>
+									<div className="flex flex-col">
+										<span className="font-medium">Both</span>
+										<span className="text-xs text-muted-foreground">Submit ideas and validate others</span>
+									</div>
+								</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
+					
+					<div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+						<p className="text-sm text-blue-800 dark:text-blue-300">
+							<strong>Note:</strong> Changing your role will update your access to different features like ValidateHub, submission limits, and reward eligibility.
+						</p>
+					</div>
+
+					<Button 
+						onClick={handleRoleChange}
+						disabled={isRoleLoading || selectedRole === user.userRole}
+						className="w-full"
+					>
+						{isRoleLoading ? (
+							<>
+								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+								Updating Role...
+							</>
+						) : (
+							'Update Role'
+						)}
+					</Button>
+				</CardContent>
+			</Card>
+			*/}
+
 			<Card className="bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
 				<CardHeader>
 					<CardTitle className="text-lg font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-2">

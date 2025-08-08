@@ -79,7 +79,14 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 		}
 	];
 
-	const displayRoutes = routes.filter((route) => route.status === "active")
+	// Filter routes based on user role
+	const displayRoutes = routes.filter((route) => {
+		// Hide ValidateHub for submitter-only users
+		if (route.path === "validatehub" && session?.user?.role === "SUBMITTER") {
+			return false;
+		}
+		return route.status === "active";
+	});
 
 	return (
 		<TooltipProvider>

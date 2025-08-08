@@ -9,19 +9,20 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-	Plus, TrendingUp, Users, Lightbulb, Star, MessageSquare, Eye, CheckCircle,
-	PenTool, Clock, DollarSign, Trophy, Zap, BookOpen, Filter, BarChart3
+	Plus, Lightbulb, Star, MessageSquare, Eye, CheckCircle,
+	PenTool, DollarSign, Zap, BookOpen
 } from "lucide-react"
 import { toast } from "sonner"
-import { getSubmitterDashboard, getValidatorDashboard, getBothDashboard } from "@/actions/dashboard.actions"
+import { getSubmitterDashboard, getValidatorDashboard } from "@/actions/dashboard.actions"
 import Link from "next/link"
 
 interface DashboardData {
 	user: {
 		name: string
-		userRole: string | null
-		totalBalance: any // Prisma Decimal
-		availableBalance: any // Prisma Decimal
+		role: string | null
+		totalBalance: number
+		availableBalance: number
+		totalSpent: number
 		reputationScore: number
 		totalIdeasSubmitted: number
 		totalValidations: number
@@ -36,7 +37,7 @@ interface DashboardData {
 }
 
 export default function DashboardPage() {
-	const { data: session } = useSession()
+	const { data: session, status } = useSession()
 	const searchParams = useSearchParams()
 	const [showCreatePrompt, setShowCreatePrompt] = useState(false)
 	const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
@@ -52,16 +53,23 @@ export default function DashboardPage() {
 
 	useEffect(() => {
 		async function fetchDashboardData() {
-			if (!session?.user) return
+			if (!session?.user?.id) return
 
 			try {
 				setLoading(true)
 
-				// Get user role from session or database
+				// Get user role from session and fetch appropriate dashboard data
+				const role = session.user.role
 				let userData
-				// For now, default to both role since userRole is not in session
-				// In a real app, you'd fetch this from the database or store it in session
-				userData = await getBothDashboard()
+
+				if (role === 'SUBMITTER') {
+					userData = await getSubmitterDashboard()
+				} else if (role === 'USER') {
+					userData = await getValidatorDashboard()
+				} else {
+					// Default to validator dashboard for USER role
+					userData = await getValidatorDashboard()
+				}
 
 				setDashboardData(userData)
 			} catch (error) {
@@ -72,10 +80,29 @@ export default function DashboardPage() {
 			}
 		}
 
-		fetchDashboardData()
-	}, [session])
+		// Only fetch data if session exists and user ID is available
+		if (session?.user?.id && status === "authenticated") {
+			fetchDashboardData()
+		} else if (status === "loading") {
+			setLoading(true)
+		} else if (status === "unauthenticated") {
+			setLoading(false)
+		}
+	}, [session?.user?.id, session?.user?.role, status])
 
-	if (!session) {
+	// Wait for session to load
+	if (status === "loading") {
+		return (
+			<div className="min-h-screen bg-gradient-to-bl dark:from-black dark:via-gray-900 dark:to-black flex items-center justify-center">
+				<div className="text-center">
+					<div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
+					<p className="text-lg text-muted-foreground">Loading session...</p>
+				</div>
+			</div>
+		)
+	}
+
+	if (status === "unauthenticated") {
 		redirect("/signin")
 	}
 
@@ -114,17 +141,17 @@ export default function DashboardPage() {
 					<div className="flex items-center gap-3 mb-2">
 						<h1 className="text-3xl font-bold">Welcome back, {user.name}!</h1>
 						<Badge variant="secondary" className="capitalize">
-							{user.userRole?.toLowerCase().replace('_', ' ') || 'User'}
+							{user.role?.toLowerCase().replace('_', ' ') || 'User'}
 						</Badge>
 					</div>
 					<p className="text-muted-foreground">
-						{user.userRole === 'SUBMITTER' && "Submit ideas and get valuable feedback from validators"}
-						{user.userRole === 'VALIDATOR' && "Validate ideas and earn rewards for quality feedback"}
-						{user.userRole === 'BOTH' && "Submit ideas and validate others' concepts to maximize your impact"}
+						{user.role === 'SUBMITTER' && "Submit ideas and get valuable feedback from validators"}
+						{user.role === 'USER' && "Validate ideas and earn rewards for quality feedback"}
+						{user.role === 'ADMIN' && "Manage the platform and moderate content"}
 					</p>
 				</div>
 				{
-					showCreatePrompt && (user.userRole === 'SUBMITTER' || user.userRole === 'BOTH') && (
+					showCreatePrompt && user.role === 'SUBMITTER' && (
 						<Card className="mb-8 border-green-200 bg-green-50 dark:bg-green-950/20 dark:border-green-800">
 							<CardContent className="p-6">
 								<div className="flex items-start gap-4">
@@ -161,25 +188,55 @@ export default function DashboardPage() {
 									<DollarSign className="h-5 w-5 text-blue-600" />
 								</div>
 								<div>
-									<p className="text-2xl font-bold">₹{Number(user.availableBalance).toFixed(2)}</p>
-									<p className="text-sm text-muted-foreground">Available Balance</p>
+									{user.role === 'SUBMITTER' ? (
+										<>
+											<p className="text-2xl font-bold">₹{Number(user.totalSpent || 0).toFixed(2)}</p>
+											<p className="text-sm text-muted-foreground">Total Spent</p>
+										</>
+									) : (
+										<>
+											<p className="text-2xl font-bold">₹{Number(user.availableBalance).toFixed(2)}</p>
+											<p className="text-sm text-muted-foreground">Available Balance</p>
+										</>
+									)}
 								</div>
 							</div>
 						</CardContent>
 					</Card>
-					<Card>
-						<CardContent className="p-6">
-							<div className="flex items-center gap-3">
-								<div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-									<Eye className="h-5 w-5 text-green-600" />
+					
+					{/* Show different metrics based on user role */}
+					{user.role === 'SUBMITTER' ? (
+						// For submitters, show total posts instead of validations
+						<Card>
+							<CardContent className="p-6">
+								<div className="flex items-center gap-3">
+									<div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
+										<BookOpen className="h-5 w-5 text-orange-600" />
+									</div>
+									<div>
+										<p className="text-2xl font-bold">{dashboardData.posts?.length || 0}</p>
+										<p className="text-sm text-muted-foreground">Total Posts</p>
+									</div>
 								</div>
-								<div>
-									<p className="text-2xl font-bold">{user.totalValidations}</p>
-									<p className="text-sm text-muted-foreground">Validations</p>
+							</CardContent>
+						</Card>
+					) : (
+						// For validators, show validations
+						<Card>
+							<CardContent className="p-6">
+								<div className="flex items-center gap-3">
+									<div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+										<Eye className="h-5 w-5 text-green-600" />
+									</div>
+									<div>
+										<p className="text-2xl font-bold">{user.totalValidations}</p>
+										<p className="text-sm text-muted-foreground">Validations</p>
+									</div>
 								</div>
-							</div>
-						</CardContent>
-					</Card>
+							</CardContent>
+						</Card>
+					)}
+					
 					<Card>
 						<CardContent className="p-6">
 							<div className="flex items-center gap-3">
@@ -208,9 +265,7 @@ export default function DashboardPage() {
 					</Card>
 				</div>
 				{
-					user.userRole === 'BOTH' ? (
-						<BothDashboard data={dashboardData} />
-					) : user.userRole === 'SUBMITTER' ? (
+					user.role === 'SUBMITTER' ? (
 						<SubmitterDashboard data={dashboardData} />
 					) : (
 						<ValidatorDashboard data={dashboardData} />
@@ -235,7 +290,7 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 						Submit ideas and manage your posts
 					</CardDescription>
 				</CardHeader>
-				<CardContent className="space-y-4">
+				<CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
 					<Link href="/post/create">
 						<Button className="w-full justify-start" size="lg">
 							<Plus className="mr-2 h-5 w-5" />
@@ -246,12 +301,6 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 						<Button variant="outline" className="w-full justify-start" size="lg">
 							<DollarSign className="mr-2 h-5 w-5" />
 							View Wallet
-						</Button>
-					</Link>
-					<Link href="/validatehub">
-						<Button variant="outline" className="w-full justify-start" size="lg">
-							<Eye className="mr-2 h-5 w-5" />
-							Browse ValidateHub
 						</Button>
 					</Link>
 				</CardContent>
@@ -432,33 +481,5 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 				</CardContent>
 			</Card>
 		</div>
-	)
-}
-
-// Both Roles Dashboard Component
-function BothDashboard({ data }: { data: DashboardData }) {
-	return (
-		<Tabs defaultValue="submitter" className="w-full">
-			<TabsList className="grid w-full grid-cols-2">
-				<TabsTrigger value="submitter" className="flex items-center gap-2">
-					<Lightbulb className="h-4 w-4" />
-					Submitter
-				</TabsTrigger>
-				<TabsTrigger value="validator" className="flex items-center gap-2">
-					<Eye className="h-4 w-4" />
-					Validator
-				</TabsTrigger>
-			</TabsList>
-			<TabsContent value="submitter" className="mt-6">
-				<SubmitterDashboard data={data} />
-			</TabsContent>
-			<TabsContent value="validator" className="mt-6">
-				<ValidatorDashboard data={{
-					...data,
-					validations: data.validatorData?.validations,
-					availablePosts: data.validatorData?.availablePosts
-				}} />
-			</TabsContent>
-		</Tabs>
 	)
 }
