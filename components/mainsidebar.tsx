@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { LogOut, ChevronRight, UserPlus, Users, BarChart3, MessageSquare, Settings, Eye, Zap, LayoutDashboardIcon } from "lucide-react"
+import { LogOut, ChevronRight, UserPlus, Users, BarChart3, MessageSquare, Settings, Eye, Zap, LayoutDashboardIcon, Wallet } from "lucide-react"
 import Link from "next/link"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "sonner"
@@ -66,9 +66,9 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 			status: "active"
 		},
 		{
-			path: "feedback",
-			name: "Feedback",
-			icon: <MessageSquare className="h-5 w-5" />,
+			path: "wallet",
+			name: "Wallet",
+			icon: <Zap className="h-5 w-5" />,
 			status: "active"
 		}
 	];
@@ -77,6 +77,14 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 	const displayRoutes = routes.filter((route) => {
 		// Hide ValidateHub for submitter-only users
 		if (route.path === "validatehub" && session?.user?.role === "SUBMITTER") {
+			return false;
+		}
+		// Hide Analytics for USER role
+		if (route.path === "analytics" && session?.user?.role === "USER") {
+			return false;
+		}
+		// Hide Wallet for SUBMITTER role (they can access via dashboard)
+		if (route.path === "wallet" && session?.user?.role === "SUBMITTER") {
 			return false;
 		}
 		return route.status === "active";

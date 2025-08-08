@@ -351,10 +351,30 @@ export default function WalletPage() {
                           value={withdrawalAmount}
                           onChange={(e) => setWithdrawalAmount(e.target.value)}
                           placeholder="0.00"
-                          className="pl-8"
+                          className="pl-8 pr-24"
                           min="100"
                           max={walletData.balance}
                         />
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-6 px-2 text-xs"
+                            onClick={() => setWithdrawalAmount((walletData.balance / 2).toFixed(2))}
+                          >
+                            Half
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-6 px-2 text-xs"
+                            onClick={() => setWithdrawalAmount(walletData.balance.toFixed(2))}
+                          >
+                            Max
+                          </Button>
+                        </div>
                       </div>
                       <p className="text-sm text-gray-500">
                         Available: ₹{walletData.balance.toFixed(2)}

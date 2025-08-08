@@ -84,15 +84,28 @@ export async function getWalletInfo(userId?: string) {
 		return {
 			success: true,
 			wallet: {
-				...user,
 				totalBalance: user.totalBalance.toNumber(),
 				availableBalance: user.availableBalance.toNumber(),
 				optedOutBalance: user.optedOutBalance.toNumber(),
+				upiId: user.upiId,
+				paytmNumber: user.paytmNumber,
+				walletAddress: user.walletAddress,
+				preferredPaymentMethod: user.preferredPaymentMethod,
+				totalValidations: user.totalValidations,
+				totalIdeasSubmitted: user.totalIdeasSubmitted,
+				reputationScore: user.reputationScore,
+				lastCashoutAt: user.lastCashoutAt,
 				monthlyEarnings: monthlyEarnings._sum.amount ? monthlyEarnings._sum.amount.toNumber() : 0,
 				monthlyValidations: monthlyEarnings._count || 0,
 				recentTransactions: transactions.map(t => ({
-					...t,
-					amount: t.amount.toNumber()
+					id: t.id,
+					userId: t.userId,
+					amount: t.amount.toNumber(),
+					type: t.type,
+					description: t.description,
+					status: t.status,
+					createdAt: t.createdAt,
+					updatedAt: t.updatedAt
 				})),
 				canCashout,
 				nextCashoutAvailable,
