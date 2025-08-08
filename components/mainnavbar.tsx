@@ -3,24 +3,57 @@
 import { useTheme } from "next-themes"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Moon, Sun, Home, User, LogOut, Shield, LogIn, DollarSign, Wallet } from "lucide-react"
+import { Moon, Sun, Home, User, LogOut, Shield, LogIn, DollarSign, Wallet, Settings, Eye } from "lucide-react"
 import { Button } from "./ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
     DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
 } from "./ui/dropdown-menu"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import { Input } from "./ui/input"
+import { Label } from "./ui/label"
 import { motion } from "framer-motion"
 import { signOut, useSession } from "next-auth/react"
 import { toast } from "sonner"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
+import { getWalletInfo, updateUserPaymentSettings } from "@/actions/wallet.actions"
 
 const MainNavbar = ({ isCollapsed }: { isCollapsed: boolean }) => {
     const { data: session } = useSession();
     const { theme, setTheme } = useTheme()
     const [scrolled, setScrolled] = useState(false)
+    const [walletBalance, setWalletBalance] = useState<number>(0)
     const pathname = usePathname()
     const router = useRouter()
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20)
+        }
+
+        window.addEventListener("scroll", handleScroll)
+        return () => window.removeEventListener("scroll", handleScroll)
+    }, []);
+
+    useEffect(() => {
+        const fetchWalletBalance = async () => {
+            if (session?.user?.id && session?.user?.role === 'USER') {
+                try {
+                    const result = await getWalletInfo()
+                    if (result.success && result.wallet) {
+                        setWalletBalance(result.wallet.availableBalance)
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch wallet balance:', error)
+                }
+            }
+        }
+
+        if (session?.user?.id) {
+            fetchWalletBalance()
+        }
+    }, [session?.user?.id, session?.user?.role])
 
     useEffect(() => {
         const handleScroll = () => {
@@ -88,7 +121,7 @@ const MainNavbar = ({ isCollapsed }: { isCollapsed: boolean }) => {
                             <div className="hidden md:flex items-center gap-2 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg px-3 py-1">
                                 <DollarSign className="h-4 w-4 text-green-600" />
                                 <span className="text-sm font-medium text-green-700 dark:text-green-300">
-                                    ₹234.50
+                                    ₹{walletBalance.toFixed(2)}
                                 </span>
                                 <Link href="/wallet">
                                     <Button variant="ghost" size="sm" className="h-6 px-2 text-xs hover:bg-green-100 dark:hover:bg-green-900">

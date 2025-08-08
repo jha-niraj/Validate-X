@@ -546,3 +546,31 @@ export async function createWithdrawalRequest({
 		throw error
 	}
 }
+
+export async function updateUserPaymentSettings(data: {
+	upiId?: string
+	walletAddress?: string
+}) {
+	try {
+		const session = await auth()
+		if (!session?.user?.id) {
+			return { success: false, error: "Unauthorized" }
+		}
+
+		const user = await prisma.user.update({
+			where: { id: session.user.id },
+			data: {
+				upiId: data.upiId || null,
+				walletAddress: data.walletAddress || null
+			}
+		})
+
+		revalidatePath('/wallet')
+		revalidatePath('/profile')
+
+		return { success: true, user }
+	} catch (error) {
+		console.error("Error updating payment settings:", error)
+		return { success: false, error: "Failed to update payment settings" }
+	}
+}

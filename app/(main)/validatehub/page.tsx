@@ -28,8 +28,8 @@ interface Post {
 	fileUrl?: string | null
 	fileName?: string | null
 	linkUrl?: string | null
-	normalReward: any
-	detailedReward: any
+	normalReward: number
+	detailedReward: number
 	currentNormalCount: number
 	currentDetailedCount: number
 	normalValidatorCount: number
@@ -223,9 +223,9 @@ export default function ValidateHubPage() {
 					</div>
 				</div>
 
-				<div className="grid lg:grid-cols-3 gap-6">
+				<div className="flex gap-6">
 					{/* Main Content Area - 2/3 width */}
-					<div className="lg:col-span-2">
+					<div className="w-2/3">
 						{/* Preview Card */}
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
@@ -235,11 +235,11 @@ export default function ValidateHubPage() {
 							<Card className="h-[600px] flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
 								<div className="text-center space-y-6 max-w-md">
 									<motion.div
-										animate={{ 
+										animate={{
 											scale: [1, 1.1, 1],
 											rotate: [0, 5, -5, 0]
 										}}
-										transition={{ 
+										transition={{
 											duration: 4,
 											repeat: Infinity,
 											ease: "easeInOut"
@@ -247,7 +247,7 @@ export default function ValidateHubPage() {
 									>
 										<CheckCircle className="h-24 w-24 mx-auto text-green-500" />
 									</motion.div>
-									
+
 									<div className="space-y-3">
 										<h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200">All Caught Up!</h2>
 										<p className="text-lg text-gray-600 dark:text-gray-400">
@@ -264,7 +264,7 @@ export default function ValidateHubPage() {
 											whileHover={{ scale: 1.05 }}
 											whileTap={{ scale: 0.95 }}
 										>
-											<Button 
+											<Button
 												onClick={loadPosts}
 												className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
 											>
@@ -312,8 +312,8 @@ export default function ValidateHubPage() {
 						</motion.div>
 					</div>
 
-					{/* Sidebar - Filters & Info */}
-					<div className="lg:col-span-1 space-y-6">
+					{/* Sidebar - 1/3 width */}
+					<div className="w-1/3 space-y-6">
 						{/* Filters Card */}
 						<motion.div
 							initial={{ opacity: 0, x: 20 }}
@@ -344,7 +344,7 @@ export default function ValidateHubPage() {
 											</SelectContent>
 										</Select>
 									</div>
-									
+
 									<div>
 										<Label className="text-sm font-medium">Validation Type</Label>
 										<Select defaultValue="all">
@@ -451,239 +451,285 @@ export default function ValidateHubPage() {
 						Swipe or click to validate ideas and earn rewards
 					</p>
 				</div>
-				<div className="flex items-center gap-3">
-					<Select value={selectedCategories.length > 0 ? selectedCategories.join(',') : 'all'} onValueChange={(value) => setSelectedCategories(value && value !== 'all' ? value.split(',') : [])}>
-						<SelectTrigger className="w-48">
-							<Filter className="h-4 w-4 mr-2" />
-							<SelectValue placeholder="Filter by category" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="all">All Categories</SelectItem>
-							{
-								categories.map(category => (
-									<SelectItem key={category.id} value={category.id}>
-										{category.icon} {category.name}
-									</SelectItem>
-								))
-							}
-						</SelectContent>
-					</Select>
-					<Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-						<DialogTrigger asChild>
-							<Button variant="outline" size="sm">
-								<FileText className="h-4 w-4 mr-2" />
-								View Details
-							</Button>
-						</DialogTrigger>
-						<DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-							<DialogHeader>
-								<DialogTitle>{currentPost.title}</DialogTitle>
-							</DialogHeader>
-							<div className="space-y-4">
-								<div className="flex items-center justify-between">
-									<Badge variant="secondary">{currentPost.category.name}</Badge>
-									<span className="text-sm text-gray-500">
-										{calculateTimeRemaining(currentPost.expiryDate)}
-									</span>
-								</div>
+			</div>
 
-								<div className="prose max-w-none">
-									<p>{currentPost.description}</p>
-								</div>
-								{
-									currentPost.fileUrl && (
-										<div className="border rounded-lg p-4">
-											<p className="text-sm font-medium mb-2">Attached File:</p>
-											<Link
-												href={currentPost.fileUrl}
-												target="_blank"
-												rel="noopener noreferrer"
-												className="flex items-center gap-2 text-blue-600 hover:underline"
-											>
-												<ExternalLink className="h-4 w-4" />
-												{currentPost.fileName || 'View File'}
-											</Link>
+			<div className="flex gap-6">
+				{/* Main Content Area - 2/3 width */}
+				<div className="w-2/3">
+					<div className="mb-6">
+						<div className="flex items-center justify-between text-sm text-gray-500 mb-2">
+							<span>Post {currentPostIndex + 1} of {posts.length}</span>
+							<span>{calculateTimeRemaining(currentPost.expiryDate)}</span>
+						</div>
+						<Progress value={(currentPostIndex / posts.length) * 100} className="h-2" />
+					</div>
+					<motion.div
+						key={currentPost.id}
+						className="relative"
+						drag="x"
+						dragConstraints={{ left: 0, right: 0 }}
+						onDragEnd={(_, info) => {
+							if (info.offset.x > 100) {
+								handleSwipe('right', info)
+							} else if (info.offset.x < -100) {
+								handleSwipe('left', info)
+							} else if (info.offset.y < -100) {
+								handleSwipe('up', info)
+							}
+						}}
+						whileDrag={{ rotate: 0 }}
+					>
+						<Card className="w-full border-2 border-gray-200 hover:border-gray-300 transition-colors">
+							<CardHeader>
+								<div className="flex items-start justify-between">
+									<div className="flex-1">
+										<CardTitle className="text-xl mb-2">{currentPost.title}</CardTitle>
+										<div className="flex items-center gap-2 mb-3">
+											<Badge variant="secondary">{currentPost.category.name}</Badge>
+											<Badge variant="outline" className="flex items-center gap-1">
+												<Clock className="h-3 w-3" />
+												{calculateTimeRemaining(currentPost.expiryDate)}
+											</Badge>
 										</div>
-									)
-								}
-								{
-									currentPost.linkUrl && (
-										<div className="border rounded-lg p-4">
-											<p className="text-sm font-medium mb-2">Reference Link:</p>
-											<Link
-												href={currentPost.linkUrl}
-												target="_blank"
-												rel="noopener noreferrer"
-												className="flex items-center gap-2 text-blue-600 hover:underline"
-											>
-												<ExternalLink className="h-4 w-4" />
-												{currentPost.linkUrl}
-											</Link>
-										</div>
-									)
-								}
-								<div className="flex items-center gap-4 pt-4 border-t">
+									</div>
 									<div className="flex items-center gap-2">
-										<Avatar className="h-8 w-8">
+										<Avatar className="h-10 w-10">
 											<AvatarImage src={currentPost.author.image} />
 											<AvatarFallback>{currentPost.author.name[0]}</AvatarFallback>
 										</Avatar>
 										<div>
 											<p className="font-medium text-sm">{currentPost.author.name}</p>
-											<p className="text-xs text-gray-500">
-												Reputation: {currentPost.author.reputationScore}
-											</p>
+											<p className="text-xs text-gray-500">Rep: {currentPost.author.reputationScore}</p>
 										</div>
 									</div>
 								</div>
-							</div>
-						</DialogContent>
-					</Dialog>
-				</div>
-			</div>
-			<div className="mb-6">
-				<div className="flex items-center justify-between text-sm text-gray-500 mb-2">
-					<span>Post {currentPostIndex + 1} of {posts.length}</span>
-					<span>{calculateTimeRemaining(currentPost.expiryDate)}</span>
-				</div>
-				<Progress value={(currentPostIndex / posts.length) * 100} className="h-2" />
-			</div>
-			<motion.div
-				key={currentPost.id}
-				className="relative"
-				drag="x"
-				dragConstraints={{ left: 0, right: 0 }}
-				onDragEnd={(_, info) => {
-					if (info.offset.x > 100) {
-						handleSwipe('right', info)
-					} else if (info.offset.x < -100) {
-						handleSwipe('left', info)
-					} else if (info.offset.y < -100) {
-						handleSwipe('up', info)
-					}
-				}}
-				whileDrag={{ rotate: 0 }}
-			>
-				<Card className="w-full max-w-2xl mx-auto border-2 border-gray-200 hover:border-gray-300 transition-colors">
-					<CardHeader>
-						<div className="flex items-start justify-between">
-							<div className="flex-1">
-								<CardTitle className="text-xl mb-2">{currentPost.title}</CardTitle>
-								<div className="flex items-center gap-2 mb-3">
-									<Badge variant="secondary">{currentPost.category.name}</Badge>
-									<Badge variant="outline" className="flex items-center gap-1">
-										<Clock className="h-3 w-3" />
-										{calculateTimeRemaining(currentPost.expiryDate)}
-									</Badge>
+							</CardHeader>
+							<CardContent>
+								<div className="space-y-4">
+									<p className="text-gray-700 leading-relaxed line-clamp-4">
+										{currentPost.description}
+									</p>
+									{
+										(currentPost.fileUrl || currentPost.linkUrl) && (
+											<div className="flex gap-2">
+												{
+													currentPost.fileUrl && (
+														<Badge variant="outline" className="flex items-center gap-1">
+															<FileText className="h-3 w-3" />
+															File attached
+														</Badge>
+													)
+												}
+												{
+													currentPost.linkUrl && (
+														<Link href={currentPost?.linkUrl} target="_blank">
+															<Badge variant="outline" className="flex items-center gap-1">
+																<ExternalLink className="h-3 w-3" />
+																Link included
+															</Badge>
+														</Link>
+													)
+												}
+											</div>
+										)
+									}
+									<div className="grid grid-cols-2 gap-4 pt-4 border-t">
+										<div className="text-center">
+											<div className="text-lg font-bold text-green-600">
+												{formatCurrency(currentPost.normalReward)}
+											</div>
+											<div className="text-sm text-gray-500">Quick Vote</div>
+											<div className="text-xs text-gray-400">
+												{currentPost.currentNormalCount}/{currentPost.normalValidatorCount}
+											</div>
+										</div>
+										<div className="text-center">
+											<div className="text-lg font-bold text-blue-600">
+												{formatCurrency(currentPost.detailedReward)}
+											</div>
+											<div className="text-sm text-gray-500">Detailed Review</div>
+											<div className="text-xs text-gray-400">
+												{currentPost.currentDetailedCount}/{currentPost.detailedValidatorCount}
+											</div>
+										</div>
+									</div>
+									<div className="space-y-2">
+										<Label className="text-sm">Quick Comment (Optional)</Label>
+										<Textarea
+											placeholder="Add a quick note..."
+											value={validationForm.shortComment}
+											onChange={(e) => setValidationForm(prev => ({ ...prev, shortComment: e.target.value }))}
+											className="resize-none"
+											rows={2}
+										/>
+									</div>
 								</div>
-							</div>
-							<div className="flex items-center gap-2">
-								<Avatar className="h-10 w-10">
-									<AvatarImage src={currentPost.author.image} />
-									<AvatarFallback>{currentPost.author.name[0]}</AvatarFallback>
-								</Avatar>
+							</CardContent>
+						</Card>
+					</motion.div>
+					<div className="flex items-center justify-center gap-4 mt-6">
+						<Button
+							variant="outline"
+							size="lg"
+							className="bg-red-50 border-red-200 hover:bg-red-100 text-red-700"
+							onClick={() => handleVote('DISLIKE')}
+							disabled={submitting}
+						>
+							<ThumbsDown className="h-5 w-5" />
+						</Button>
+						<Button
+							variant="outline"
+							size="lg"
+							className="bg-gray-50 border-gray-200 hover:bg-gray-100"
+							onClick={() => handleVote('NEUTRAL')}
+							disabled={submitting}
+						>
+							<MinusCircle className="h-5 w-5" />
+						</Button>
+						<Button
+							variant="outline"
+							size="lg"
+							className="bg-green-50 border-green-200 hover:bg-green-100 text-green-700"
+							onClick={() => handleVote('LIKE')}
+							disabled={submitting}
+						>
+							<ThumbsUp className="h-5 w-5" />
+						</Button>
+						<Link href={`/validatehub/${currentPost.id}`}>
+							<Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+								<Star className="h-5 w-5 mr-2" />
+								Detailed Review
+							</Button>
+						</Link>
+					</div>
+
+					<div className="text-center mt-8 text-sm text-gray-500">
+						<p>💡 Pro tip: Swipe right to like, left to dislike, or up for neutral</p>
+					</div>
+				</div>
+
+				{/* Sidebar - 1/3 width */}
+				<div className="w-1/3 space-y-6">
+					{/* Filters Card */}
+					<motion.div
+						initial={{ opacity: 0, x: 20 }}
+						animate={{ opacity: 1, x: 0 }}
+						transition={{ duration: 0.6, delay: 0.2 }}
+					>
+						<Card>
+							<CardHeader>
+								<CardTitle className="flex items-center gap-2">
+									<Filter className="h-5 w-5" />
+									Filters
+								</CardTitle>
+							</CardHeader>
+							<CardContent className="space-y-4">
 								<div>
-									<p className="font-medium text-sm">{currentPost.author.name}</p>
-									<p className="text-xs text-gray-500">Rep: {currentPost.author.reputationScore}</p>
+									<Label className="text-sm font-medium">Category</Label>
+									<Select value={selectedCategories.length > 0 ? selectedCategories.join(',') : 'all'} onValueChange={(value) => setSelectedCategories(value && value !== 'all' ? value.split(',') : [])}>
+										<SelectTrigger>
+											<SelectValue placeholder="All Categories" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="all">All Categories</SelectItem>
+											{categories.map((category) => (
+												<SelectItem key={category.id} value={category.id}>
+													{category.icon} {category.name}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
 								</div>
-							</div>
-						</div>
-					</CardHeader>
-					<CardContent>
-						<div className="space-y-4">
-							<p className="text-gray-700 leading-relaxed line-clamp-4">
-								{currentPost.description}
-							</p>
-							{
-								(currentPost.fileUrl || currentPost.linkUrl) && (
-									<div className="flex gap-2">
-										{
-											currentPost.fileUrl && (
-												<Badge variant="outline" className="flex items-center gap-1">
-													<FileText className="h-3 w-3" />
-													File attached
-												</Badge>
-											)
-										}
-										{
-											currentPost.linkUrl && (
-												<Badge variant="outline" className="flex items-center gap-1">
-													<ExternalLink className="h-3 w-3" />
-													Link included
-												</Badge>
-											)
-										}
-									</div>
-								)
-							}
-							<div className="grid grid-cols-2 gap-4 pt-4 border-t">
-								<div className="text-center">
-									<div className="text-lg font-bold text-green-600">
-										{formatCurrency(currentPost.normalReward)}
-									</div>
-									<div className="text-sm text-gray-500">Quick Vote</div>
-									<div className="text-xs text-gray-400">
-										{currentPost.currentNormalCount}/{currentPost.normalValidatorCount}
-									</div>
+
+								<div>
+									<Label className="text-sm font-medium">Validation Type</Label>
+									<Select defaultValue="all">
+										<SelectTrigger>
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="all">All Types</SelectItem>
+											<SelectItem value="normal">Quick Validation</SelectItem>
+											<SelectItem value="detailed">Detailed Review</SelectItem>
+										</SelectContent>
+									</Select>
 								</div>
-								<div className="text-center">
-									<div className="text-lg font-bold text-blue-600">
-										{formatCurrency(currentPost.detailedReward)}
-									</div>
-									<div className="text-sm text-gray-500">Detailed Review</div>
-									<div className="text-xs text-gray-400">
-										{currentPost.currentDetailedCount}/{currentPost.detailedValidatorCount}
-									</div>
+
+								<div>
+									<Label className="text-sm font-medium">Reward Range</Label>
+									<Select defaultValue="all">
+										<SelectTrigger>
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="all">All Rewards</SelectItem>
+											<SelectItem value="low">₹10 - ₹50</SelectItem>
+											<SelectItem value="medium">₹50 - ₹100</SelectItem>
+											<SelectItem value="high">₹100+</SelectItem>
+										</SelectContent>
+									</Select>
 								</div>
-							</div>
-							<div className="space-y-2">
-								<Label className="text-sm">Quick Comment (Optional)</Label>
-								<Textarea
-									placeholder="Add a quick note..."
-									value={validationForm.shortComment}
-									onChange={(e) => setValidationForm(prev => ({ ...prev, shortComment: e.target.value }))}
-									className="resize-none"
-									rows={2}
-								/>
-							</div>
-						</div>
-					</CardContent>
-				</Card>
-			</motion.div>
-			<div className="flex items-center justify-center gap-4 mt-6">
-				<Button
-					variant="outline"
-					size="lg"
-					className="bg-red-50 border-red-200 hover:bg-red-100 text-red-700"
-					onClick={() => handleVote('DISLIKE')}
-					disabled={submitting}
-				>
-					<ThumbsDown className="h-5 w-5" />
-				</Button>
-				<Button
-					variant="outline"
-					size="lg"
-					className="bg-gray-50 border-gray-200 hover:bg-gray-100"
-					onClick={() => handleVote('NEUTRAL')}
-					disabled={submitting}
-				>
-					<MinusCircle className="h-5 w-5" />
-				</Button>
-				<Button
-					variant="outline"
-					size="lg"
-					className="bg-green-50 border-green-200 hover:bg-green-100 text-green-700"
-					onClick={() => handleVote('LIKE')}
-					disabled={submitting}
-				>
-					<ThumbsUp className="h-5 w-5" />
-				</Button>
-				<Link href={`/validatehub/${currentPost.id}`}>
-					<Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-						<Star className="h-5 w-5 mr-2" />
-						Detailed Review
-					</Button>
-				</Link>
+							</CardContent>
+						</Card>
+					</motion.div>
+
+					{/* Stats Card */}
+					<motion.div
+						initial={{ opacity: 0, x: 20 }}
+						animate={{ opacity: 1, x: 0 }}
+						transition={{ duration: 0.6, delay: 0.4 }}
+					>
+						<Card>
+							<CardHeader>
+								<CardTitle className="flex items-center gap-2">
+									<Star className="h-5 w-5" />
+									Your Stats
+								</CardTitle>
+							</CardHeader>
+							<CardContent className="space-y-3">
+								<div className="flex justify-between">
+									<span className="text-sm text-gray-600">Total Validations</span>
+									<span className="font-medium">0</span>
+								</div>
+								<div className="flex justify-between">
+									<span className="text-sm text-gray-600">Earnings Today</span>
+									<span className="font-medium text-green-600">₹0</span>
+								</div>
+								<div className="flex justify-between">
+									<span className="text-sm text-gray-600">Success Rate</span>
+									<span className="font-medium">-</span>
+								</div>
+							</CardContent>
+						</Card>
+					</motion.div>
+
+					{/* Info Card */}
+					<motion.div
+						initial={{ opacity: 0, x: 20 }}
+						animate={{ opacity: 1, x: 0 }}
+						transition={{ duration: 0.6, delay: 0.6 }}
+					>
+						<Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+							<CardHeader>
+								<CardTitle className="text-blue-700 dark:text-blue-300">How it Works</CardTitle>
+							</CardHeader>
+							<CardContent className="space-y-2 text-sm text-blue-600 dark:text-blue-400">
+								<div className="flex items-start gap-2">
+									<CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+									<span>Review ideas and provide feedback</span>
+								</div>
+								<div className="flex items-start gap-2">
+									<CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+									<span>Earn rewards for quality validations</span>
+								</div>
+								<div className="flex items-start gap-2">
+									<CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+									<span>Build your reputation score</span>
+								</div>
+							</CardContent>
+						</Card>
+					</motion.div>
+				</div>
 			</div>
 
 			{/* Normal Vote Dialog */}
@@ -701,7 +747,7 @@ export default function ValidateHubPage() {
 								You'll earn ₹{currentPost ? Number(currentPost.normalReward).toFixed(2) : '0'} immediately upon submission
 							</span>
 						</div>
-						
+
 						<div>
 							<Label>Why did you choose "{pendingVote?.toLowerCase()}"? (Optional)</Label>
 							<Textarea
@@ -739,10 +785,6 @@ export default function ValidateHubPage() {
 					</div>
 				</DialogContent>
 			</Dialog>
-
-			<div className="text-center mt-8 text-sm text-gray-500">
-				<p>💡 Pro tip: Swipe right to like, left to dislike, or up for neutral</p>
-			</div>
 		</div>
 	)
 }

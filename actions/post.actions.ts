@@ -218,7 +218,19 @@ export async function getPostsForValidation(categoryIds?: string[]) {
 			take: 50 // Limit for performance
 		})
 
-		return { success: true, posts }
+		// Convert Decimal fields to numbers for client serialization
+		const serializedPosts = posts.map(post => ({
+			...post,
+			totalBudget: post.totalBudget.toNumber(),
+			normalReward: post.normalReward.toNumber(),
+			detailedReward: post.detailedReward.toNumber(),
+			platformFee: post.platformFee.toNumber(),
+			expiryDate: post.expiryDate.toISOString(),
+			createdAt: post.createdAt.toISOString(),
+			updatedAt: post.updatedAt.toISOString()
+		}))
+
+		return { success: true, posts: serializedPosts }
 	} catch (error) {
 		console.error("Error fetching posts for validation:", error)
 		return { success: false, error: "Failed to fetch posts" }
@@ -262,7 +274,25 @@ export async function getPostById(postId: string) {
 			return { success: false, error: "Post not found" }
 		}
 
-		return { success: true, post }
+		// Convert Decimal fields to numbers for client serialization
+		const serializedPost = {
+			...post,
+			totalBudget: post.totalBudget.toNumber(),
+			normalReward: post.normalReward.toNumber(),
+			detailedReward: post.detailedReward.toNumber(),
+			platformFee: post.platformFee.toNumber(),
+			expiryDate: post.expiryDate.toISOString(),
+			createdAt: post.createdAt.toISOString(),
+			updatedAt: post.updatedAt.toISOString(),
+			validations: post.validations.map(validation => ({
+				...validation,
+				rewardAmount: validation.rewardAmount.toNumber(),
+				createdAt: validation.createdAt.toISOString(),
+				updatedAt: validation.updatedAt.toISOString()
+			}))
+		}
+
+		return { success: true, post: serializedPost }
 	} catch (error) {
 		console.error("Error fetching post:", error)
 		return { success: false, error: "Failed to fetch post" }
