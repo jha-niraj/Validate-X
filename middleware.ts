@@ -55,7 +55,8 @@ export default auth((req) => {
 	if (
 		nextUrl.pathname.startsWith('/_next/') ||
 		nextUrl.pathname.startsWith('/api/') ||
-		nextUrl.pathname.includes('.')
+		nextUrl.pathname.includes('.') ||
+		nextUrl.pathname === '/favicon.ico'
 	) {
 		return NextResponse.next()
 	}
@@ -74,6 +75,11 @@ export default auth((req) => {
 
 	// If user is not logged in and trying to access protected route
 	if (!isLoggedIn && isProtectedRoute) {
+		// Prevent redirect loops by checking if we're already on signin
+		if (nextUrl.pathname === '/signin') {
+			return NextResponse.next()
+		}
+		
 		const signInUrl = new URL('/signin', nextUrl.origin)
 		signInUrl.searchParams.set('callbackUrl', nextUrl.pathname)
 		return NextResponse.redirect(signInUrl)
@@ -83,16 +89,19 @@ export default auth((req) => {
 	if (isLoggedIn) {
 		// If user is trying to access signin/signup, redirect to dashboard
 		if (nextUrl.pathname === '/signin' || nextUrl.pathname === '/signup') {
-			return NextResponse.redirect(new URL('/dashboard', nextUrl.origin))
+			// Prevent redirect loops by checking if we're already redirecting
+			const dashboardUrl = new URL('/dashboard', nextUrl.origin)
+			return NextResponse.redirect(dashboardUrl)
 		}
 
 		// For the root path, redirect authenticated users to dashboard
 		if (nextUrl.pathname === '/') {
-			return NextResponse.redirect(new URL('/dashboard', nextUrl.origin))
+			const dashboardUrl = new URL('/dashboard', nextUrl.origin)
+			return NextResponse.redirect(dashboardUrl)
 		}
 	}
 
-	// Prevent infinite redirects by allowing the request to proceed
+	// If it's a public route or unmatched route, allow it to proceed
 	return NextResponse.next()
 })
 

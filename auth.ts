@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
 	adapter: PrismaAdapter(prisma),
+	trustHost: true, // Required for NextAuth v5
 	providers: [
 		CredentialsProvider({
 			name: "Credentials",
@@ -140,15 +141,26 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 			return true;
 		},
 		async redirect({ url, baseUrl }) {
-			// If user is signing in and no specific redirect URL, go to dashboard
+			// Prevent redirect loops by being more specific about redirects
 			if (url.startsWith("/")) {
+				// If it's a relative URL, construct the full URL
+				const fullUrl = `${baseUrl}${url}`;
+				
+				// Avoid redirecting to signin/signup if already authenticated
 				if (url === "/signin" || url === "/signup") {
-					return `${baseUrl}/dashboard`
+					return `${baseUrl}/dashboard`;
 				}
-				return `${baseUrl}${url}`
+				
+				return fullUrl;
 			}
-			if (new URL(url).origin === baseUrl) return url
-			return `${baseUrl}/dashboard`
+			
+			// If it's an absolute URL, check if it's from the same origin
+			if (url.startsWith(baseUrl)) {
+				return url;
+			}
+			
+			// For external URLs or fallback, redirect to dashboard
+			return `${baseUrl}/dashboard`;
 		},
 	},
 	pages: {
@@ -158,9 +170,29 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 	},
 	session: {
 		strategy: "jwt",
+		maxAge: 30 * 24 * 60 * 60, // 30 days
 	},
 	secret: process.env.NEXTAUTH_SECRET,
 	cookies: {
+		sessionToken: {
+			name: "next-auth.session-token",
+			options: {
+				httpOnly: true,
+				sameSite: "lax",
+				path: "/",
+				secure: process.env.NODE_ENV === "production",
+				maxAge: 30 * 24 * 60 * 60, // 30 days
+			},
+		},
+		callbackUrl: {
+			name: "next-auth.callback-url",
+			options: {
+				httpOnly: true,
+				sameSite: "lax",
+				path: "/",
+				secure: process.env.NODE_ENV === "production",
+			},
+		},
 		csrfToken: {
 			name: "next-auth.csrf-token",
 			options: {
