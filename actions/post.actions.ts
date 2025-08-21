@@ -352,7 +352,6 @@ export async function getCategories() {
 			const DEFAULT_CATEGORIES = [
 				{ name: "Technology", icon: "💻", description: "Software, Hardware, AI, Web Development" },
 				{ name: "Business", icon: "🏢", description: "Startups, Business Models, Marketing" },
-				{ name: "Assignments", icon: "📚", description: "Academic Projects, Research, Studies" },
 				{ name: "Social Impact", icon: "❤️", description: "Non-profit, Community, Sustainability" },
 				{ name: "Creative", icon: "🎨", description: "Design, Art, Content, Media" },
 			]
