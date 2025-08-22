@@ -5,7 +5,6 @@ import { useSession } from 'next-auth/react';
 import Sidebar from '@/components/mainsidebar';
 import MainNavbar from '@/components/mainnavbar';
 import OnboardingCheck from '@/components/onboarding-check';
-import { redirect } from 'next/navigation';
 
 interface LayoutProps {
 	children: React.ReactNode
@@ -29,7 +28,14 @@ const Layout = ({ children }: LayoutProps) => {
 	};
 
 	if (!session?.user) {
-		redirect('/signin');
+		return (
+			<div className="min-h-screen bg-gradient-to-bl dark:from-black dark:via-gray-900 dark:to-black flex items-center justify-center">
+				<div className="text-center">
+					<div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
+					<p className="text-lg text-muted-foreground">Redirecting to sign in...</p>
+				</div>
+			</div>
+		)
 	}
 
 	return (

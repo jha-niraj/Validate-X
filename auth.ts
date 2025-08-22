@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
 	adapter: PrismaAdapter(prisma),
-	trustHost: true, // Required for NextAuth v5
+	// Remove trustHost: true - let NextAuth handle this automatically
 	providers: [
 		CredentialsProvider({
 			name: "Credentials",
@@ -90,7 +90,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 		}),
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID || "",
-			clientSecret: process.env.GOOGLE_SECRET_ID || ""
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET || "" // Fixed this
 		}),
 	],
 	callbacks: {
@@ -101,11 +101,23 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 				token.roleExplicitlyChosen = user.roleExplicitlyChosen;
 			}
 
-			// Handle session updates from client-side
-			if (trigger === "update" && session) {
-				// Update token with new session data
-				if (session.role) {
-					token.role = session.role;
+			// Only fetch from database during session updates or when explicitly triggered
+			// This prevents Prisma from running in Edge Runtime during middleware execution
+			if (token && !token.roleExplicitlyChosen && (trigger === "update" || trigger === "signIn")) {
+				try {
+					// Check if we're in Edge Runtime by trying to access process
+					if (typeof process !== 'undefined' && process.env) {
+						const dbUser = await prisma.user.findUnique({
+							where: { id: token.id as string },
+							select: { roleExplicitlyChosen: true }
+						});
+						if (dbUser) {
+							token.roleExplicitlyChosen = dbUser.roleExplicitlyChosen;
+						}
+					}
+				} catch (error) {
+					// Silently fail if running in Edge Runtime (middleware)
+					console.log("JWT callback: Skipping database query in Edge Runtime");
 				}
 			}
 
@@ -140,27 +152,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 			}
 			return true;
 		},
+		// Simplified redirect logic to prevent loops
 		async redirect({ url, baseUrl }) {
-			// Prevent redirect loops by being more specific about redirects
-			if (url.startsWith("/")) {
-				// If it's a relative URL, construct the full URL
-				const fullUrl = `${baseUrl}${url}`;
-				
-				// Avoid redirecting to signin/signup if already authenticated
-				if (url === "/signin" || url === "/signup") {
-					return `${baseUrl}/dashboard`;
-				}
-				
-				return fullUrl;
-			}
-			
-			// If it's an absolute URL, check if it's from the same origin
-			if (url.startsWith(baseUrl)) {
-				return url;
-			}
-			
-			// For external URLs or fallback, redirect to dashboard
-			return `${baseUrl}/dashboard`;
+			// Always return the URL as-is if it's relative or from the same origin
+			if (url.startsWith("/")) return `${baseUrl}${url}`
+			if (new URL(url).origin === baseUrl) return url
+			return baseUrl
 		},
 	},
 	pages: {
@@ -170,29 +167,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 	},
 	session: {
 		strategy: "jwt",
-		maxAge: 30 * 24 * 60 * 60, // 30 days
+		// Remove maxAge to use default behavior like your working project
 	},
 	secret: process.env.NEXTAUTH_SECRET,
+	// Use minimal cookie configuration like your working project
 	cookies: {
-		sessionToken: {
-			name: "next-auth.session-token",
-			options: {
-				httpOnly: true,
-				sameSite: "lax",
-				path: "/",
-				secure: process.env.NODE_ENV === "production",
-				maxAge: 30 * 24 * 60 * 60, // 30 days
-			},
-		},
-		callbackUrl: {
-			name: "next-auth.callback-url",
-			options: {
-				httpOnly: true,
-				sameSite: "lax",
-				path: "/",
-				secure: process.env.NODE_ENV === "production",
-			},
-		},
 		csrfToken: {
 			name: "next-auth.csrf-token",
 			options: {

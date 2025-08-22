@@ -3,7 +3,6 @@
 import { useSession } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -115,7 +114,14 @@ export default function DashboardPage() {
 	}
 
 	if (status === "unauthenticated") {
-		redirect("/signin")
+		return (
+			<div className="min-h-screen bg-gradient-to-bl dark:from-black dark:via-gray-900 dark:to-black flex items-center justify-center">
+				<div className="text-center">
+					<div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
+					<p className="text-lg text-muted-foreground">Redirecting to sign in...</p>
+				</div>
+			</div>
+		)
 	}
 
 	if (loading) {
