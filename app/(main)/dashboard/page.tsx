@@ -115,7 +115,7 @@ export default function DashboardPage() {
 
 	if (status === "unauthenticated") {
 		return (
-			<div className="min-h-screen bg-gradient-to-bl dark:from-black dark:via-gray-900 dark:to-black flex items-center justify-center">
+			<div className="min-h-screen bg-white dark:bg-neutral-900 flex items-center justify-center">
 				<div className="text-center">
 					<div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
 					<p className="text-lg text-muted-foreground">Redirecting to sign in...</p>
@@ -126,7 +126,7 @@ export default function DashboardPage() {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen bg-gradient-to-bl dark:from-black dark:via-gray-900 dark:to-black flex items-center justify-center">
+			<div className="min-h-screen bg-white dark:bg-neutral-900 flex items-center justify-center">
 				<div className="text-center">
 					<div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
 					<p className="text-lg text-muted-foreground">Loading your dashboard...</p>
@@ -154,8 +154,8 @@ export default function DashboardPage() {
 
 	return (
 		<div className="min-h-screen bg-white dark:bg-neutral-900">
-			<div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-				<div className="mb-8">
+			<div className="w-full mx-auto p-4">
+				<div className="mb-4">
 					<div className="flex items-center gap-3 mb-2">
 						<h1 className="text-3xl font-bold">Welcome back, {user.name}!</h1>
 						<Badge variant="secondary" className="capitalize">
@@ -258,7 +258,7 @@ export default function DashboardPage() {
 						</Card>
 					)
 				}
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+				<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-4">
 					<Card>
 						<CardContent className="p-6">
 							<div className="flex items-center gap-3">
@@ -405,7 +405,7 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 	}
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-4">
 			{/* Quick Actions */}
 			<Card>
 				<CardHeader>
@@ -622,7 +622,7 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 	}
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-4">
 			{/* Analytics Section */}
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 				{/* Earnings Trend Chart */}
