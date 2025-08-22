@@ -21,16 +21,60 @@ function SignInContent() {
 	const searchParams = useSearchParams()
 	const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
 
-	// Handle verified email parameter
+	// Handle verified email parameter and authentication errors
 	useEffect(() => {
 		const verified = searchParams.get('verified')
 		const emailParam = searchParams.get('email')
+		const error = searchParams.get('error')
 
 		if (verified === 'true') {
 			toast.success('Email verified successfully! Please sign in.')
 			if (emailParam) {
 				setEmail(decodeURIComponent(emailParam))
 			}
+		}
+
+		// Handle NextAuth errors
+		if (error) {
+			let errorMessage = 'Sign-in failed'
+			
+			switch (error) {
+				case 'CredentialsSignin':
+					errorMessage = 'Invalid email or password'
+					break
+				case 'EmailSignin':
+					errorMessage = 'Error sending email'
+					break
+				case 'OAuthSignin':
+					errorMessage = 'Error with OAuth provider'
+					break
+				case 'OAuthCallback':
+					errorMessage = 'Error in OAuth callback'
+					break
+				case 'OAuthCreateAccount':
+					errorMessage = 'Could not create OAuth account'
+					break
+				case 'EmailCreateAccount':
+					errorMessage = 'Could not create account'
+					break
+				case 'Callback':
+					errorMessage = 'Error in callback'
+					break
+				case 'OAuthAccountNotLinked':
+					errorMessage = 'Account not linked'
+					break
+				case 'EmailPasswordMismatch':
+					errorMessage = 'Email and password do not match'
+					break
+				case 'SessionRequired':
+					errorMessage = 'Please sign in to access this page'
+					break
+				default:
+					errorMessage = decodeURIComponent(error)
+					break
+			}
+			
+			toast.error(errorMessage)
 		}
 	}, [searchParams])
 

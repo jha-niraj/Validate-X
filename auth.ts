@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import NextAuth from "next-auth";
 import { Role } from '@prisma/client';
-import bcrypt from "bcryptjs";
+import { verifyCredentials } from "@/lib/auth-helpers";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
 	adapter: PrismaAdapter(prisma),
@@ -28,60 +28,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 				}
 
 				try {
-					const user = await prisma.user.findUnique({
-						where: {
-							email: credentials.email as string
-						}
-					});
+					const result = await verifyCredentials(
+						credentials.email as string, 
+						credentials.password as string
+					);
 
-					if (!user || !user.password) {
-						return null;
+					if (!result.success) {
+						throw new Error(result.error || "Authentication failed");
 					}
 
-					// For special case where password is "verified" (after OTP verification)
-					if (credentials.password === "verified") {
-						// Refetch user to get latest verification status
-						const freshUser = await prisma.user.findUnique({
-							where: {
-								email: credentials.email as string
-							}
-						});
-
-						if (freshUser && freshUser.emailVerified) {
-							return {
-								id: freshUser.id,
-								email: freshUser.email,
-								name: freshUser.name,
-								image: freshUser.image,
-								role: freshUser.role,
-								roleExplicitlyChosen: freshUser.roleExplicitlyChosen,
-								onboardingCompleted: freshUser.onboardingCompleted
-							};
-						} else {
-							throw new Error("Email verification not completed");
-						}
-					}
-
-					// Check if email is verified for regular password login
-					if (!user.emailVerified) {
-						throw new Error("Please verify your email before signing in");
-					}
-
-					// Regular password check
-					const isPasswordValid = await bcrypt.compare(credentials.password as string, user.password);
-
-					if (!isPasswordValid) {
-						return null;
-					}
-
-					return {
-						id: user.id,
-						email: user.email,
-						name: user.name,
-						image: user.image,
-						role: user.role,
-						roleExplicitlyChosen: user.roleExplicitlyChosen
-					};
+					return result.user;
 				} catch (error) {
 					console.error("Authorization error:", error);
 					throw new Error(error instanceof Error ? error.message : "Authentication failed");
