@@ -57,7 +57,7 @@ function FloatingPaths({ position }: { position: number }) {
     );
 }
 
-export function BackgroundPaths({
+export function MainLandingPage({
     title = "Validate",
     subtitle = "Blockchain-Powered Idea Validation Platform",
     showWaitingArea = false
