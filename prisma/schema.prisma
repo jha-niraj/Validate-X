@@ -20,6 +20,44 @@ enum PostStatus {
     EXPIRED       // Expired without completion
 }
 
+enum PostType {
+    MEDIA_VALIDATION      // Group 1: Images/Videos
+    DOCUMENT_VALIDATION   // Group 2: PDFs/Documents
+    POLL_VALIDATION       // Group 3: Polls/Surveys
+    LINK_VALIDATION       // Group 4: URLs/Links
+    CUSTOM_VALIDATION     // Group 5: Custom/Mixed
+}
+
+enum MediaValidationSubtype {
+    THUMBNAIL_SELECTION   // Image selection/ranking
+    DESIGN_FEEDBACK      // UI/Design mockups
+    VIDEO_REVIEW         // Video snippet review
+}
+
+enum DocumentValidationSubtype {
+    PROJECT_REVIEW       // PDF/Document review
+    CONTENT_FEEDBACK     // Text/Script feedback
+    POLICY_VALIDATION    // Policy/Report validation
+}
+
+enum PollValidationSubtype {
+    BINARY_POLL          // Yes/No poll
+    MULTIPLE_CHOICE      // Multiple choice survey
+    RANKING_POLL         // Ranking poll
+}
+
+enum LinkValidationSubtype {
+    WEBSITE_USABILITY    // Website usability
+    APP_PROTOTYPE        // App prototype test
+    SOCIAL_MEDIA_POST    // Social media validation
+}
+
+enum CustomValidationSubtype {
+    GENERIC_UPLOAD       // Generic file upload
+    HYBRID_FORMAT        // Multiple formats
+    OPEN_QUERY          // Open-ended question
+}
+
 enum ValidationType {
     NORMAL        // Quick vote (Yes/No/Neutral)
     DETAILED      // Detailed feedback with rating
@@ -140,11 +178,26 @@ model Post {
     categoryId            String
     authorId              String
     
-    // Files and links
-    fileUrl               String?
+    // Post type and subtype
+    postType              PostType
+    postSubtype           String?    // Stores the specific subtype enum value as string
+    
+    // Content based on type
+    mediaUrls             String[]   @default([])  // For images/videos (array for multiple files)
+    documentUrl           String?                  // For PDFs/documents
+    linkUrl               String?                  // For website/app links
+    
+    // Poll-specific data (stored as JSON)
+    pollOptions           String?    // JSON array of poll options
+    pollSettings          String?    // JSON object with poll configuration
+    
+    // Custom validation instructions
+    customInstructions    String?    // For custom validation types
+    
+    // Files and attachments
+    fileUrl               String?    // Legacy - keeping for backward compatibility
     fileName              String?
     fileType              String?
-    linkUrl               String?
     
     // Validation requirements
     normalValidatorCount  Int        @default(500)
@@ -190,6 +243,13 @@ model Validation {
     // Basic validation data
     vote              String?          // LIKE, DISLIKE, NEUTRAL for normal
     shortComment      String?
+    
+    // Type-specific validation responses (stored as JSON)
+    mediaResponse     String?          // Rankings, selections for media
+    pollResponse      String?          // Poll answers, rankings
+    documentResponse  String?          // Document feedback, annotations
+    linkResponse      String?          // Website usability feedback
+    customResponse    String?          // Custom validation responses
     
     // Detailed validation data
     detailedFeedback  String?
