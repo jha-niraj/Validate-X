@@ -188,7 +188,7 @@ model Post {
     linkUrl               String?                  // For website/app links
     
     // Poll-specific data (stored as JSON)
-    pollOptions           String?    // JSON array of poll options
+    pollOptions           String[]      @default([])    // JSON array of poll options
     pollSettings          String?    // JSON object with poll configuration
     
     // Custom validation instructions

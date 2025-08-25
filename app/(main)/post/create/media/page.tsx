@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import {
-	Upload, X, Image as ImageIcon, Play, Palette, 
+	Upload, X, Image as ImageIcon, Play, Palette,
 	DollarSign, Target, ArrowLeft, CheckCircle
 } from "lucide-react"
 import { toast } from "sonner"
@@ -29,7 +29,7 @@ export default function MediaValidationPage() {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const subtype = searchParams.get('subtype') || 'thumbnail_selection'
-	
+
 	const [loading, setLoading] = useState(false)
 	const [categories, setCategories] = useState<Category[]>([])
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([])
@@ -99,7 +99,7 @@ export default function MediaValidationPage() {
 
 	const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const files = Array.from(event.target.files || [])
-		
+
 		if (selectedFiles.length + files.length > config.maxFiles) {
 			toast.error(`Maximum ${config.maxFiles} files allowed`)
 			return
@@ -116,10 +116,10 @@ export default function MediaValidationPage() {
 	const removeFile = (index: number) => {
 		const newFiles = selectedFiles.filter((_, i) => i !== index)
 		const newPreviews = previews.filter((_, i) => i !== index)
-		
+
 		// Revoke the object URL to prevent memory leaks
 		URL.revokeObjectURL(previews[index])
-		
+
 		setSelectedFiles(newFiles)
 		setPreviews(newPreviews)
 	}
@@ -129,9 +129,9 @@ export default function MediaValidationPage() {
 	}
 
 	const calculateTotalCost = () => {
-		return (formData.normalValidatorCount * formData.normalReward) + 
-			   (formData.detailedValidatorCount * formData.detailedReward) + 
-			   calculatePlatformFee()
+		return (formData.normalValidatorCount * formData.normalReward) +
+			(formData.detailedValidatorCount * formData.detailedReward) +
+			calculatePlatformFee()
 	}
 
 	const calculateRemainingBudget = () => {
@@ -165,7 +165,7 @@ export default function MediaValidationPage() {
 		try {
 			// Mock file upload - in real implementation, upload files first
 			const mockFileUrl = selectedFiles.length > 0 ? `https://mock-cdn.com/${selectedFiles[0].name}` : undefined
-			
+
 			const result = await createPost({
 				title: formData.title,
 				description: formData.description,

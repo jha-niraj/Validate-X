@@ -110,23 +110,23 @@ export default function CreateDocumentPost() {
         setIsSubmitting(true)
 
         try {
-      const result = await createDocumentPost({
-        title: formData.title,
-        description: formData.description,
-        categoryId: '', // Will be auto-filled in the action
-        postSubtype: formData.subtype as any,
-        documentUrl: formData.documentUrls[0] || '',
-        normalValidatorCount: 3,
-        detailedValidatorCount: 1,
-        totalBudget: parseFloat(formData.budget),
-        normalReward: parseFloat(formData.budget) * 0.6,
-        detailedReward: parseFloat(formData.budget) * 0.3,
-        platformFee: parseFloat(formData.budget) * 0.1,
-        allowAIFeedback: true,
-        detailedApprovalRequired: false,
-        enableDetailedFeedback: true,
-        expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-      })
+            const result = await createDocumentPost({
+                title: formData.title,
+                description: formData.description,
+                categoryId: '', // Will be auto-filled in the action
+                postSubtype: formData.subtype as any,
+                documentUrl: formData.documentUrls[0] || '',
+                normalValidatorCount: 3,
+                detailedValidatorCount: 1,
+                totalBudget: parseFloat(formData.budget),
+                normalReward: parseFloat(formData.budget) * 0.6,
+                detailedReward: parseFloat(formData.budget) * 0.3,
+                platformFee: parseFloat(formData.budget) * 0.1,
+                allowAIFeedback: true,
+                detailedApprovalRequired: false,
+                enableDetailedFeedback: true,
+                expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+            })
 
             if (result.success) {
                 toast.success('Document validation post created successfully!')

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
 	Image, FileText, BarChart3, ExternalLink, Settings,
-	Play, Palette, FileIcon, MessageSquare, ThumbsUp, 
+	Play, Palette, FileIcon, MessageSquare, ThumbsUp,
 	Globe, Smartphone, Share2, Upload, HelpCircle, Lightbulb
 } from "lucide-react"
 import { motion } from "framer-motion"
@@ -199,7 +199,7 @@ export default function PostTypeSelectionPage() {
 		if (!selectedType || !selectedSubtype) {
 			return
 		}
-		
+
 		router.push(`/post/create/${selectedType}?subtype=${selectedSubtype}`)
 	}
 
@@ -233,7 +233,7 @@ export default function PostTypeSelectionPage() {
 										animate={{ opacity: 1, y: 0 }}
 										transition={{ delay: index * 0.1 }}
 									>
-										<Card 
+										<Card
 											className={`cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 ${type.borderColor} border-2`}
 											onClick={() => setSelectedType(type.id)}
 										>
@@ -275,7 +275,7 @@ export default function PostTypeSelectionPage() {
 								>
 									← Back to Type Selection
 								</Button>
-								
+
 								<div className="flex items-center gap-3 mb-4">
 									<div className={`p-3 rounded-lg ${selectedTypeData?.color} w-fit`}>
 										{selectedTypeData && <selectedTypeData.icon className="h-6 w-6" />}
@@ -295,12 +295,11 @@ export default function PostTypeSelectionPage() {
 										animate={{ opacity: 1, y: 0 }}
 										transition={{ delay: index * 0.1 }}
 									>
-										<Card 
-											className={`cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 ${
-												selectedSubtype === subtype.id 
-													? `${selectedTypeData.borderColor} border-2 bg-blue-50 dark:bg-blue-950/20` 
+										<Card
+											className={`cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 ${selectedSubtype === subtype.id
+													? `${selectedTypeData.borderColor} border-2 bg-blue-50 dark:bg-blue-950/20`
 													: 'border hover:border-gray-300'
-											}`}
+												}`}
 											onClick={() => setSelectedSubtype(subtype.id)}
 										>
 											<CardHeader>
@@ -342,7 +341,7 @@ export default function PostTypeSelectionPage() {
 									animate={{ opacity: 1, y: 0 }}
 									className="flex justify-center"
 								>
-									<Button 
+									<Button
 										onClick={handleCreatePost}
 										size="lg"
 										className="px-8"
