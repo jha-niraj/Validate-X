@@ -16,7 +16,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
-import { getCategories, createPost } from "@/actions/post.actions"
+import { getCategories, createMediaPost } from "@/actions/post.actions"
 
 interface Category {
 	id: string
@@ -163,17 +163,12 @@ export default function MediaValidationPage() {
 
 		setLoading(true)
 		try {
-			// Mock file upload - in real implementation, upload files first
-			const mockFileUrl = selectedFiles.length > 0 ? `https://mock-cdn.com/${selectedFiles[0].name}` : undefined
-
-			const result = await createPost({
+			const result = await createMediaPost({
 				title: formData.title,
 				description: formData.description,
 				categoryId: formData.categoryId,
-				fileUrl: mockFileUrl,
-				fileName: selectedFiles[0]?.name,
-				fileType: selectedFiles[0]?.type.startsWith('video/') ? 'video' : 'image',
-				linkUrl: undefined,
+				postSubtype: subtype as any, // Convert subtype to proper enum
+				mediaFiles: selectedFiles,
 				normalValidatorCount: formData.normalValidatorCount,
 				detailedValidatorCount: formData.detailedValidatorCount,
 				totalBudget: formData.totalBudget,

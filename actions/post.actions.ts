@@ -5,124 +5,7 @@ import { auth } from "@/auth"
 import { revalidatePath } from "next/cache"
 import { PostStatus, ValidationType, ValidationStatus, PostType, MediaValidationSubtype, DocumentValidationSubtype, PollValidationSubtype, LinkValidationSubtype, CustomValidationSubtype } from "@prisma/client"
 import { Decimal } from "@prisma/client/runtime/library"
-
-interface CreatePostData {
-	title: string
-	description: string
-	categoryId: string
-	fileUrl?: string
-	fileName?: string
-	fileType?: string
-	linkUrl?: string
-	normalValidatorCount: number
-	detailedValidatorCount: number
-	totalBudget: number
-	normalReward: number
-	detailedReward: number
-	platformFee: number
-	allowAIFeedback: boolean
-	detailedApprovalRequired: boolean
-	enableDetailedFeedback: boolean
-	detailedFeedbackStructure?: string
-	expiryDate: string
-	file?: File | null
-}
-
-export async function createPost(data: CreatePostData) {
-	try {
-		const session = await auth()
-		if (!session?.user?.id) {
-			return { success: false, error: "Unauthorized" }
-		}
-
-		// Check if user has sufficient balance
-		const user = await prisma.user.findUnique({
-			where: { id: session.user.id },
-			select: { availableBalance: true }
-		})
-
-		if (!user) {
-			return { success: false, error: "User not found" }
-		}
-
-		if (user.availableBalance.toNumber() < data.totalBudget) {
-			return { success: false, error: "Insufficient balance" }
-		}
-
-		const expiryDate = new Date(data.expiryDate)
-
-		const post = await prisma.post.create({
-			data: {
-				title: data.title,
-				description: data.description,
-				categoryId: data.categoryId,
-				authorId: session.user.id,
-				fileUrl: data.fileUrl,
-				fileName: data.fileName,
-				fileType: data.fileType,
-				linkUrl: data.linkUrl,
-				normalValidatorCount: data.normalValidatorCount,
-				detailedValidatorCount: data.detailedValidatorCount,
-				totalBudget: new Decimal(data.totalBudget),
-				normalReward: new Decimal(data.normalReward),
-				detailedReward: new Decimal(data.detailedReward),
-				platformFee: new Decimal(data.platformFee),
-				allowAIFeedback: data.allowAIFeedback,
-				detailedApprovalRequired: data.detailedApprovalRequired,
-				enableDetailedFeedback: data.enableDetailedFeedback,
-				detailedFeedbackStructure: data.detailedFeedbackStructure,
-				expiryDate,
-				status: PostStatus.OPEN
-			},
-			include: {
-				category: true,
-				author: {
-					select: {
-						name: true,
-						image: true
-					}
-				}
-			}
-		})
-
-		// Deduct from user's available balance
-		await prisma.user.update({
-			where: { id: session.user.id },
-			data: {
-				availableBalance: { decrement: data.totalBudget }
-			}
-		})
-
-		// Create payment transaction record
-		await prisma.transaction.create({
-			data: {
-				userId: session.user.id,
-				amount: new Decimal(-data.totalBudget),
-				type: "POST_PAYMENT",
-				description: `Payment for post: ${data.title}`,
-				status: "COMPLETED"
-			}
-		})
-
-		// Update user stats
-		await prisma.user.update({
-			where: { id: session.user.id },
-			data: {
-				totalIdeasSubmitted: {
-					increment: 1
-				}
-			}
-		})
-
-		revalidatePath('/dashboard')
-		revalidatePath('/validatehub')
-
-		return { success: true, post }
-	} catch (error) {
-		console.error("Error creating post:", error)
-		return { success: false, error: "Failed to create post" }
-	}
-}
+import cloudinary from "@/lib/cloudinary"
 
 export async function getUserPosts(userId?: string) {
 	try {
@@ -513,7 +396,7 @@ export async function getDetailedValidations(postId: string) {
 				validator: {
 					select: { 
 						name: true, 
-						image: true,
+					image: true,
 						reputationScore: true
 					}
 				}
@@ -557,7 +440,7 @@ interface CreateMediaPostData {
 	description: string
 	categoryId: string
 	postSubtype: MediaValidationSubtype
-	mediaUrls: string[]
+	mediaFiles: File[]
 	normalValidatorCount: number
 	detailedValidatorCount: number
 	totalBudget: number
@@ -592,6 +475,22 @@ export async function createMediaPost(data: CreateMediaPostData) {
 			return { success: false, error: "Insufficient balance" }
 		}
 
+		// Upload multiple media files to Cloudinary
+		const mediaUrls: string[] = []
+		
+		if (data.mediaFiles && data.mediaFiles.length > 0) {
+			try {
+				const uploadPromises = data.mediaFiles.map(file => 
+					uploadToCloudinary(file, "validatex-media")
+				)
+				const uploadResults = await Promise.all(uploadPromises)
+				mediaUrls.push(...uploadResults.map(result => result.url))
+			} catch (uploadError) {
+				console.error("Media upload error:", uploadError)
+				return { success: false, error: "Failed to upload media files" }
+			}
+		}
+
 		const expiryDate = new Date(data.expiryDate)
 
 		const post = await prisma.post.create({
@@ -602,7 +501,7 @@ export async function createMediaPost(data: CreateMediaPostData) {
 				authorId: session.user.id,
 				postType: PostType.MEDIA_VALIDATION,
 				postSubtype: data.postSubtype,
-				mediaUrls: data.mediaUrls,
+				mediaUrls: mediaUrls,
 				normalValidatorCount: data.normalValidatorCount,
 				detailedValidatorCount: data.detailedValidatorCount,
 				totalBudget: new Decimal(data.totalBudget),
@@ -662,7 +561,7 @@ interface CreateDocumentPostData {
 	description: string
 	categoryId: string
 	postSubtype: DocumentValidationSubtype
-	documentUrl: string
+	documentFile: File
 	normalValidatorCount: number
 	detailedValidatorCount: number
 	totalBudget: number
@@ -692,6 +591,17 @@ export async function createDocumentPost(data: CreateDocumentPostData) {
 			return { success: false, error: "Insufficient balance" }
 		}
 
+		// Upload document file to Cloudinary
+		let documentUrl = ""
+		
+		try {
+			const uploadResult = await uploadToCloudinary(data.documentFile, "validatex-documents")
+			documentUrl = uploadResult.url
+		} catch (uploadError) {
+			console.error("Document upload error:", uploadError)
+			return { success: false, error: "Failed to upload document" }
+		}
+
 		const expiryDate = new Date(data.expiryDate)
 
 		const post = await prisma.post.create({
@@ -702,7 +612,7 @@ export async function createDocumentPost(data: CreateDocumentPostData) {
 				authorId: session.user.id,
 				postType: PostType.DOCUMENT_VALIDATION,
 				postSubtype: data.postSubtype,
-				documentUrl: data.documentUrl,
+				documentUrl: documentUrl,
 				normalValidatorCount: data.normalValidatorCount,
 				detailedValidatorCount: data.detailedValidatorCount,
 				totalBudget: new Decimal(data.totalBudget),
@@ -783,12 +693,17 @@ export async function createPollPost(data: CreatePollPostData) {
 			return { success: false, error: "Unauthorized" }
 		}
 
+		// Check if user has sufficient balance
 		const user = await prisma.user.findUnique({
 			where: { id: session.user.id },
 			select: { availableBalance: true }
 		})
 
-		if (!user || user.availableBalance.toNumber() < data.totalBudget) {
+		if (!user) {
+			return { success: false, error: "User not found" }
+		}
+
+		if (user.availableBalance.toNumber() < data.totalBudget) {
 			return { success: false, error: "Insufficient balance" }
 		}
 
@@ -803,7 +718,7 @@ export async function createPollPost(data: CreatePollPostData) {
 				postType: PostType.POLL_VALIDATION,
 				postSubtype: data.postSubtype,
 				pollOptions: data.pollOptions,
-				pollSettings: data.pollSettings,
+				pollSettings: JSON.stringify(data.pollSettings),
 				normalValidatorCount: data.normalValidatorCount,
 				detailedValidatorCount: data.detailedValidatorCount,
 				totalBudget: new Decimal(data.totalBudget),
@@ -1003,7 +918,7 @@ export async function createCustomPost(data: CreateCustomPostData) {
 				postType: PostType.CUSTOM_VALIDATION,
 				postSubtype: data.postSubtype,
 				customInstructions: data.customInstructions,
-				customRequirements: data.customRequirements,
+				customRequirements: JSON.stringify(data.customRequirements),
 				normalValidatorCount: data.normalValidatorCount,
 				detailedValidatorCount: data.detailedValidatorCount,
 				totalBudget: new Decimal(data.totalBudget),
@@ -1053,5 +968,158 @@ export async function createCustomPost(data: CreateCustomPostData) {
 	} catch (error) {
 		console.error("Error creating custom post:", error)
 		return { success: false, error: "Failed to create custom validation post" }
+	}
+}
+
+// File upload utility function
+async function uploadToCloudinary(file: File, folder: string = "validatex-posts"): Promise<{ url: string; publicId: string }> {
+	const arrayBuffer = await file.arrayBuffer()
+	const buffer = Buffer.from(arrayBuffer)
+	
+	return new Promise((resolve, reject) => {
+		cloudinary.uploader.upload_stream(
+			{
+				folder: folder,
+				resource_type: "auto", // Auto-detect file type
+			},
+			(error, result) => {
+				if (error) {
+					reject(error)
+				} else if (result) {
+					resolve({
+						url: result.secure_url,
+						publicId: result.public_id
+					})
+				} else {
+					reject(new Error("Upload failed"))
+				}
+			}
+		).end(buffer)
+	})
+}
+
+interface CreatePostData {
+	title: string
+	description: string
+	categoryId: string
+	postType: PostType
+	fileUrl?: string
+	fileName?: string
+	fileType?: string
+	linkUrl?: string
+	normalValidatorCount: number
+	detailedValidatorCount: number
+	totalBudget: number
+	normalReward: number
+	detailedReward: number
+	platformFee: number
+	allowAIFeedback: boolean
+	detailedApprovalRequired: boolean
+	enableDetailedFeedback: boolean
+	detailedFeedbackStructure?: string
+	expiryDate: string
+	file?: File | null
+}
+
+export async function createPost(data: CreatePostData) {
+	try {
+		const session = await auth()
+		if (!session?.user?.id) {
+			return { success: false, error: "Unauthorized" }
+		}
+
+		// Check if user has sufficient balance
+		const user = await prisma.user.findUnique({
+			where: { id: session.user.id },
+			select: { availableBalance: true }
+		})
+
+		if (!user) {
+			return { success: false, error: "User not found" }
+		}
+
+		if (user.availableBalance.toNumber() < data.totalBudget) {
+			return { success: false, error: "Insufficient balance" }
+		}
+
+		// Handle file upload if provided
+		let fileUrl = data.fileUrl
+		let fileName = data.fileName
+		
+		if (data.file) {
+			try {
+				const uploadResult = await uploadToCloudinary(data.file)
+				fileUrl = uploadResult.url
+				fileName = data.file.name
+			} catch (uploadError) {
+				console.error("File upload error:", uploadError)
+				return { success: false, error: "Failed to upload file" }
+			}
+		}
+
+		const expiryDate = new Date(data.expiryDate)
+
+		const post = await prisma.post.create({
+			data: {
+				title: data.title,
+				description: data.description,
+				categoryId: data.categoryId,
+				authorId: session.user.id,
+				postType: data.postType,
+				fileUrl: fileUrl,
+				fileName: fileName,
+				fileType: data.fileType,
+				linkUrl: data.linkUrl,
+				normalValidatorCount: data.normalValidatorCount,
+				detailedValidatorCount: data.detailedValidatorCount,
+				totalBudget: new Decimal(data.totalBudget),
+				normalReward: new Decimal(data.normalReward),
+				detailedReward: new Decimal(data.detailedReward),
+				platformFee: new Decimal(data.platformFee),
+				allowAIFeedback: data.allowAIFeedback,
+				detailedApprovalRequired: data.detailedApprovalRequired,
+				enableDetailedFeedback: data.enableDetailedFeedback,
+				detailedFeedbackStructure: data.detailedFeedbackStructure,
+				expiryDate,
+				status: PostStatus.OPEN
+			},
+			include: {
+				category: true,
+				author: {
+					select: {
+						name: true,
+						image: true
+					}
+				}
+			}
+		})
+
+		// Deduct from user's available balance
+		await prisma.user.update({
+			where: { id: session.user.id },
+			data: {
+				availableBalance: { decrement: data.totalBudget },
+				totalIdeasSubmitted: { increment: 1 }
+			}
+		})
+
+		// Create payment transaction record
+		await prisma.transaction.create({
+			data: {
+				userId: session.user.id,
+				amount: new Decimal(-data.totalBudget),
+				type: "POST_PAYMENT",
+				description: `Payment for post: ${data.title}`,
+				status: "COMPLETED"
+			}
+		})
+
+		revalidatePath('/dashboard')
+		revalidatePath('/validatehub')
+
+		return { success: true, post }
+	} catch (error) {
+		console.error("Error creating post:", error)
+		return { success: false, error: "Failed to create post" }
 	}
 }

@@ -193,6 +193,7 @@ model Post {
     
     // Custom validation instructions
     customInstructions    String?    // For custom validation types
+    customRequirements    String?    // JSON string for custom requirements
     
     // Files and attachments
     fileUrl               String?    // Legacy - keeping for backward compatibility
