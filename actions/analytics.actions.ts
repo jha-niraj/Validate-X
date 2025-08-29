@@ -47,33 +47,70 @@ export async function getSubmitterAnalytics() {
 			orderBy: { createdAt: 'desc' }
 		})
 
-		// Get monthly spending trend (last 6 months)
-		const monthlySpending = await prisma.$queryRaw`
-			SELECT 
-				DATE_TRUNC('month', created_at) as month,
-				SUM(amount) as total_amount,
-				COUNT(*) as transaction_count
-			FROM "Transaction"
-			WHERE user_id = ${userId}
-				AND type = 'POST_PAYMENT'
-				AND created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '6 months')
-			GROUP BY DATE_TRUNC('month', created_at)
-			ORDER BY month
-		`
+		// Get monthly spending trend (last 6 months) using Prisma
+		const sixMonthsAgo = new Date()
+		sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+		
+		const monthlySpendingData = await prisma.transaction.findMany({
+			where: {
+				userId: userId,
+				type: 'POST_PAYMENT',
+				createdAt: {
+					gte: sixMonthsAgo
+				}
+			},
+			orderBy: { createdAt: 'asc' }
+		})
+
+		// Group by month
+		const monthlySpending = monthlySpendingData.reduce((acc, transaction) => {
+			const month = new Date(transaction.createdAt.getFullYear(), transaction.createdAt.getMonth(), 1)
+			const monthKey = month.toISOString()
+			
+			if (!acc[monthKey]) {
+				acc[monthKey] = { month: monthKey, total_amount: 0, transaction_count: 0 }
+			}
+			
+			acc[monthKey].total_amount += transaction.amount.toNumber()
+			acc[monthKey].transaction_count += 1
+			
+			return acc
+		}, {} as Record<string, any>)
 
 		// Get validation engagement over time (daily for last 30 days)
-		const dailyValidations = await prisma.$queryRaw`
-			SELECT 
-				DATE(v.created_at) as date,
-				COUNT(*) as validation_count,
-				COUNT(DISTINCT v.validator_id) as unique_validators
-			FROM "Validation" v
-			JOIN "Post" p ON v.post_id = p.id
-			WHERE p.author_id = ${userId}
-				AND v.created_at >= CURRENT_DATE - INTERVAL '30 days'
-			GROUP BY DATE(v.created_at)
-			ORDER BY date
-		`
+		const thirtyDaysAgo = new Date()
+		thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+		const validationsData = await prisma.validation.findMany({
+			where: {
+				post: {
+					authorId: userId
+				},
+				createdAt: {
+					gte: thirtyDaysAgo
+				}
+			},
+			include: {
+				validator: {
+					select: { id: true }
+				}
+			},
+			orderBy: { createdAt: 'asc' }
+		})
+
+		// Group by date
+		const dailyValidations = validationsData.reduce((acc, validation) => {
+			const date = validation.createdAt.toISOString().split('T')[0]
+			
+			if (!acc[date]) {
+				acc[date] = { date, validation_count: 0, unique_validators: new Set() }
+			}
+			
+			acc[date].validation_count += 1
+			acc[date].unique_validators.add(validation.validator.id)
+			
+			return acc
+		}, {} as Record<string, any>)
 
 		// Get category performance
 		const categoryPerformance = await prisma.post.groupBy({
@@ -153,15 +190,15 @@ export async function getSubmitterAnalytics() {
 					avgCostPerValidation: Math.round(avgCostPerValidation * 100) / 100
 				},
 				// Charts data
-				monthlySpending: (monthlySpending as any[]).map(item => ({
+				monthlySpending: Object.values(monthlySpending).map((item: any) => ({
 					month: item.month,
-					amount: item.total_amount ? Number(item.total_amount) : 0,
-					transactions: Number(item.transaction_count)
+					amount: item.total_amount || 0,
+					transactions: item.transaction_count || 0
 				})),
-				dailyValidations: (dailyValidations as any[]).map(item => ({
+				dailyValidations: Object.values(dailyValidations).map((item: any) => ({
 					date: item.date,
-					validations: Number(item.validation_count),
-					uniqueValidators: Number(item.unique_validators)
+					validations: item.validation_count || 0,
+					uniqueValidators: item.unique_validators?.size || 0
 				})),
 				categoryPerformance: categoriesWithNames.map(cat => ({
 					categoryId: cat.categoryId,
@@ -224,17 +261,29 @@ export async function getPostAnalytics(postId: string) {
 			return { success: false, error: "Post not found or access denied" }
 		}
 
-		// Get validation timeline
-		const validationTimeline = await prisma.$queryRaw`
-			SELECT 
-				DATE(created_at) as date,
-				COUNT(*) as validation_count,
-				AVG(CASE WHEN vote = 'LIKE' THEN 1 WHEN vote = 'DISLIKE' THEN -1 ELSE 0 END) as sentiment_score
-			FROM "Validation"
-			WHERE post_id = ${postId}
-			GROUP BY DATE(created_at)
-			ORDER BY date
-		`
+		// Get validation timeline using Prisma (group by date)
+		const validations = await prisma.validation.findMany({
+			where: { postId },
+			orderBy: { createdAt: 'asc' },
+			select: {
+				createdAt: true,
+				vote: true,
+			}
+		})
+
+		// Group by date and calculate sentiment
+		const timelineMap: Record<string, { validation_count: number, sentiment_sum: number }> = {}
+		validations.forEach(v => {
+			const date = v.createdAt.toISOString().split('T')[0]
+			if (!timelineMap[date]) timelineMap[date] = { validation_count: 0, sentiment_sum: 0 }
+			timelineMap[date].validation_count += 1
+			timelineMap[date].sentiment_sum += v.vote === 'LIKE' ? 1 : v.vote === 'DISLIKE' ? -1 : 0
+		})
+		const validationTimeline = Object.entries(timelineMap).map(([date, data]) => ({
+			date,
+			validationCount: data.validation_count,
+			sentimentScore: data.validation_count > 0 ? data.sentiment_sum / data.validation_count : 0
+		}))
 
 		// Get validator quality distribution
 		const validatorQuality = await prisma.validation.findMany({
@@ -266,11 +315,7 @@ export async function getPostAnalytics(postId: string) {
 					totalBudget: post.normalReward.toNumber() * post.normalValidatorCount + 
 								post.detailedReward.toNumber() * post.detailedValidatorCount
 				},
-				validationTimeline: (validationTimeline as any[]).map(item => ({
-					date: item.date,
-					validationCount: Number(item.validation_count),
-					sentimentScore: Number(item.sentiment_score)
-				})),
+				validationTimeline,
 				validatorQualityDistribution: qualityDistribution,
 				validations: post.validations.map(validation => ({
 					id: validation.id,

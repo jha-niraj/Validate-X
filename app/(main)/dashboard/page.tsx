@@ -242,7 +242,7 @@ export default function DashboardPage() {
 											Get valuable feedback from our community of validators and improve your concepts.
 										</p>
 										<div className="flex gap-3">
-											<Link href="/validation/create">
+											<Link href="/post/create">
 												<Button className="flex items-center gap-2">
 													<Plus className="h-4 w-4" />
 													Create Your First Post
@@ -418,7 +418,7 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<Link href="/validation/create">
+					<Link href="/post/create">
 						<Button className="w-full justify-start" size="lg">
 							<Plus className="mr-2 h-5 w-5" />
 							Submit New Idea
@@ -706,7 +706,7 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 												whileHover={{ scale: 1.02 }}
 												transition={{ duration: 0.2 }}
 											>
-												<Link href={`/validatehub`}>
+												<Link href={`/post`}>
 													<div className="flex items-center justify-between p-3 border rounded-lg hover:shadow-md transition-all cursor-pointer bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750">
 														<div className="flex-1">
 															<h4 className="font-medium line-clamp-1">{post.title}</h4>
@@ -732,7 +732,7 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 											</motion.div>
 										))
 									}
-									<Link href="/validatehub">
+									<Link href="/post">
 										<Button className="w-full mt-4">
 											View All Available Posts
 										</Button>

@@ -206,7 +206,7 @@ export default function PostTypeSelectionPage() {
 	const selectedTypeData = validationTypes.find(type => type.id === selectedType)
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+		<div className="min-h-screen bg-white dark:bg-neutral-900">
 			<div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}

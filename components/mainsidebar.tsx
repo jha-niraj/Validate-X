@@ -54,7 +54,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 			status: "active"
 		},
 		{
-			path: "validatehub",
+			path: "post",
 			name: "ValidateHub",
 			icon: <Eye className="h-5 w-5" />,
 			status: "active"
@@ -66,9 +66,9 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 			status: "active"
 		},
 		{
-			path: "wallet",
-			name: "Wallet",
-			icon: <Zap className="h-5 w-5" />,
+			path: "spending",
+			name: "Spending",
+			icon: <Wallet className="h-5 w-5" />,
 			status: "active"
 		}
 	];
@@ -76,15 +76,15 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 	// Filter routes based on user role
 	const displayRoutes = routes.filter((route) => {
 		// Hide ValidateHub for submitter-only users
-		if (route.path === "validatehub" && session?.user?.role === "SUBMITTER") {
+		if (route.path === "post" && session?.user?.role === "SUBMITTER") {
 			return false;
 		}
 		// Hide Analytics for USER role
 		if (route.path === "analytics" && session?.user?.role === "USER") {
 			return false;
 		}
-		// Hide Wallet for SUBMITTER role (they can access via dashboard)
-		if (route.path === "wallet" && session?.user?.role === "SUBMITTER") {
+		// Show Spending only for SUBMITTER
+		if (route.path === "spending" && session?.user?.role !== "SUBMITTER") {
 			return false;
 		}
 		return route.status === "active";
@@ -302,4 +302,4 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
 	)
 }
 
-export default Sidebar; 
+export default Sidebar;
