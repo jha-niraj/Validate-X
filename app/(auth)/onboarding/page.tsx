@@ -9,8 +9,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { ArrowRight, ArrowLeft, CheckCircle, Users, Lightbulb, Play, SkipForward, Loader2 } from "lucide-react"
-import { completeOnboarding, redirectAfterOnboarding, checkOnboardingStatus } from "@/actions/onboarding.actions"
+import { ArrowRight, ArrowLeft, CheckCircle, Users, Lightbulb, Loader2 } from "lucide-react"
+import { completeOnboarding, checkOnboardingStatus } from "@/actions/onboarding.actions"
 import { getCategories } from "@/actions/post.actions"
 
 interface Category {
@@ -314,39 +314,6 @@ export default function OnboardingPage() {
 	const renderStep3 = () => (
 		<Card className="w-full max-w-7xl mx-auto">
 			<CardHeader className="text-center">
-				<CardTitle className="text-2xl font-bold">How ValidateX Works</CardTitle>
-				<CardDescription>
-					Watch this quick 1-minute video to understand the platform
-				</CardDescription>
-			</CardHeader>
-			<CardContent className="space-y-6">
-				<div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
-					<div className="text-center">
-						<div className="p-4 bg-white/10 rounded-full mb-4 mx-auto w-fit">
-							<Play className="h-8 w-8 text-white" />
-						</div>
-						<p className="text-white mb-4">Video: How ValidateX Works</p>
-						<p className="text-white/70 text-sm">Click to watch the introduction video</p>
-					</div>
-				</div>
-				<div className="flex gap-3">
-					<Button variant="outline" onClick={handlePrevious} className="flex-1">
-						<ArrowLeft className="mr-2 h-4 w-4" /> Previous
-					</Button>
-					<Button variant="outline" onClick={handleSkipVideo} className="flex-1">
-						<SkipForward className="mr-2 h-4 w-4" /> Skip Video
-					</Button>
-					<Button onClick={handleNext} className="flex-1">
-						Continue <ArrowRight className="ml-2 h-4 w-4" />
-					</Button>
-				</div>
-			</CardContent>
-		</Card>
-	)
-
-	const renderStep4 = () => (
-		<Card className="w-full max-w-7xl mx-auto">
-			<CardHeader className="text-center">
 				<CardTitle className="text-2xl font-bold">You&apos;re All Set!</CardTitle>
 				<CardDescription>
 					Review your selections and complete your onboarding
@@ -461,7 +428,6 @@ export default function OnboardingPage() {
 				{currentStep === 1 && renderStep1()}
 				{currentStep === 2 && renderStep2()}
 				{currentStep === 3 && renderStep3()}
-				{currentStep === 4 && renderStep4()}
 			</div>
 		</div>
 	)
