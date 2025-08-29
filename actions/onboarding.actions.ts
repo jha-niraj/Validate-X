@@ -101,7 +101,10 @@ export async function completeOnboarding(data: OnboardingInput) {
 			});
 		}
 
-		return { success: true };
+		return { 
+			success: true,
+			role: user?.role
+		};
 	} catch (error) {
 		console.error("Error completing onboarding:", error);
 

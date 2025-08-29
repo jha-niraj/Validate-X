@@ -136,8 +136,11 @@ export default function OnboardingPage() {
 
 			if (result.success) {
 				toast.success("Welcome to ValidateX!")
-				// Redirect based on role
-				await redirectAfterOnboarding(formData.role)
+				if(result?.role === "SUBMITTER") {
+					router.push("/dashboard?createPost=true");
+				} else if(result.role === "USER") {
+					router.push("/post");
+				}
 			} else {
 				toast.error(result.error || "Failed to complete onboarding")
 			}
