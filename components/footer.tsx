@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "./ui/button";
+import Image from "next/image";
 
 const Footer = () => {
     const footerLinks = {
@@ -37,9 +38,13 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
                     <div className="lg:col-span-2">
                         <Link href="/" className="flex items-center gap-2 mb-4">
-                            <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">V</span>
-                            </div>
+                            <Image
+                                src="/validatexmainlogo.png"
+                                alt="ValidateX"
+                                width={32}
+                                height={32}
+                                className='w-10 h-10 rounded-full scale-110'
+                            />
                             <span className="font-bold text-xl tracking-tight">ValidateX</span>
                         </Link>
                         <p className="text-neutral-400 mb-6 max-w-sm">
@@ -85,7 +90,7 @@ const Footer = () => {
                 <hr className="border-neutral-800 mb-8" />
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-neutral-400 text-sm">
-                        © 2024 ValidateX. All rights reserved.
+                        © 2025 ValidateX. All rights reserved.
                     </p>
                     <p className="text-neutral-400 text-sm">
                         Made with ❤️ for innovators worldwide
