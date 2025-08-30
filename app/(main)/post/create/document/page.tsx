@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { 
-    Card, CardContent, CardHeader, CardTitle, CardDescription 
+import {
+    Card, CardContent, CardHeader, CardTitle, CardDescription
 } from '@/components/ui/card'
-import { 
-    Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+import {
+    Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select'
 import { Upload, FileText, X, DollarSign, ArrowLeft } from 'lucide-react'
 import { createDocumentPost, getCategories } from '@/actions/post.actions'
@@ -76,9 +76,9 @@ export default function CreateDocumentPost() {
 
     const handleFileUpload = (files: FileList) => {
         if (files.length === 0) return
-        
+
         const file = files[0] // Take only the first file for documents
-        
+
         // Validate file type (PDF, DOC, DOCX, TXT)
         if (!file.type.includes('pdf') &&
             !file.type.includes('document') &&
@@ -90,7 +90,7 @@ export default function CreateDocumentPost() {
             toast.error(`${file.name} is not a supported document format`)
             return
         }
-        
+
         setDocumentFile(file)
         toast.success("Document file selected successfully!")
     }
@@ -178,7 +178,6 @@ export default function CreateDocumentPost() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    {/* Header */}
                     <div className="flex items-center gap-3 mb-6">
                         <Button
                             variant="outline"
@@ -196,9 +195,7 @@ export default function CreateDocumentPost() {
                             <p className="text-muted-foreground">Get professional feedback on your documents</p>
                         </div>
                     </div>
-
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Basic Information */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>Basic Information</CardTitle>
@@ -217,7 +214,6 @@ export default function CreateDocumentPost() {
                                         required
                                     />
                                 </div>
-
                                 <div>
                                     <Label htmlFor="description">Description *</Label>
                                     <Textarea
@@ -229,7 +225,6 @@ export default function CreateDocumentPost() {
                                         required
                                     />
                                 </div>
-
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <Label htmlFor="category">Category *</Label>
@@ -238,15 +233,16 @@ export default function CreateDocumentPost() {
                                                 <SelectValue placeholder="Select a category" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {categories.map((category) => (
-                                                    <SelectItem key={category.id} value={category.id}>
-                                                        {category.icon} {category.name}
-                                                    </SelectItem>
-                                                ))}
+                                                {
+                                                    categories.map((category) => (
+                                                        <SelectItem key={category.id} value={category.id}>
+                                                            {category.icon} {category.name}
+                                                        </SelectItem>
+                                                    ))
+                                                }
                                             </SelectContent>
                                         </Select>
                                     </div>
-
                                     <div>
                                         <Label htmlFor="subtype">Document Type *</Label>
                                         <Select value={formData.subtype} onValueChange={(value) => setFormData(prev => ({ ...prev, subtype: value }))}>
@@ -254,27 +250,28 @@ export default function CreateDocumentPost() {
                                                 <SelectValue placeholder="Select document type" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {documentSubtypes.map((subtype) => (
-                                                    <SelectItem key={subtype.value} value={subtype.value}>
-                                                        {subtype.label}
-                                                    </SelectItem>
-                                                ))}
+                                                {
+                                                    documentSubtypes.map((subtype) => (
+                                                        <SelectItem key={subtype.value} value={subtype.value}>
+                                                            {subtype.label}
+                                                        </SelectItem>
+                                                    ))
+                                                }
                                             </SelectContent>
                                         </Select>
                                     </div>
                                 </div>
-
-                                {selectedSubtypeInfo && (
-                                    <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                                        <p className="text-sm text-blue-700 dark:text-blue-300">
-                                            {selectedSubtypeInfo.description}
-                                        </p>
-                                    </div>
-                                )}
+                                {
+                                    selectedSubtypeInfo && (
+                                        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                                            <p className="text-sm text-blue-700 dark:text-blue-300">
+                                                {selectedSubtypeInfo.description}
+                                            </p>
+                                        </div>
+                                    )
+                                }
                             </CardContent>
                         </Card>
-
-                        {/* Document Upload */}
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
@@ -287,54 +284,54 @@ export default function CreateDocumentPost() {
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
-                                    {!documentFile ? (
-                                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                                            <FileText className="h-8 w-8 mx-auto text-gray-400 mb-2" />
-                                            <p className="text-sm text-gray-600 mb-2">
-                                                Drag and drop your document here or click to browse
-                                            </p>
-                                            <p className="text-xs text-gray-500 mb-4">
-                                                Supports: PDF, DOC, DOCX, TXT
-                                            </p>
-                                            <input
-                                                type="file"
-                                                accept=".pdf,.doc,.docx,.txt"
-                                                onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
-                                                className="hidden"
-                                                id="file-upload"
-                                            />
-                                            <Label htmlFor="file-upload" className="cursor-pointer">
-                                                <Button variant="outline" size="sm" type="button">
-                                                    Choose File
-                                                </Button>
-                                            </Label>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                                            <FileText className="h-8 w-8 text-green-600" />
-                                            <div className="flex-1">
-                                                <p className="font-medium text-green-700 dark:text-green-300">
-                                                    {documentFile.name}
+                                    {
+                                        !documentFile ? (
+                                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                                <FileText className="h-8 w-8 mx-auto text-gray-400 mb-2" />
+                                                <p className="text-sm text-gray-600 mb-2">
+                                                    Drag and drop your document here or click to browse
                                                 </p>
-                                                <p className="text-sm text-green-600 dark:text-green-400">
-                                                    {(documentFile.size / 1024 / 1024).toFixed(2)} MB
+                                                <p className="text-xs text-gray-500 mb-4">
+                                                    Supports: PDF, DOC, DOCX, TXT
                                                 </p>
+                                                <input
+                                                    type="file"
+                                                    accept=".pdf,.doc,.docx,.txt"
+                                                    onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
+                                                    className="hidden"
+                                                    id="file-upload"
+                                                />
+                                                <Label htmlFor="file-upload" className="cursor-pointer">
+                                                    <Button variant="outline" size="sm" type="button">
+                                                        Choose File
+                                                    </Button>
+                                                </Label>
                                             </div>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={removeFile}
-                                                type="button"
-                                            >
-                                                <X className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    )}
+                                        ) : (
+                                            <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                                                <FileText className="h-8 w-8 text-green-600" />
+                                                <div className="flex-1">
+                                                    <p className="font-medium text-green-700 dark:text-green-300">
+                                                        {documentFile.name}
+                                                    </p>
+                                                    <p className="text-sm text-green-600 dark:text-green-400">
+                                                        {(documentFile.size / 1024 / 1024).toFixed(2)} MB
+                                                    </p>
+                                                </div>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={removeFile}
+                                                    type="button"
+                                                >
+                                                    <X className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        )
+                                    }
                                 </div>
                             </CardContent>
                         </Card>
-
-                        {/* Validation Settings */}
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
@@ -376,7 +373,6 @@ export default function CreateDocumentPost() {
                                         </p>
                                     </div>
                                 </div>
-
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <Label htmlFor="normalReward">Quick Review Reward (₹)</Label>
@@ -406,7 +402,6 @@ export default function CreateDocumentPost() {
                                         </Select>
                                     </div>
                                 </div>
-
                                 <div>
                                     <Label htmlFor="totalBudget">Total Budget (₹)</Label>
                                     <Input
@@ -417,7 +412,6 @@ export default function CreateDocumentPost() {
                                         onChange={(e) => setFormData(prev => ({ ...prev, totalBudget: parseInt(e.target.value) || 0 }))}
                                     />
                                 </div>
-
                                 <div>
                                     <Label htmlFor="expiryDays">Validation Period</Label>
                                     <Select value={formData.expiryDays.toString()} onValueChange={(value) => setFormData(prev => ({ ...prev, expiryDays: parseInt(value) }))}>
@@ -432,8 +426,6 @@ export default function CreateDocumentPost() {
                                         </SelectContent>
                                     </Select>
                                 </div>
-
-                                {/* Budget Breakdown */}
                                 <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 space-y-2">
                                     <h4 className="font-medium">Budget Breakdown</h4>
                                     <div className="text-sm space-y-1">
@@ -465,8 +457,6 @@ export default function CreateDocumentPost() {
                                 </div>
                             </CardContent>
                         </Card>
-
-                        {/* Additional Requirements */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>Additional Requirements</CardTitle>
@@ -487,8 +477,6 @@ export default function CreateDocumentPost() {
                                 </div>
                             </CardContent>
                         </Card>
-
-                        {/* Submit */}
                         <div className="flex gap-3">
                             <Button
                                 variant="outline"

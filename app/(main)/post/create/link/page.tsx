@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { 
-	Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+import {
+	Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select'
 import { Link, ExternalLink, DollarSign, Globe } from 'lucide-react'
 import { createLinkPost } from '@/actions/post.actions'
@@ -138,9 +138,7 @@ export default function CreateLinkPost() {
 					Get expert feedback on websites, apps, and online content
 				</p>
 			</div>
-
 			<form onSubmit={handleSubmit} className="space-y-8">
-				{/* Link Type Selection */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
@@ -159,26 +157,29 @@ export default function CreateLinkPost() {
 									<SelectValue placeholder="Select link type for validation" />
 								</SelectTrigger>
 								<SelectContent>
-									{linkSubtypes.map((subtype) => (
-										<SelectItem key={subtype.value} value={subtype.value}>
-											<div>
-												<div className="font-medium">{subtype.label}</div>
-												<div className="text-sm text-muted-foreground">{subtype.description}</div>
-											</div>
-										</SelectItem>
-									))}
+									{
+										linkSubtypes.map((subtype) => (
+											<SelectItem key={subtype.value} value={subtype.value}>
+												<div>
+													<div className="font-medium">{subtype.label}</div>
+													<div className="text-sm text-muted-foreground">{subtype.description}</div>
+												</div>
+											</SelectItem>
+										))
+									}
 								</SelectContent>
 							</Select>
-							{selectedSubtypeInfo && (
-								<p className="text-sm text-muted-foreground mt-2">
-									{selectedSubtypeInfo.description}
-								</p>
-							)}
+							{
+								selectedSubtypeInfo && (
+									<p className="text-sm text-muted-foreground mt-2">
+										{selectedSubtypeInfo.description}
+									</p>
+								)
+							}
 						</div>
 					</CardContent>
 				</Card>
 
-				{/* Link Input */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
@@ -197,23 +198,24 @@ export default function CreateLinkPost() {
 								onChange={(e) => handleUrlChange(e.target.value)}
 								className="mt-1"
 							/>
-							{formData.linkUrl && !validateUrl(formData.linkUrl) && (
-								<p className="text-sm text-red-500 mt-1">Please enter a valid URL</p>
-							)}
+							{
+								formData.linkUrl && !validateUrl(formData.linkUrl) && (
+									<p className="text-sm text-red-500 mt-1">Please enter a valid URL</p>
+								)
+							}
 						</div>
-
-						{/* Link Preview */}
-						{linkPreview && (
-							<div className="border rounded-lg p-4 bg-muted/50">
-								<div className="flex items-center gap-2 mb-2">
-									<ExternalLink className="w-4 h-4" />
-									<span className="font-medium">Link Preview</span>
+						{
+							linkPreview && (
+								<div className="border rounded-lg p-4 bg-muted/50">
+									<div className="flex items-center gap-2 mb-2">
+										<ExternalLink className="w-4 h-4" />
+										<span className="font-medium">Link Preview</span>
+									</div>
+									<p className="font-medium">{linkPreview.title}</p>
+									<p className="text-sm text-muted-foreground">{linkPreview.description}</p>
 								</div>
-								<p className="font-medium">{linkPreview.title}</p>
-								<p className="text-sm text-muted-foreground">{linkPreview.description}</p>
-							</div>
-						)}
-
+							)
+						}
 						<div>
 							<Label htmlFor="accessInstructions">Access Instructions</Label>
 							<Textarea
@@ -226,8 +228,6 @@ export default function CreateLinkPost() {
 						</div>
 					</CardContent>
 				</Card>
-
-				{/* Validation Details */}
 				<Card>
 					<CardHeader>
 						<CardTitle>Validation Requirements</CardTitle>
@@ -243,7 +243,6 @@ export default function CreateLinkPost() {
 								className="mt-1"
 							/>
 						</div>
-
 						<div>
 							<Label htmlFor="reviewCriteria">Review Criteria</Label>
 							<Textarea
@@ -256,8 +255,6 @@ export default function CreateLinkPost() {
 						</div>
 					</CardContent>
 				</Card>
-
-				{/* Post Details */}
 				<Card>
 					<CardHeader>
 						<CardTitle>Validation Details</CardTitle>
@@ -273,7 +270,6 @@ export default function CreateLinkPost() {
 								className="mt-1"
 							/>
 						</div>
-
 						<div>
 							<Label htmlFor="description">Description *</Label>
 							<Textarea
@@ -286,8 +282,6 @@ export default function CreateLinkPost() {
 						</div>
 					</CardContent>
 				</Card>
-
-				{/* Budget */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
@@ -314,8 +308,6 @@ export default function CreateLinkPost() {
 						</div>
 					</CardContent>
 				</Card>
-
-				{/* Submit Button */}
 				<div className="flex justify-between">
 					<Button
 						type="button"

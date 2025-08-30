@@ -2,13 +2,14 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+	Card, CardContent, CardDescription, CardHeader, CardTitle
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
-	Image, FileText, BarChart3, ExternalLink, Settings,
-	Play, Palette, FileIcon, MessageSquare, ThumbsUp,
-	Globe, Smartphone, Share2, Upload, HelpCircle, Lightbulb
+	Image, FileText, BarChart3, ExternalLink, Settings, Play, Palette, FileIcon,
+	MessageSquare, ThumbsUp, Globe, Smartphone, Share2, Upload, HelpCircle, Lightbulb
 } from "lucide-react"
 import { motion } from "framer-motion"
 
@@ -222,136 +223,144 @@ export default function PostTypeSelectionPage() {
 							</p>
 						</div>
 					</div>
-
-					{!selectedType ? (
-						<>
-							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-								{validationTypes.map((type, index) => (
-									<motion.div
-										key={type.id}
-										initial={{ opacity: 0, y: 20 }}
-										animate={{ opacity: 1, y: 0 }}
-										transition={{ delay: index * 0.1 }}
+					{
+						!selectedType ? (
+							<>
+								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+									{
+										validationTypes.map((type, index) => (
+											<motion.div
+												key={type.id}
+												initial={{ opacity: 0, y: 20 }}
+												animate={{ opacity: 1, y: 0 }}
+												transition={{ delay: index * 0.1 }}
+											>
+												<Card
+													className={`cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 ${type.borderColor} border-2`}
+													onClick={() => setSelectedType(type.id)}
+												>
+													<CardHeader>
+														<div className={`p-3 rounded-lg ${type.color} w-fit mb-3`}>
+															<type.icon className="h-6 w-6" />
+														</div>
+														<CardTitle className="flex items-center gap-2">
+															{type.title}
+														</CardTitle>
+														<CardDescription>
+															{type.description}
+														</CardDescription>
+													</CardHeader>
+													<CardContent>
+														<div className="space-y-2">
+															{
+																type.examples.map((example, idx) => (
+																	<Badge key={idx} variant="secondary" className="mr-2">
+																		{example}
+																	</Badge>
+																))
+															}
+														</div>
+													</CardContent>
+												</Card>
+											</motion.div>
+										))
+									}
+								</div>
+							</>
+						) : (
+							<>
+								<div className="mb-6">
+									<Button
+										variant="outline"
+										onClick={() => {
+											setSelectedType(null)
+											setSelectedSubtype(null)
+										}}
+										className="mb-4"
 									>
-										<Card
-											className={`cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 ${type.borderColor} border-2`}
-											onClick={() => setSelectedType(type.id)}
-										>
-											<CardHeader>
-												<div className={`p-3 rounded-lg ${type.color} w-fit mb-3`}>
-													<type.icon className="h-6 w-6" />
-												</div>
-												<CardTitle className="flex items-center gap-2">
-													{type.title}
-												</CardTitle>
-												<CardDescription>
-													{type.description}
-												</CardDescription>
-											</CardHeader>
-											<CardContent>
-												<div className="space-y-2">
-													{type.examples.map((example, idx) => (
-														<Badge key={idx} variant="secondary" className="mr-2">
-															{example}
-														</Badge>
-													))}
-												</div>
-											</CardContent>
-										</Card>
-									</motion.div>
-								))}
-							</div>
-						</>
-					) : (
-						<>
-							<div className="mb-6">
-								<Button
-									variant="outline"
-									onClick={() => {
-										setSelectedType(null)
-										setSelectedSubtype(null)
-									}}
-									className="mb-4"
-								>
-									← Back to Type Selection
-								</Button>
-
-								<div className="flex items-center gap-3 mb-4">
-									<div className={`p-3 rounded-lg ${selectedTypeData?.color} w-fit`}>
-										{selectedTypeData && <selectedTypeData.icon className="h-6 w-6" />}
-									</div>
-									<div>
-										<h2 className="text-2xl font-bold">{selectedTypeData?.title}</h2>
-										<p className="text-muted-foreground">{selectedTypeData?.description}</p>
+										← Back to Type Selection
+									</Button>
+									<div className="flex items-center gap-3 mb-4">
+										<div className={`p-3 rounded-lg ${selectedTypeData?.color} w-fit`}>
+											{selectedTypeData && <selectedTypeData.icon className="h-6 w-6" />}
+										</div>
+										<div>
+											<h2 className="text-2xl font-bold">{selectedTypeData?.title}</h2>
+											<p className="text-muted-foreground">{selectedTypeData?.description}</p>
+										</div>
 									</div>
 								</div>
-							</div>
-
-							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-								{selectedTypeData?.subtypes.map((subtype, index) => (
-									<motion.div
-										key={subtype.id}
-										initial={{ opacity: 0, y: 20 }}
-										animate={{ opacity: 1, y: 0 }}
-										transition={{ delay: index * 0.1 }}
-									>
-										<Card
-											className={`cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 ${selectedSubtype === subtype.id
-													? `${selectedTypeData.borderColor} border-2 bg-blue-50 dark:bg-blue-950/20`
-													: 'border hover:border-gray-300'
-												}`}
-											onClick={() => setSelectedSubtype(subtype.id)}
-										>
-											<CardHeader>
-												<div className={`p-2 rounded-lg ${selectedTypeData.color} w-fit mb-2`}>
-													<subtype.icon className="h-5 w-5" />
-												</div>
-												<CardTitle className="text-lg">{subtype.title}</CardTitle>
-												<CardDescription className="text-sm">
-													{subtype.description}
-												</CardDescription>
-											</CardHeader>
-											<CardContent>
-												<div className="space-y-3">
-													<div>
-														<p className="text-sm font-medium text-muted-foreground mb-1">Examples:</p>
-														<div className="space-y-1">
-															{subtype.examples.map((example, idx) => (
-																<Badge key={idx} variant="outline" className="mr-1 text-xs">
-																	{example}
-																</Badge>
-															))}
+								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+									{
+										selectedTypeData?.subtypes.map((subtype, index) => (
+											<motion.div
+												key={subtype.id}
+												initial={{ opacity: 0, y: 20 }}
+												animate={{ opacity: 1, y: 0 }}
+												transition={{ delay: index * 0.1 }}
+											>
+												<Card
+													className={`cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 ${selectedSubtype === subtype.id
+														? `${selectedTypeData.borderColor} border-2 bg-blue-50 dark:bg-blue-950/20`
+														: 'border hover:border-gray-300'
+														}`}
+													onClick={() => setSelectedSubtype(subtype.id)}
+												>
+													<CardHeader>
+														<div className={`p-2 rounded-lg ${selectedTypeData.color} w-fit mb-2`}>
+															<subtype.icon className="h-5 w-5" />
 														</div>
-													</div>
-													<div className="pt-2 border-t">
-														<p className="text-sm font-medium text-green-600">
-															Reward Range: {subtype.rewardRange}
-														</p>
-													</div>
-												</div>
-											</CardContent>
-										</Card>
-									</motion.div>
-								))}
-							</div>
-
-							{selectedSubtype && (
-								<motion.div
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									className="flex justify-center"
-								>
-									<Button
-										onClick={handleCreatePost}
-										size="lg"
-										className="px-8"
-									>
-										Continue with {selectedTypeData?.subtypes.find(s => s.id === selectedSubtype)?.title}
-									</Button>
-								</motion.div>
-							)}
-						</>
-					)}
+														<CardTitle className="text-lg">{subtype.title}</CardTitle>
+														<CardDescription className="text-sm">
+															{subtype.description}
+														</CardDescription>
+													</CardHeader>
+													<CardContent>
+														<div className="space-y-3">
+															<div>
+																<p className="text-sm font-medium text-muted-foreground mb-1">Examples:</p>
+																<div className="space-y-1">
+																	{
+																		subtype.examples.map((example, idx) => (
+																			<Badge key={idx} variant="outline" className="mr-1 text-xs">
+																				{example}
+																			</Badge>
+																		))
+																	}
+																</div>
+															</div>
+															<div className="pt-2 border-t">
+																<p className="text-sm font-medium text-green-600">
+																	Reward Range: {subtype.rewardRange}
+																</p>
+															</div>
+														</div>
+													</CardContent>
+												</Card>
+											</motion.div>
+										))
+									}
+								</div>
+								{
+									selectedSubtype && (
+										<motion.div
+											initial={{ opacity: 0, y: 20 }}
+											animate={{ opacity: 1, y: 0 }}
+											className="flex justify-center"
+										>
+											<Button
+												onClick={handleCreatePost}
+												size="lg"
+												className="px-8"
+											>
+												Continue with {selectedTypeData?.subtypes.find(s => s.id === selectedSubtype)?.title}
+											</Button>
+										</motion.div>
+									)
+								}
+							</>
+						)
+					}
 				</motion.div>
 			</div>
 		</div>

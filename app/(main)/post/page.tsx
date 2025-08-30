@@ -9,8 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Progress } from '@/components/ui/progress'
 import {
-	ThumbsUp, ThumbsDown, Clock, Eye, FileText, ExternalLink, 
-	Star, CheckCircle, RefreshCw
+	ThumbsUp, ThumbsDown, Clock, Eye, FileText,
+	ExternalLink, Star, CheckCircle, RefreshCw
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, PanInfo } from 'framer-motion'
@@ -150,7 +150,7 @@ export default function PostPage() {
 
 		setSubmitting(true)
 		setNormalVoteDialogOpen(false)
-		
+
 		// Redirect to post details page for validation
 		window.location.href = `/post/${currentPost.id}`
 	}
@@ -212,7 +212,6 @@ export default function PostPage() {
 							>
 								<CheckCircle className="h-24 w-24 mx-auto text-green-500" />
 							</motion.div>
-
 							<div className="space-y-3">
 								<h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200">All Caught Up!</h2>
 								<p className="text-lg text-gray-600 dark:text-gray-400">
@@ -222,7 +221,6 @@ export default function PostPage() {
 									Check back later for more posts to validate
 								</p>
 							</div>
-
 							<Button
 								onClick={loadPosts}
 								className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
@@ -240,7 +238,6 @@ export default function PostPage() {
 	return (
 		<div className="min-h-screen bg-white dark:bg-neutral-900">
 			<div className="max-w-4xl mx-auto p-6">
-				{/* Header */}
 				<div className="text-center mb-8">
 					<h1 className="text-4xl font-bold flex items-center justify-center gap-3 mb-4">
 						<div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
@@ -252,8 +249,6 @@ export default function PostPage() {
 						Swipe through ideas and earn rewards for your feedback
 					</p>
 				</div>
-
-				{/* Progress */}
 				<div className="mb-8">
 					<div className="text-center mb-4">
 						<div className="flex items-center justify-center gap-4 mb-3">
@@ -265,15 +260,13 @@ export default function PostPage() {
 							</div>
 						</div>
 						<div className="w-full max-w-sm mx-auto">
-							<Progress 
-								value={((currentPostIndex + 1) / posts.length) * 100} 
+							<Progress
+								value={((currentPostIndex + 1) / posts.length) * 100}
 								className="h-2 bg-gray-200 dark:bg-gray-700"
 							/>
 						</div>
 					</div>
 				</div>
-
-				{/* Card Stack */}
 				<div className="flex justify-center mb-8">
 					<motion.div
 						key={currentPost.id}
@@ -287,18 +280,18 @@ export default function PostPage() {
 								handleSwipe('left', info)
 							}
 						}}
-						whileDrag={{ 
+						whileDrag={{
 							scale: 1.05
 						}}
-						animate={{ 
-							x: 0, 
+						animate={{
+							x: 0,
 							rotate: 0,
 							scale: 1
 						}}
-						transition={{ 
-							type: "spring", 
-							stiffness: 300, 
-							damping: 30 
+						transition={{
+							type: "spring",
+							stiffness: 300,
+							damping: 30
 						}}
 					>
 						<Card className="w-full h-[500px] border-0 shadow-2xl rounded-3xl overflow-hidden bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
@@ -338,27 +331,31 @@ export default function PostPage() {
 											{currentPost.description}
 										</p>
 									</div>
-									
-									{(currentPost.fileUrl || currentPost.linkUrl) && (
-										<div className="flex gap-3">
-											{currentPost.fileUrl && (
-												<div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200">
-													<FileText className="h-4 w-4 text-blue-600" />
-													<span className="text-sm font-medium text-blue-700 dark:text-blue-300">Document attached</span>
-												</div>
-											)}
-											{currentPost.linkUrl && (
-												<Link href={currentPost.linkUrl} target="_blank">
-													<div className="flex items-center gap-2 px-3 py-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 hover:bg-purple-100 transition-colors">
-														<ExternalLink className="h-4 w-4 text-purple-600" />
-														<span className="text-sm font-medium text-purple-700 dark:text-purple-300">Visit link</span>
-													</div>
-												</Link>
-											)}
-										</div>
-									)}
+									{
+										(currentPost.fileUrl || currentPost.linkUrl) && (
+											<div className="flex gap-3">
+												{
+													currentPost.fileUrl && (
+														<div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200">
+															<FileText className="h-4 w-4 text-blue-600" />
+															<span className="text-sm font-medium text-blue-700 dark:text-blue-300">Document attached</span>
+														</div>
+													)
+												}
+												{
+													currentPost.linkUrl && (
+														<Link href={currentPost.linkUrl} target="_blank">
+															<div className="flex items-center gap-2 px-3 py-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 hover:bg-purple-100 transition-colors">
+																<ExternalLink className="h-4 w-4 text-purple-600" />
+																<span className="text-sm font-medium text-purple-700 dark:text-purple-300">Visit link</span>
+															</div>
+														</Link>
+													)
+												}
+											</div>
+										)
+									}
 								</div>
-
 								<div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
 									<div className="text-center">
 										<div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">
@@ -374,8 +371,6 @@ export default function PostPage() {
 						</Card>
 					</motion.div>
 				</div>
-
-				{/* Action Buttons */}
 				<div className="flex items-center justify-center gap-8 mb-8">
 					<motion.div
 						whileHover={{ scale: 1.1 }}
@@ -391,7 +386,6 @@ export default function PostPage() {
 							<ThumbsDown className="h-6 w-6" />
 						</Button>
 					</motion.div>
-					
 					<motion.div
 						whileHover={{ scale: 1.1 }}
 						whileTap={{ scale: 0.9 }}
@@ -407,13 +401,10 @@ export default function PostPage() {
 						</Button>
 					</motion.div>
 				</div>
-
 				<div className="text-center text-sm text-gray-500">
 					<p>💡 Swipe right to like, left to skip</p>
 				</div>
 			</div>
-
-			{/* Normal Vote Dialog */}
 			<Dialog open={normalVoteDialogOpen} onOpenChange={setNormalVoteDialogOpen}>
 				<DialogContent>
 					<DialogHeader>
@@ -432,7 +423,6 @@ export default function PostPage() {
 								</p>
 							</div>
 						</div>
-
 						<div className="p-4 bg-gray-50 rounded-lg">
 							<h4 className="font-medium text-gray-800 mb-2">What happens next:</h4>
 							<ul className="space-y-2 text-sm text-gray-600">
@@ -450,18 +440,19 @@ export default function PostPage() {
 								</li>
 							</ul>
 						</div>
-
 						<div className="flex gap-3">
 							<Button
 								onClick={confirmNormalVote}
 								className="flex-1 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
 								disabled={submitting}
 							>
-								{submitting ? (
-									<RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-								) : (
-									<Eye className="h-4 w-4 mr-2" />
-								)}
+								{
+									submitting ? (
+										<RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+									) : (
+										<Eye className="h-4 w-4 mr-2" />
+									)
+								}
 								Continue to Validation
 							</Button>
 							<Button

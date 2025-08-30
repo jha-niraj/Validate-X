@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { 
-	Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+import {
+	Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select'
 import { Settings, DollarSign, Lightbulb } from 'lucide-react'
 import { createCustomPost } from '@/actions/post.actions'
@@ -105,9 +105,7 @@ export default function CreateCustomPost() {
 					Design your own validation process with custom instructions and criteria
 				</p>
 			</div>
-
 			<form onSubmit={handleSubmit} className="space-y-8">
-				{/* Custom Type Selection */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
@@ -126,26 +124,28 @@ export default function CreateCustomPost() {
 									<SelectValue placeholder="Select custom validation type" />
 								</SelectTrigger>
 								<SelectContent>
-									{customSubtypes.map((subtype) => (
-										<SelectItem key={subtype.value} value={subtype.value}>
-											<div>
-												<div className="font-medium">{subtype.label}</div>
-												<div className="text-sm text-muted-foreground">{subtype.description}</div>
-											</div>
-										</SelectItem>
-									))}
+									{
+										customSubtypes.map((subtype) => (
+											<SelectItem key={subtype.value} value={subtype.value}>
+												<div>
+													<div className="font-medium">{subtype.label}</div>
+													<div className="text-sm text-muted-foreground">{subtype.description}</div>
+												</div>
+											</SelectItem>
+										))
+									}
 								</SelectContent>
 							</Select>
-							{selectedSubtypeInfo && (
-								<p className="text-sm text-muted-foreground mt-2">
-									{selectedSubtypeInfo.description}
-								</p>
-							)}
+							{
+								selectedSubtypeInfo && (
+									<p className="text-sm text-muted-foreground mt-2">
+										{selectedSubtypeInfo.description}
+									</p>
+								)
+							}
 						</div>
 					</CardContent>
 				</Card>
-
-				{/* Custom Instructions */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
@@ -167,7 +167,6 @@ export default function CreateCustomPost() {
 								Be as specific as possible. This will guide validators on how to assess your content.
 							</p>
 						</div>
-
 						<div>
 							<Label htmlFor="validationCriteria">Validation Criteria</Label>
 							<Textarea
@@ -178,7 +177,6 @@ export default function CreateCustomPost() {
 								className="mt-1"
 							/>
 						</div>
-
 						<div>
 							<Label htmlFor="deliverables">Expected Deliverables</Label>
 							<Textarea
@@ -189,7 +187,6 @@ export default function CreateCustomPost() {
 								className="mt-1"
 							/>
 						</div>
-
 						<div>
 							<Label htmlFor="timeline">Timeline Requirements</Label>
 							<Textarea
@@ -202,8 +199,6 @@ export default function CreateCustomPost() {
 						</div>
 					</CardContent>
 				</Card>
-
-				{/* Post Details */}
 				<Card>
 					<CardHeader>
 						<CardTitle>Validation Details</CardTitle>
@@ -219,7 +214,6 @@ export default function CreateCustomPost() {
 								className="mt-1"
 							/>
 						</div>
-
 						<div>
 							<Label htmlFor="description">Description *</Label>
 							<Textarea
@@ -232,8 +226,6 @@ export default function CreateCustomPost() {
 						</div>
 					</CardContent>
 				</Card>
-
-				{/* Budget */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
@@ -260,8 +252,6 @@ export default function CreateCustomPost() {
 						</div>
 					</CardContent>
 				</Card>
-
-				{/* Submit Button */}
 				<div className="flex justify-between">
 					<Button
 						type="button"

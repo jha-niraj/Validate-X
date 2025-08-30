@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { 
-	Card, CardContent, CardDescription, CardHeader, CardTitle 
+import {
+	Card, CardContent, CardDescription, CardHeader, CardTitle
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { 
-	Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+import {
+	Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -212,7 +212,6 @@ export default function MediaValidationPage() {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.5 }}
 				>
-					{/* Header */}
 					<div className="flex items-center gap-3 mb-6">
 						<Button
 							variant="outline"
@@ -230,9 +229,7 @@ export default function MediaValidationPage() {
 							<p className="text-muted-foreground">{config.description}</p>
 						</div>
 					</div>
-
 					<div className="grid gap-6">
-						{/* Basic Information */}
 						<Card>
 							<CardHeader>
 								<CardTitle>Basic Information</CardTitle>
@@ -250,7 +247,6 @@ export default function MediaValidationPage() {
 										onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
 									/>
 								</div>
-
 								<div>
 									<Label htmlFor="description">Description *</Label>
 									<Textarea
@@ -261,7 +257,6 @@ export default function MediaValidationPage() {
 										className="min-h-[100px]"
 									/>
 								</div>
-
 								<div>
 									<Label htmlFor="category">Category *</Label>
 									<Select value={formData.categoryId} onValueChange={(value) => setFormData(prev => ({ ...prev, categoryId: value }))}>
@@ -269,15 +264,16 @@ export default function MediaValidationPage() {
 											<SelectValue placeholder="Select a category" />
 										</SelectTrigger>
 										<SelectContent>
-											{categories.map((category) => (
-												<SelectItem key={category.id} value={category.id}>
-													{category.icon} {category.name}
-												</SelectItem>
-											))}
+											{
+												categories.map((category) => (
+													<SelectItem key={category.id} value={category.id}>
+														{category.icon} {category.name}
+													</SelectItem>
+												))
+											}
 										</SelectContent>
 									</Select>
 								</div>
-
 								<div>
 									<Label htmlFor="instructions">Validation Instructions</Label>
 									<Textarea
@@ -290,8 +286,6 @@ export default function MediaValidationPage() {
 								</div>
 							</CardContent>
 						</Card>
-
-						{/* File Upload */}
 						<Card>
 							<CardHeader>
 								<CardTitle className="flex items-center gap-2">
@@ -304,7 +298,6 @@ export default function MediaValidationPage() {
 							</CardHeader>
 							<CardContent>
 								<div className="space-y-4">
-									{/* Upload Area */}
 									<div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
 										<Upload className="h-8 w-8 mx-auto text-gray-400 mb-2" />
 										<p className="text-sm text-gray-600 mb-2">
@@ -327,56 +320,59 @@ export default function MediaValidationPage() {
 											</Button>
 										</Label>
 									</div>
-
-									{/* File Previews */}
-									{selectedFiles.length > 0 && (
-										<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-											{selectedFiles.map((file, index) => (
-												<div key={index} className="relative group">
-													<div className="aspect-square border rounded-lg overflow-hidden bg-gray-100">
-														{file.type.startsWith('image/') ? (
-															<Image
-																src={previews[index]}
-																alt={`Preview ${index + 1}`}
-																className="w-full h-full object-cover"
-																height={200}
-																width={200}
-															/>
-														) : (
-															<div className="w-full h-full flex items-center justify-center">
-																<Play className="h-8 w-8 text-gray-400" />
+									{
+										selectedFiles.length > 0 && (
+											<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+												{
+													selectedFiles.map((file, index) => (
+														<div key={index} className="relative group">
+															<div className="aspect-square border rounded-lg overflow-hidden bg-gray-100">
+																{
+																	file.type.startsWith('image/') ? (
+																		<Image
+																			src={previews[index]}
+																			alt={`Preview ${index + 1}`}
+																			className="w-full h-full object-cover"
+																			height={200}
+																			width={200}
+																		/>
+																	) : (
+																		<div className="w-full h-full flex items-center justify-center">
+																			<Play className="h-8 w-8 text-gray-400" />
+																		</div>
+																	)
+																}
 															</div>
-														)}
-													</div>
-													<div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
-														<Button
-															variant="destructive"
-															size="sm"
-															className="opacity-0 group-hover:opacity-100 transition-opacity"
-															onClick={() => removeFile(index)}
-														>
-															<X className="h-4 w-4" />
-														</Button>
-													</div>
-													<p className="text-xs text-center mt-1 truncate">
-														{file.name}
-													</p>
-												</div>
-											))}
-										</div>
-									)}
-
-									{selectedFiles.length > 0 && (
-										<div className="flex items-center gap-2 text-sm text-muted-foreground">
-											<CheckCircle className="h-4 w-4 text-green-600" />
-											{selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} uploaded
-										</div>
-									)}
+															<div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
+																<Button
+																	variant="destructive"
+																	size="sm"
+																	className="opacity-0 group-hover:opacity-100 transition-opacity"
+																	onClick={() => removeFile(index)}
+																>
+																	<X className="h-4 w-4" />
+																</Button>
+															</div>
+															<p className="text-xs text-center mt-1 truncate">
+																{file.name}
+															</p>
+														</div>
+													))
+												}
+											</div>
+										)
+									}
+									{
+										selectedFiles.length > 0 && (
+											<div className="flex items-center gap-2 text-sm text-muted-foreground">
+												<CheckCircle className="h-4 w-4 text-green-600" />
+												{selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} uploaded
+											</div>
+										)
+									}
 								</div>
 							</CardContent>
 						</Card>
-
-						{/* Validation Settings */}
 						<Card>
 							<CardHeader>
 								<CardTitle className="flex items-center gap-2">
@@ -418,7 +414,6 @@ export default function MediaValidationPage() {
 										</p>
 									</div>
 								</div>
-
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 									<div>
 										<Label htmlFor="normalReward">Quick Validation Reward (₹)</Label>
@@ -448,7 +443,6 @@ export default function MediaValidationPage() {
 										</Select>
 									</div>
 								</div>
-
 								<div>
 									<Label htmlFor="totalBudget">Total Budget (₹)</Label>
 									<Input
@@ -459,7 +453,6 @@ export default function MediaValidationPage() {
 										onChange={(e) => setFormData(prev => ({ ...prev, totalBudget: parseInt(e.target.value) || 0 }))}
 									/>
 								</div>
-
 								<div>
 									<Label htmlFor="expiryDays">Validation Period</Label>
 									<Select value={formData.expiryDays.toString()} onValueChange={(value) => setFormData(prev => ({ ...prev, expiryDays: parseInt(value) }))}>
@@ -474,8 +467,6 @@ export default function MediaValidationPage() {
 										</SelectContent>
 									</Select>
 								</div>
-
-								{/* Budget Breakdown */}
 								<div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 space-y-2">
 									<h4 className="font-medium">Budget Breakdown</h4>
 									<div className="text-sm space-y-1">
@@ -508,8 +499,6 @@ export default function MediaValidationPage() {
 								</div>
 							</CardContent>
 						</Card>
-
-						{/* Submit */}
 						<div className="flex gap-3">
 							<Button
 								variant="outline"

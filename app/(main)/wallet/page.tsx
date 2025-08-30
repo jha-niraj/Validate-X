@@ -2,34 +2,30 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+	Card, CardContent, CardDescription, CardHeader, CardTitle
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+	Dialog, DialogContent, DialogHeader, DialogTitle
+} from '@/components/ui/dialog';
+import {
+	Select, SelectContent, SelectItem, SelectTrigger, SelectValue
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-	Wallet,
-	Send,
-	CreditCard,
-	Info,
-	Zap,
-	TrendingUp,
-	Calendar,
-	ArrowUpRight,
-	ArrowDownLeft,
-	Clock,
-	CheckCircle,
-	XCircle,
-	Settings,
-	Eye,
-	EyeOff
+	Wallet, Send, CreditCard, Info, Zap, TrendingUp, Calendar, ArrowUpRight,
+	ArrowDownLeft, Clock, CheckCircle, XCircle, Settings, Eye, EyeOff
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { getUserWallet, createWithdrawalRequest, updateUserPaymentSettings, getWalletInfo } from '@/actions/wallet.actions';
+import {
+	getUserWallet, createWithdrawalRequest,
+	updateUserPaymentSettings, getWalletInfo
+} from '@/actions/wallet.actions';
 import { toast } from 'sonner';
 
 interface WalletData {
@@ -194,9 +190,7 @@ export default function WalletPage() {
 							<p className="text-gray-600 dark:text-gray-400">Manage your earnings and withdrawals</p>
 						</div>
 					</div>
-
 					<div className="flex items-center gap-3">
-						{/* Balance Visibility Toggle */}
 						<Button
 							variant="outline"
 							size="sm"
@@ -206,8 +200,6 @@ export default function WalletPage() {
 							{showBalance ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
 							{showBalance ? 'Hide Balance' : 'Show Balance'}
 						</Button>
-
-						{/* Payment Settings */}
 						<Button
 							variant="outline"
 							size="sm"
@@ -219,8 +211,6 @@ export default function WalletPage() {
 						</Button>
 					</div>
 				</div>
-
-				{/* Balance Overview Cards */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}
@@ -242,53 +232,54 @@ export default function WalletPage() {
 							</CardContent>
 						</Card>
 					</motion.div>
-
-					{walletData.role === 'USER' && (
-						<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.5, delay: 0.2 }}
-						>
-							<Card>
-								<CardHeader className="pb-3">
-									<CardTitle className="flex items-center gap-2 text-blue-600">
-										<TrendingUp className="h-5 w-5" />
-										Total Earned
-									</CardTitle>
-								</CardHeader>
-								<CardContent>
-									<div className="text-2xl font-bold text-blue-600">
-										{showBalance ? `₹${walletData.totalEarned?.toFixed(2) || '0.00'}` : '••••••'}
-									</div>
-									<p className="text-gray-600 dark:text-gray-400 text-sm mt-1">All time earnings</p>
-								</CardContent>
-							</Card>
-						</motion.div>
-					)}
-
-					{walletData.role === 'SUBMITTER' && (
-						<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.5, delay: 0.2 }}
-						>
-							<Card>
-								<CardHeader className="pb-3">
-									<CardTitle className="flex items-center gap-2 text-purple-600">
-										<ArrowUpRight className="h-5 w-5" />
-										Total Spent
-									</CardTitle>
-								</CardHeader>
-								<CardContent>
-									<div className="text-2xl font-bold text-purple-600">
-										{showBalance ? `₹${walletData.totalSpent?.toFixed(2) || '0.00'}` : '••••••'}
-									</div>
-									<p className="text-gray-600 dark:text-gray-400 text-sm mt-1">All time spending</p>
-								</CardContent>
-							</Card>
-						</motion.div>
-					)}
-
+					{
+						walletData.role === 'USER' && (
+							<motion.div
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.5, delay: 0.2 }}
+							>
+								<Card>
+									<CardHeader className="pb-3">
+										<CardTitle className="flex items-center gap-2 text-blue-600">
+											<TrendingUp className="h-5 w-5" />
+											Total Earned
+										</CardTitle>
+									</CardHeader>
+									<CardContent>
+										<div className="text-2xl font-bold text-blue-600">
+											{showBalance ? `₹${walletData.totalEarned?.toFixed(2) || '0.00'}` : '••••••'}
+										</div>
+										<p className="text-gray-600 dark:text-gray-400 text-sm mt-1">All time earnings</p>
+									</CardContent>
+								</Card>
+							</motion.div>
+						)
+					}
+					{
+						walletData.role === 'SUBMITTER' && (
+							<motion.div
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.5, delay: 0.2 }}
+							>
+								<Card>
+									<CardHeader className="pb-3">
+										<CardTitle className="flex items-center gap-2 text-purple-600">
+											<ArrowUpRight className="h-5 w-5" />
+											Total Spent
+										</CardTitle>
+									</CardHeader>
+									<CardContent>
+										<div className="text-2xl font-bold text-purple-600">
+											{showBalance ? `₹${walletData.totalSpent?.toFixed(2) || '0.00'}` : '••••••'}
+										</div>
+										<p className="text-gray-600 dark:text-gray-400 text-sm mt-1">All time spending</p>
+									</CardContent>
+								</Card>
+							</motion.div>
+						)
+					}
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
@@ -308,7 +299,6 @@ export default function WalletPage() {
 						</Card>
 					</motion.div>
 				</div>
-
 				<Tabs defaultValue="withdraw" className="space-y-6">
 					<TabsList className="grid w-full grid-cols-2">
 						<TabsTrigger value="withdraw" className="flex items-center gap-2">
@@ -320,7 +310,6 @@ export default function WalletPage() {
 							Transaction History
 						</TabsTrigger>
 					</TabsList>
-
 					<TabsContent value="withdraw">
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
@@ -378,7 +367,6 @@ export default function WalletPage() {
 												Available: ₹{walletData.balance.toFixed(2)}
 											</p>
 										</div>
-
 										<div className="space-y-2">
 											<Label htmlFor="method">Payment Method</Label>
 											<Select
@@ -405,71 +393,72 @@ export default function WalletPage() {
 											</Select>
 										</div>
 									</div>
-
-									{paymentMethod === 'UPI' && (
-										<motion.div
-											initial={{ opacity: 0, height: 0 }}
-											animate={{ opacity: 1, height: 'auto' }}
-											transition={{ duration: 0.3 }}
-											className="space-y-2"
-										>
-											<Label htmlFor="upi">UPI ID</Label>
-											<Input
-												id="upi"
-												value={upiId}
-												onChange={(e) => setUpiId(e.target.value)}
-												placeholder="yourname@upi"
-											/>
-										</motion.div>
-									)}
-
-									{paymentMethod === 'BLOCKCHAIN' && (
-										<motion.div
-											initial={{ opacity: 0, height: 0 }}
-											animate={{ opacity: 1, height: 'auto' }}
-											transition={{ duration: 0.3 }}
-											className="space-y-2"
-										>
-											<Label htmlFor="wallet">Wallet Address</Label>
-											<Input
-												id="wallet"
-												value={walletAddress}
-												onChange={(e) => setWalletAddress(e.target.value)}
-												placeholder="0x..."
-											/>
-										</motion.div>
-									)}
-
+									{
+										paymentMethod === 'UPI' && (
+											<motion.div
+												initial={{ opacity: 0, height: 0 }}
+												animate={{ opacity: 1, height: 'auto' }}
+												transition={{ duration: 0.3 }}
+												className="space-y-2"
+											>
+												<Label htmlFor="upi">UPI ID</Label>
+												<Input
+													id="upi"
+													value={upiId}
+													onChange={(e) => setUpiId(e.target.value)}
+													placeholder="yourname@upi"
+												/>
+											</motion.div>
+										)
+									}
+									{
+										paymentMethod === 'BLOCKCHAIN' && (
+											<motion.div
+												initial={{ opacity: 0, height: 0 }}
+												animate={{ opacity: 1, height: 'auto' }}
+												transition={{ duration: 0.3 }}
+												className="space-y-2"
+											>
+												<Label htmlFor="wallet">Wallet Address</Label>
+												<Input
+													id="wallet"
+													value={walletAddress}
+													onChange={(e) => setWalletAddress(e.target.value)}
+													placeholder="0x..."
+												/>
+											</motion.div>
+										)
+									}
 									<Alert className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
 										<Info className="h-4 w-4 text-blue-600" />
 										<AlertDescription className="text-blue-700 dark:text-blue-300">
 											Withdrawal requests are processed within 2-3 business days. A small processing fee may apply.
 										</AlertDescription>
 									</Alert>
-
 									<Button
 										onClick={handleWithdrawal}
 										disabled={withdrawing || !withdrawalAmount || parseFloat(withdrawalAmount) < 100}
 										className="w-full bg-blue-600 hover:bg-blue-700"
 										size="lg"
 									>
-										{withdrawing ? (
-											<div className="flex items-center gap-2">
-												<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-												Processing...
-											</div>
-										) : (
-											<div className="flex items-center gap-2">
-												<Send className="h-4 w-4" />
-												Submit Withdrawal Request
-											</div>
-										)}
+										{
+											withdrawing ? (
+												<div className="flex items-center gap-2">
+													<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+													Processing...
+												</div>
+											) : (
+												<div className="flex items-center gap-2">
+													<Send className="h-4 w-4" />
+													Submit Withdrawal Request
+												</div>
+											)
+										}
 									</Button>
 								</CardContent>
 							</Card>
 						</motion.div>
 					</TabsContent>
-
 					<TabsContent value="history">
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
@@ -485,71 +474,75 @@ export default function WalletPage() {
 									<CardDescription>Your recent withdrawal requests and transactions</CardDescription>
 								</CardHeader>
 								<CardContent>
-									{walletData.withdrawalRequests && walletData.withdrawalRequests.length > 0 ? (
-										<div className="space-y-4">
-											{walletData.withdrawalRequests.map((request) => (
-												<motion.div
-													key={request.id}
-													initial={{ opacity: 0, x: -20 }}
-													animate={{ opacity: 1, x: 0 }}
-													className="flex items-center justify-between p-4 border rounded-lg hover:shadow-sm transition-shadow"
-												>
-													<div className="flex items-center gap-3">
-														<div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-															<ArrowDownLeft className="h-4 w-4 text-gray-600" />
-														</div>
-														<div>
-															<div className="font-semibold">₹{request.amount.toFixed(2)}</div>
-															<div className="text-sm text-gray-600">
-																{new Date(request.createdAt).toLocaleDateString('en-IN', {
-																	year: 'numeric',
-																	month: 'short',
-																	day: 'numeric',
-																	hour: '2-digit',
-																	minute: '2-digit'
-																})}
-															</div>
-														</div>
-													</div>
-													<div className="text-right">
-														<Badge
-															variant={
-																request.status === 'COMPLETED'
-																	? 'default'
-																	: request.status === 'PENDING'
-																		? 'secondary'
-																		: 'destructive'
-															}
-															className="flex items-center gap-1"
+									{
+										walletData.withdrawalRequests && walletData.withdrawalRequests.length > 0 ? (
+											<div className="space-y-4">
+												{
+													walletData.withdrawalRequests.map((request) => (
+														<motion.div
+															key={request.id}
+															initial={{ opacity: 0, x: -20 }}
+															animate={{ opacity: 1, x: 0 }}
+															className="flex items-center justify-between p-4 border rounded-lg hover:shadow-sm transition-shadow"
 														>
-															{request.status === 'COMPLETED' && <CheckCircle className="h-3 w-3" />}
-															{request.status === 'PENDING' && <Clock className="h-3 w-3" />}
-															{request.status === 'FAILED' && <XCircle className="h-3 w-3" />}
-															{request.status}
-														</Badge>
-														<div className="text-sm text-gray-600 mt-1">
-															via {request.paymentMethod}
-														</div>
-													</div>
-												</motion.div>
-											))}
-										</div>
-									) : (
-										<div className="text-center py-12">
-											<div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-												<Clock className="h-8 w-8 text-gray-400" />
+															<div className="flex items-center gap-3">
+																<div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+																	<ArrowDownLeft className="h-4 w-4 text-gray-600" />
+																</div>
+																<div>
+																	<div className="font-semibold">₹{request.amount.toFixed(2)}</div>
+																	<div className="text-sm text-gray-600">
+																		{
+																			new Date(request.createdAt).toLocaleDateString('en-IN', {
+																				year: 'numeric',
+																				month: 'short',
+																				day: 'numeric',
+																				hour: '2-digit',
+																				minute: '2-digit'
+																			})
+																		}
+																	</div>
+																</div>
+															</div>
+															<div className="text-right">
+																<Badge
+																	variant={
+																		request.status === 'COMPLETED'
+																			? 'default'
+																			: request.status === 'PENDING'
+																				? 'secondary'
+																				: 'destructive'
+																	}
+																	className="flex items-center gap-1"
+																>
+																	{request.status === 'COMPLETED' && <CheckCircle className="h-3 w-3" />}
+																	{request.status === 'PENDING' && <Clock className="h-3 w-3" />}
+																	{request.status === 'FAILED' && <XCircle className="h-3 w-3" />}
+																	{request.status}
+																</Badge>
+																<div className="text-sm text-gray-600 mt-1">
+																	via {request.paymentMethod}
+																</div>
+															</div>
+														</motion.div>
+													))
+												}
 											</div>
-											<h3 className="text-lg font-semibold text-gray-600 mb-2">No transactions yet</h3>
-											<p className="text-gray-500">Your withdrawal requests will appear here</p>
-										</div>
-									)}
+										) : (
+											<div className="text-center py-12">
+												<div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+													<Clock className="h-8 w-8 text-gray-400" />
+												</div>
+												<h3 className="text-lg font-semibold text-gray-600 mb-2">No transactions yet</h3>
+												<p className="text-gray-500">Your withdrawal requests will appear here</p>
+											</div>
+										)
+									}
 								</CardContent>
 							</Card>
 						</motion.div>
 					</TabsContent>
 				</Tabs>
-
-				{/* Payment Settings Dialog */}
 				<Dialog open={showPaymentSettings} onOpenChange={setShowPaymentSettings}>
 					<DialogContent className="sm:max-w-md">
 						<DialogHeader>
@@ -572,7 +565,6 @@ export default function WalletPage() {
 									Used for UPI withdrawals
 								</p>
 							</div>
-
 							<div>
 								<Label htmlFor="saved-wallet">Blockchain Wallet Address</Label>
 								<Input
@@ -586,21 +578,22 @@ export default function WalletPage() {
 									Used for blockchain withdrawals
 								</p>
 							</div>
-
 							<div className="flex gap-3 pt-4">
 								<Button
 									onClick={handleUpdatePaymentSettings}
 									disabled={updatingSettings}
 									className="flex-1"
 								>
-									{updatingSettings ? (
-										<div className="flex items-center gap-2">
-											<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-											Saving...
-										</div>
-									) : (
-										'Save Settings'
-									)}
+									{
+										updatingSettings ? (
+											<div className="flex items-center gap-2">
+												<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+												Saving...
+											</div>
+										) : (
+											'Save Settings'
+										)
+									}
 								</Button>
 								<Button
 									variant="outline"

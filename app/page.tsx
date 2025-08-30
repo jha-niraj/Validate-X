@@ -89,8 +89,6 @@ function MainLandingPage() {
 						>
 							{subtitle}
 						</motion.p>
-
-						{/* Role Selection Buttons */}
 						<motion.div
 							initial={{ opacity: 0, y: 50 }}
 							animate={{ opacity: 1, y: 0 }}
@@ -115,8 +113,6 @@ function MainLandingPage() {
 									<span className="ml-3 transition-transform group-hover:translate-x-1">→</span>
 								</Button>
 							</div>
-							
-							{/* Down Arrow */}
 							<motion.div
 								animate={{ y: [0, 10, 0] }}
 								transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -128,8 +124,6 @@ function MainLandingPage() {
 								</svg>
 							</motion.div>
 						</motion.div>
-
-						{/* General CTA Buttons */}
 						<motion.div
 							initial={{ opacity: 0, y: 50 }}
 							animate={{ opacity: 1, y: 0 }}
@@ -176,8 +170,6 @@ function MainLandingPage() {
 					</motion.div>
 				</section>
 			</div>
-
-			{/* Submitter Section */}
 			<section id="submitter-section" className="py-24 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/50 dark:to-indigo-950/50">
 				<div className="container mx-auto px-4 md:px-6 max-w-7xl">
 					<motion.div
@@ -195,11 +187,10 @@ function MainLandingPage() {
 							Submit Your Ideas for Expert Validation
 						</h2>
 						<p className="text-xl text-blue-700 dark:text-blue-300 max-w-3xl mx-auto mb-12">
-							Turn your innovative concepts into validated opportunities with feedback from global experts. 
+							Turn your innovative concepts into validated opportunities with feedback from global experts.
 							Pay with traditional methods or crypto - your choice for getting quality insights.
 						</p>
 					</motion.div>
-
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 						<motion.div
 							initial={{ opacity: 0, x: -50 }}
@@ -247,7 +238,6 @@ function MainLandingPage() {
 								</li>
 							</ul>
 						</motion.div>
-
 						<motion.div
 							initial={{ opacity: 0, x: 50 }}
 							whileInView={{ opacity: 1, x: 0 }}
@@ -286,14 +276,12 @@ function MainLandingPage() {
 								</div>
 							</div>
 							<Button asChild className="w-full mt-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 rounded-xl text-lg">
-								<Link href="/signup?role=submitter">Start Submitting Ideas</Link>
+								<Link href="/signup">Start Submitting Ideas</Link>
 							</Button>
 						</motion.div>
 					</div>
 				</div>
 			</section>
-
-			{/* Validator Section */}
 			<section id="validator-section" className="py-24 bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-950/50 dark:to-teal-950/50">
 				<div className="container mx-auto px-4 md:px-6 max-w-7xl">
 					<motion.div
@@ -311,11 +299,10 @@ function MainLandingPage() {
 							Earn Crypto by Validating Ideas
 						</h2>
 						<p className="text-xl text-emerald-700 dark:text-emerald-300 max-w-3xl mx-auto mb-12">
-							Join our community of expert validators and earn rewards by providing valuable feedback to innovators. 
+							Join our community of expert validators and earn rewards by providing valuable feedback to innovators.
 							Get paid in traditional currency or cryptocurrency - your choice for maximum flexibility.
 						</p>
 					</motion.div>
-
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 						<motion.div
 							initial={{ opacity: 0, x: -50 }}
@@ -355,10 +342,9 @@ function MainLandingPage() {
 								</div>
 							</div>
 							<Button asChild className="w-full mt-8 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-4 rounded-xl text-lg">
-								<Link href="/signup?role=validator">Start Earning Rewards</Link>
+								<Link href="/signup">Start Earning Rewards</Link>
 							</Button>
 						</motion.div>
-
 						<motion.div
 							initial={{ opacity: 0, x: 50 }}
 							whileInView={{ opacity: 1, x: 0 }}

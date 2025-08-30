@@ -3,20 +3,20 @@
 import { useSession } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { 
-	Card, CardContent, CardDescription, CardHeader, CardTitle 
+import {
+	Card, CardContent, CardDescription, CardHeader, CardTitle
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
-	Plus, Lightbulb, Star, MessageSquare, Eye, CheckCircle, PenTool, DollarSign, 
+	Plus, Lightbulb, Star, MessageSquare, Eye, CheckCircle, PenTool, DollarSign,
 	Zap, BookOpen, TrendingUp, BarChart3, ArrowUpRight, User
 } from "lucide-react"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
-import { 
-	LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
-	ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell 
+import {
+	LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
+	ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell
 } from 'recharts'
 import { Category, DashboardPost, DashboardValidation, DashboardAnalytics } from "@/types"
 import { getSubmitterDashboard, getValidatorDashboard } from "@/actions/dashboard.actions"
@@ -60,7 +60,7 @@ export default function DashboardPage() {
 			setShowCreatePrompt(true)
 			toast.success("Welcome! Ready to submit your first idea?")
 		}
-		
+
 		// Check if user came back from posting
 		if (searchParams.get('posted') === 'true') {
 			setShowPostedAnimation(true)
@@ -176,66 +176,66 @@ export default function DashboardPage() {
 						{user.role === 'ADMIN' && "Manage the platform and moderate content"}
 					</p>
 				</div>
-				
-				{/* Posted Success Animation */}
 				<AnimatePresence>
-					{showPostedAnimation && (
-						<motion.div
-							initial={{ opacity: 0, y: -50, scale: 0.9 }}
-							animate={{ opacity: 1, y: 0, scale: 1 }}
-							exit={{ opacity: 0, y: -50, scale: 0.9 }}
-							transition={{ duration: 0.5, type: "spring", bounce: 0.3 }}
-							className="mb-8"
-						>
-							<Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 dark:border-green-800">
-								<CardContent className="p-6">
-									<div className="flex items-center gap-4">
-										<motion.div
-											animate={{ rotate: 360 }}
-											transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-											className="p-3 bg-green-100 dark:bg-green-900 rounded-full"
-										>
-											<CheckCircle className="h-8 w-8 text-green-600" />
-										</motion.div>
-										<div className="flex-1">
-											<motion.h3
-												initial={{ opacity: 0, x: -20 }}
-												animate={{ opacity: 1, x: 0 }}
-												transition={{ delay: 0.2 }}
-												className="text-xl font-bold text-green-800 dark:text-green-200 mb-2"
-											>
-												🎉 Idea Submitted Successfully!
-											</motion.h3>
-											<motion.p
-												initial={{ opacity: 0, x: -20 }}
-												animate={{ opacity: 1, x: 0 }}
-												transition={{ delay: 0.4 }}
-												className="text-green-700 dark:text-green-300"
-											>
-												Your idea is now live and ready for validation. You&apos;ll receive notifications as validators provide feedback.
-											</motion.p>
+					{
+						showPostedAnimation && (
+							<motion.div
+								initial={{ opacity: 0, y: -50, scale: 0.9 }}
+								animate={{ opacity: 1, y: 0, scale: 1 }}
+								exit={{ opacity: 0, y: -50, scale: 0.9 }}
+								transition={{ duration: 0.5, type: "spring", bounce: 0.3 }}
+								className="mb-8"
+							>
+								<Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 dark:border-green-800">
+									<CardContent className="p-6">
+										<div className="flex items-center gap-4">
 											<motion.div
-												initial={{ opacity: 0, y: 20 }}
-												animate={{ opacity: 1, y: 0 }}
-												transition={{ delay: 0.6 }}
-												className="flex gap-3 mt-4"
+												animate={{ rotate: 360 }}
+												transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+												className="p-3 bg-green-100 dark:bg-green-900 rounded-full"
 											>
-												<Button size="sm" variant="outline" className="border-green-300 text-green-700 hover:bg-green-100">
-													<Eye className="h-4 w-4 mr-2" />
-													View Your Post
-												</Button>
-												<Button size="sm" variant="ghost" onClick={() => setShowPostedAnimation(false)}>
-													Dismiss
-												</Button>
+												<CheckCircle className="h-8 w-8 text-green-600" />
 											</motion.div>
+											<div className="flex-1">
+												<motion.h3
+													initial={{ opacity: 0, x: -20 }}
+													animate={{ opacity: 1, x: 0 }}
+													transition={{ delay: 0.2 }}
+													className="text-xl font-bold text-green-800 dark:text-green-200 mb-2"
+												>
+													🎉 Idea Submitted Successfully!
+												</motion.h3>
+												<motion.p
+													initial={{ opacity: 0, x: -20 }}
+													animate={{ opacity: 1, x: 0 }}
+													transition={{ delay: 0.4 }}
+													className="text-green-700 dark:text-green-300"
+												>
+													Your idea is now live and ready for validation. You&apos;ll receive notifications as validators provide feedback.
+												</motion.p>
+												<motion.div
+													initial={{ opacity: 0, y: 20 }}
+													animate={{ opacity: 1, y: 0 }}
+													transition={{ delay: 0.6 }}
+													className="flex gap-3 mt-4"
+												>
+													<Button size="sm" variant="outline" className="border-green-300 text-green-700 hover:bg-green-100">
+														<Eye className="h-4 w-4 mr-2" />
+														View Your Post
+													</Button>
+													<Button size="sm" variant="ghost" onClick={() => setShowPostedAnimation(false)}>
+														Dismiss
+													</Button>
+												</motion.div>
+											</div>
 										</div>
-									</div>
-								</CardContent>
-							</Card>
-						</motion.div>
-					)}
+									</CardContent>
+								</Card>
+							</motion.div>
+						)
+					}
 				</AnimatePresence>
-				
+
 				{
 					showCreatePrompt && user.role === 'SUBMITTER' && (
 						<Card className="mb-8 border-green-200 bg-green-50 dark:bg-green-950/20 dark:border-green-800">
@@ -274,55 +274,58 @@ export default function DashboardPage() {
 									<DollarSign className="h-5 w-5 text-blue-600" />
 								</div>
 								<div>
-									{user.role === 'SUBMITTER' ? (
-										<>
-											<p className="text-2xl font-bold">₹{Number(user.totalSpent || 0).toFixed(2)}</p>
-											<p className="text-sm text-muted-foreground">Total Spent</p>
-										</>
-									) : (
-										<>
-											<p className="text-2xl font-bold">₹{Number(user.availableBalance).toFixed(2)}</p>
-											<p className="text-sm text-muted-foreground">Available Balance</p>
-										</>
-									)}
+									{
+										user.role === 'SUBMITTER' ? (
+											<>
+												<p className="text-2xl font-bold">₹{Number(user.totalSpent || 0).toFixed(2)}</p>
+												<p className="text-sm text-muted-foreground">Total Spent</p>
+											</>
+										) : (
+											<>
+												<p className="text-2xl font-bold">₹{Number(user.availableBalance).toFixed(2)}</p>
+												<p className="text-sm text-muted-foreground">Available Balance</p>
+											</>
+										)
+									}
 								</div>
 							</div>
 						</CardContent>
 					</Card>
-					
+
 					{/* Show different metrics based on user role */}
-					{user.role === 'SUBMITTER' ? (
-						// For submitters, show total posts instead of validations
-						<Card>
-							<CardContent className="p-6">
-								<div className="flex items-center gap-3">
-									<div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
-										<BookOpen className="h-5 w-5 text-orange-600" />
+					{
+						user.role === 'SUBMITTER' ? (
+							// For submitters, show total posts instead of validations
+							<Card>
+								<CardContent className="p-6">
+									<div className="flex items-center gap-3">
+										<div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
+											<BookOpen className="h-5 w-5 text-orange-600" />
+										</div>
+										<div>
+											<p className="text-2xl font-bold">{dashboardData.posts?.length || 0}</p>
+											<p className="text-sm text-muted-foreground">Total Posts</p>
+										</div>
 									</div>
-									<div>
-										<p className="text-2xl font-bold">{dashboardData.posts?.length || 0}</p>
-										<p className="text-sm text-muted-foreground">Total Posts</p>
+								</CardContent>
+							</Card>
+						) : (
+							// For validators, show validations
+							<Card>
+								<CardContent className="p-6">
+									<div className="flex items-center gap-3">
+										<div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+											<Eye className="h-5 w-5 text-green-600" />
+										</div>
+										<div>
+											<p className="text-2xl font-bold">{user.totalValidations}</p>
+											<p className="text-sm text-muted-foreground">Validations</p>
+										</div>
 									</div>
-								</div>
-							</CardContent>
-						</Card>
-					) : (
-						// For validators, show validations
-						<Card>
-							<CardContent className="p-6">
-								<div className="flex items-center gap-3">
-									<div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-										<Eye className="h-5 w-5 text-green-600" />
-									</div>
-									<div>
-										<p className="text-2xl font-bold">{user.totalValidations}</p>
-										<p className="text-sm text-muted-foreground">Validations</p>
-									</div>
-								</div>
-							</CardContent>
-						</Card>
-					)}
-					
+								</CardContent>
+							</Card>
+						)
+					}
 					<Card>
 						<CardContent className="p-6">
 							<div className="flex items-center gap-3">
@@ -365,7 +368,7 @@ export default function DashboardPage() {
 // Submitter Dashboard Component
 function SubmitterDashboard({ data }: { data: DashboardData }) {
 	// Generate validation trend data from real posts data with better fallback
-	const validationTrendData = (data.posts && data.posts.length > 0) ? 
+	const validationTrendData = (data.posts && data.posts.length > 0) ?
 		data.posts.slice(-7).map((post, index) => ({
 			date: new Date(Date.now() - (6 - index) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
 			validations: post.validationCount || 0
@@ -377,7 +380,7 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 			const avgValidationsPerPost = totalPosts > 0 ? totalValidations / totalPosts : 0
 			const dailyAvg = Math.max(1, Math.floor(avgValidationsPerPost / 7))
 			const variance = Math.floor(Math.random() * Math.max(1, dailyAvg)) // Add some variance
-			
+
 			return {
 				date: new Date(Date.now() - (6 - index) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
 				validations: Math.max(0, dailyAvg + variance - Math.floor(dailyAvg / 2))
@@ -385,20 +388,20 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 		})
 
 	const postStatusData = [
-		{ 
-			name: 'Open', 
+		{
+			name: 'Open',
 			value: data.posts?.filter(p => p.status === 'OPEN').length || 1,
-			color: '#22c55e' 
+			color: '#22c55e'
 		},
-		{ 
-			name: 'Closed', 
+		{
+			name: 'Closed',
 			value: data.posts?.filter(p => p.status === 'CLOSED').length || 0,
-			color: '#94a3b8' 
+			color: '#94a3b8'
 		},
-		{ 
-			name: 'Draft', 
+		{
+			name: 'Draft',
 			value: data.posts?.filter(p => p.status === 'DRAFT').length || 0,
-			color: '#f59e0b' 
+			color: '#f59e0b'
 		}
 	]
 
@@ -414,7 +417,6 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 
 	return (
 		<div className="space-y-4">
-			{/* Quick Actions */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -440,10 +442,7 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 					</Link>
 				</CardContent>
 			</Card>
-
-			{/* Analytics Section */}
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-				{/* Validation Trend Chart */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
@@ -461,7 +460,7 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 									<CartesianGrid strokeDasharray="3 3" />
 									<XAxis dataKey="date" tickFormatter={(value) => new Date(value).toLocaleDateString()} />
 									<YAxis />
-									<Tooltip 
+									<Tooltip
 										labelFormatter={(value) => new Date(value).toLocaleDateString()}
 										formatter={(value) => [value, 'Validations']}
 									/>
@@ -471,8 +470,6 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 						</div>
 					</CardContent>
 				</Card>
-
-				{/* Post Status Distribution */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
@@ -495,9 +492,11 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 										dataKey="value"
 										label={({ name, value }) => `${name}: ${value}`}
 									>
-										{postStatusData.map((entry, index) => (
-											<Cell key={`cell-${index}`} fill={entry.color} />
-										))}
+										{
+											postStatusData.map((entry, index) => (
+												<Cell key={`cell-${index}`} fill={entry.color} />
+											))
+										}
 									</Pie>
 									<Tooltip />
 								</PieChart>
@@ -506,8 +505,6 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 					</CardContent>
 				</Card>
 			</div>
-
-			{/* Recent Posts with Links */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -524,7 +521,7 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 							<div className="space-y-4">
 								{
 									data.posts.slice(0, 5).map((post) => (
-										<motion.div 
+										<motion.div
 											key={post.id}
 											initial={{ opacity: 0, y: 20 }}
 											animate={{ opacity: 1, y: 0 }}
@@ -583,11 +580,11 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 // Validator Dashboard Component  
 function ValidatorDashboard({ data }: { data: DashboardData }) {
 	// Generate earnings data from analytics or create realistic fallback
-	const earningsData = data.analytics?.earningsChart && data.analytics.earningsChart.length > 0 ? 
+	const earningsData = data.analytics?.earningsChart && data.analytics.earningsChart.length > 0 ?
 		data.analytics.earningsChart.map((item: { date: string, amount: number }) => ({
 			date: item.date,
 			earnings: item.amount || 0
-		})) : 
+		})) :
 		// Fallback: generate last 7 days with realistic data based on user validation history
 		Array.from({ length: 7 }, (_, index) => {
 			const date = new Date(Date.now() - (6 - index) * 24 * 60 * 60 * 1000)
@@ -596,12 +593,12 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 				const validationDate = new Date(v.createdAt || Date.now())
 				return validationDate.toDateString() === date.toDateString()
 			}).length || 0
-			
+
 			// If no real data, create realistic baseline
-			const baseEarnings = dailyValidations > 0 ? dailyValidations * 15 : 
-				(data.user?.totalValidations || 0) > 0 ? Math.floor((data.user.totalValidations * 12) / 30) : 
-				Math.floor(Math.random() * 40) + 10
-			
+			const baseEarnings = dailyValidations > 0 ? dailyValidations * 15 :
+				(data.user?.totalValidations || 0) > 0 ? Math.floor((data.user.totalValidations * 12) / 30) :
+					Math.floor(Math.random() * 40) + 10
+
 			return {
 				date: date.toISOString().split('T')[0],
 				earnings: baseEarnings
@@ -609,17 +606,17 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 		})
 
 	const validationTypeData = [
-		{ 
-			name: 'Normal', 
-			value: data.validations?.filter(v => v.type === 'NORMAL').length || 
-				   (data.user?.totalValidations ? Math.floor(data.user.totalValidations * 0.7) : 5),
-			color: '#22c55e' 
+		{
+			name: 'Normal',
+			value: data.validations?.filter(v => v.type === 'NORMAL').length ||
+				(data.user?.totalValidations ? Math.floor(data.user.totalValidations * 0.7) : 5),
+			color: '#22c55e'
 		},
-		{ 
-			name: 'Detailed', 
+		{
+			name: 'Detailed',
 			value: data.validations?.filter(v => v.type === 'DETAILED').length ||
-				   (data.user?.totalValidations ? Math.floor(data.user.totalValidations * 0.3) : 2),
-			color: '#3b82f6' 
+				(data.user?.totalValidations ? Math.floor(data.user.totalValidations * 0.3) : 2),
+			color: '#3b82f6'
 		}
 	]
 
@@ -631,9 +628,7 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 
 	return (
 		<div className="space-y-4">
-			{/* Analytics Section */}
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-				{/* Earnings Trend Chart */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
@@ -651,7 +646,7 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 									<CartesianGrid strokeDasharray="3 3" />
 									<XAxis dataKey="date" tickFormatter={(value) => new Date(value).toLocaleDateString()} />
 									<YAxis />
-									<Tooltip 
+									<Tooltip
 										labelFormatter={(value) => new Date(value).toLocaleDateString()}
 										formatter={(value) => [`₹${value}`, 'Earnings']}
 									/>
@@ -661,8 +656,6 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 						</div>
 					</CardContent>
 				</Card>
-
-				{/* Validation Type Distribution */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
@@ -688,9 +681,7 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 					</CardContent>
 				</Card>
 			</div>
-
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-				{/* Available Posts */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
@@ -758,8 +749,6 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 						}
 					</CardContent>
 				</Card>
-
-				{/* Recent Validations */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
@@ -782,30 +771,30 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 												animate={{ opacity: 1, y: 0 }}
 												transition={{ delay: index * 0.1 }}
 											>													<div className="flex items-center justify-between p-3 border rounded-lg">
-														<div className="flex-1">
-															<h4 className="font-medium line-clamp-1">{validation.postTitle || 'Untitled Post'}</h4>
-															<div className="flex items-center gap-2 mt-1">
-																<Badge variant="outline" className="text-xs">
-																	{validation.postCategory || 'General'}
-																</Badge>
-																<Badge variant={
-																	validation.status === 'APPROVED' ? 'default' :
-																		validation.status === 'PENDING' ? 'secondary' :
-																			'destructive'
-																} className="text-xs">
-																	{validation.status || 'Unknown'}
-																</Badge>
-															</div>
-														</div>
-														<div className="text-right">
-															<p className="text-sm font-medium text-green-600">
-																₹{Number(validation.rewardAmount || 0).toFixed(2)}
-															</p>
-															<p className="text-xs text-muted-foreground">
-																{validation.type || 'Normal'}
-															</p>
+													<div className="flex-1">
+														<h4 className="font-medium line-clamp-1">{validation.postTitle || 'Untitled Post'}</h4>
+														<div className="flex items-center gap-2 mt-1">
+															<Badge variant="outline" className="text-xs">
+																{validation.postCategory || 'General'}
+															</Badge>
+															<Badge variant={
+																validation.status === 'APPROVED' ? 'default' :
+																	validation.status === 'PENDING' ? 'secondary' :
+																		'destructive'
+															} className="text-xs">
+																{validation.status || 'Unknown'}
+															</Badge>
 														</div>
 													</div>
+													<div className="text-right">
+														<p className="text-sm font-medium text-green-600">
+															₹{Number(validation.rewardAmount || 0).toFixed(2)}
+														</p>
+														<p className="text-xs text-muted-foreground">
+															{validation.type || 'Normal'}
+														</p>
+													</div>
+												</div>
 											</motion.div>
 										))
 									}

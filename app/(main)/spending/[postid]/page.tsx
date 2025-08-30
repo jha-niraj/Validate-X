@@ -66,7 +66,7 @@ export default function PostSpendingDetailsPage({ params }: { params: Promise<{ 
 				setLoading(true)
 				const { postid } = await params
 				const result = await getPostSpendingDetails(postid)
-				
+
 				if (result.success && result.data) {
 					setData(result.data)
 				} else {
@@ -106,7 +106,6 @@ export default function PostSpendingDetailsPage({ params }: { params: Promise<{ 
 
 	return (
 		<div className="max-w-4xl mx-auto p-6 space-y-8">
-			{/* Header */}
 			<div className="flex items-center gap-4 mb-8">
 				<Link href="/spending">
 					<Button variant="outline" size="sm">
@@ -119,8 +118,6 @@ export default function PostSpendingDetailsPage({ params }: { params: Promise<{ 
 					<p className="text-gray-600">Detailed spending analysis</p>
 				</div>
 			</div>
-
-			{/* Post Details Hero Section */}
 			<Card className="bg-gradient-to-r from-blue-50 to-purple-50">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -167,8 +164,6 @@ export default function PostSpendingDetailsPage({ params }: { params: Promise<{ 
 					</div>
 				</CardContent>
 			</Card>
-
-			{/* Spending Breakdown */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -201,8 +196,6 @@ export default function PostSpendingDetailsPage({ params }: { params: Promise<{ 
 					</div>
 				</CardContent>
 			</Card>
-
-			{/* Progress Tracking */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -235,8 +228,6 @@ export default function PostSpendingDetailsPage({ params }: { params: Promise<{ 
 					</div>
 				</CardContent>
 			</Card>
-
-			{/* Recent Validations */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -245,46 +236,50 @@ export default function PostSpendingDetailsPage({ params }: { params: Promise<{ 
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					{validations.length === 0 ? (
-						<div className="text-center py-8">
-							<Eye className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-							<p className="text-gray-600">No validations yet</p>
-						</div>
-					) : (
-						<div className="space-y-4">
-							{validations.slice(0, 10).map((validation) => (
-								<div key={validation.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-									<div className="flex items-center gap-4">
-										<Badge variant={validation.type === 'NORMAL' ? 'secondary' : 'default'}>
-											{validation.type}
-										</Badge>
-										<div>
-											<p className="font-medium">{validation.validatorName}</p>
-											<p className="text-sm text-gray-600">
-												Rep: {validation.validatorReputation} • {validation.vote}
-											</p>
-											{validation.shortComment && (
-												<p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-													<MessageSquare className="h-3 w-3" />
-													{validation.shortComment}
+					{
+						validations.length === 0 ? (
+							<div className="text-center py-8">
+								<Eye className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+								<p className="text-gray-600">No validations yet</p>
+							</div>
+						) : (
+							<div className="space-y-4">
+								{
+									validations.slice(0, 10).map((validation) => (
+										<div key={validation.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+											<div className="flex items-center gap-4">
+												<Badge variant={validation.type === 'NORMAL' ? 'secondary' : 'default'}>
+													{validation.type}
+												</Badge>
+												<div>
+													<p className="font-medium">{validation.validatorName}</p>
+													<p className="text-sm text-gray-600">
+														Rep: {validation.validatorReputation} • {validation.vote}
+													</p>
+													{
+														validation.shortComment && (
+															<p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+																<MessageSquare className="h-3 w-3" />
+																{validation.shortComment}
+															</p>
+														)
+													}
+												</div>
+											</div>
+											<div className="text-right">
+												<p className="font-bold text-green-600">₹{validation.rewardAmount.toFixed(2)}</p>
+												<p className="text-xs text-gray-500">
+													{new Date(validation.createdAt).toLocaleDateString()}
 												</p>
-											)}
+											</div>
 										</div>
-									</div>
-									<div className="text-right">
-										<p className="font-bold text-green-600">₹{validation.rewardAmount.toFixed(2)}</p>
-										<p className="text-xs text-gray-500">
-											{new Date(validation.createdAt).toLocaleDateString()}
-										</p>
-									</div>
-								</div>
-							))}
-						</div>
-					)}
+									))
+								}
+							</div>
+						)
+					}
 				</CardContent>
 			</Card>
-
-			{/* Actions */}
 			<div className="flex gap-4">
 				<Link href={`/post/${post.id}`} className="flex-1">
 					<Button className="w-full">

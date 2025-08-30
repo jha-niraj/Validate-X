@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { 
-    Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+import {
+    Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select'
 import { Plus, X, DollarSign, BarChart3 } from 'lucide-react'
 import { createPollPost } from '@/actions/post.actions'
@@ -131,9 +131,7 @@ export default function CreatePollPost() {
                     Create polls and surveys for community feedback and insights
                 </p>
             </div>
-
             <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Poll Type Selection */}
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
@@ -152,26 +150,28 @@ export default function CreatePollPost() {
                                     <SelectValue placeholder="Select poll type for validation" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {pollSubtypes.map((subtype) => (
-                                        <SelectItem key={subtype.value} value={subtype.value}>
-                                            <div>
-                                                <div className="font-medium">{subtype.label}</div>
-                                                <div className="text-sm text-muted-foreground">{subtype.description}</div>
-                                            </div>
-                                        </SelectItem>
-                                    ))}
+                                    {
+                                        pollSubtypes.map((subtype) => (
+                                            <SelectItem key={subtype.value} value={subtype.value}>
+                                                <div>
+                                                    <div className="font-medium">{subtype.label}</div>
+                                                    <div className="text-sm text-muted-foreground">{subtype.description}</div>
+                                                </div>
+                                            </SelectItem>
+                                        ))
+                                    }
                                 </SelectContent>
                             </Select>
-                            {selectedSubtypeInfo && (
-                                <p className="text-sm text-muted-foreground mt-2">
-                                    {selectedSubtypeInfo.description}
-                                </p>
-                            )}
+                            {
+                                selectedSubtypeInfo && (
+                                    <p className="text-sm text-muted-foreground mt-2">
+                                        {selectedSubtypeInfo.description}
+                                    </p>
+                                )
+                            }
                         </div>
                     </CardContent>
                 </Card>
-
-                {/* Poll Setup */}
                 <Card>
                     <CardHeader>
                         <CardTitle>Poll Setup</CardTitle>
@@ -187,45 +187,49 @@ export default function CreatePollPost() {
                                 className="mt-1"
                             />
                         </div>
-
                         <div>
                             <Label>Poll Options *</Label>
                             <div className="space-y-2 mt-2">
-                                {pollOptions.map((option, index) => (
-                                    <div key={index} className="flex gap-2">
-                                        <Input
-                                            placeholder={`Option ${index + 1}`}
-                                            value={option}
-                                            onChange={(e) => updatePollOption(index, e.target.value)}
-                                            className="flex-1"
-                                        />
-                                        {pollOptions.length > 2 && (
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => removePollOption(index)}
-                                            >
-                                                <X className="w-4 h-4" />
-                                            </Button>
-                                        )}
-                                    </div>
-                                ))}
-                                {pollOptions.length < 10 && (
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={addPollOption}
-                                        className="w-full"
-                                    >
-                                        <Plus className="w-4 h-4 mr-2" />
-                                        Add Option
-                                    </Button>
-                                )}
+                                {
+                                    pollOptions.map((option, index) => (
+                                        <div key={index} className="flex gap-2">
+                                            <Input
+                                                placeholder={`Option ${index + 1}`}
+                                                value={option}
+                                                onChange={(e) => updatePollOption(index, e.target.value)}
+                                                className="flex-1"
+                                            />
+                                            {
+                                                pollOptions.length > 2 && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => removePollOption(index)}
+                                                    >
+                                                        <X className="w-4 h-4" />
+                                                    </Button>
+                                                )
+                                            }
+                                        </div>
+                                    ))
+                                }
+                                {
+                                    pollOptions.length < 10 && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={addPollOption}
+                                            className="w-full"
+                                        >
+                                            <Plus className="w-4 h-4 mr-2" />
+                                            Add Option
+                                        </Button>
+                                    )
+                                }
                             </div>
                         </div>
-
                         <div>
                             <Label htmlFor="pollInstructions">Poll Instructions</Label>
                             <Textarea
@@ -238,8 +242,6 @@ export default function CreatePollPost() {
                         </div>
                     </CardContent>
                 </Card>
-
-                {/* Post Details */}
                 <Card>
                     <CardHeader>
                         <CardTitle>Validation Details</CardTitle>
@@ -255,7 +257,6 @@ export default function CreatePollPost() {
                                 className="mt-1"
                             />
                         </div>
-
                         <div>
                             <Label htmlFor="description">Description *</Label>
                             <Textarea
@@ -268,8 +269,6 @@ export default function CreatePollPost() {
                         </div>
                     </CardContent>
                 </Card>
-
-                {/* Budget */}
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
@@ -296,8 +295,6 @@ export default function CreatePollPost() {
                         </div>
                     </CardContent>
                 </Card>
-
-                {/* Submit Button */}
                 <div className="flex justify-between">
                     <Button
                         type="button"
