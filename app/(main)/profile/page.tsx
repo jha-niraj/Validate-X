@@ -29,5 +29,24 @@ export default async function ProfilePage() {
 	const { user } = profileData
 	const stats = statsData.success ? statsData.stats : null
 
-	return <MainProfile user={user} stats={stats} />
+	// Transform stats to ProfileStats format
+	const profileStats = stats ? {
+		memberSince: stats.memberSince || new Date().toISOString(),
+		totalPosts: stats.totalIdeasSubmitted || 0,
+		totalValidations: stats.totalValidations || 0,
+		avgRating: stats.reputationScore || 0,
+		totalEarnings: 0,
+		totalSpent: 0,
+		recentActivity: []
+	} : {
+		memberSince: new Date().toISOString(),
+		totalPosts: 0,
+		totalValidations: 0,
+		avgRating: 0,
+		totalEarnings: 0,
+		totalSpent: 0,
+		recentActivity: []
+	}
+
+	return <MainProfile user={{...user, onboardingCompleted: true}} stats={profileStats} />
 }

@@ -211,7 +211,7 @@ export default function SpendingTrackingPage() {
                                                 <Badge variant="secondary">
                                                     {post.category.icon} {post.category.name}
                                                 </Badge>
-                                                <Badge variant={post.status === 'ACTIVE' ? 'default' : 'secondary'}>
+                                                <Badge variant={post.status === 'OPEN' ? 'default' : 'secondary'}>
                                                     {post.status}
                                                 </Badge>
                                             </div>

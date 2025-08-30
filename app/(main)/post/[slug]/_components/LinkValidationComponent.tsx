@@ -41,13 +41,13 @@ interface LinkValidationProps {
 		}
 		createdAt: string
 		expiryDate: string
-		totalBudget: number
-		normalValidatorCount: number
-		detailedValidatorCount: number
-		currentNormalCount: number
-		currentDetailedCount: number
-		normalReward: number
-		detailedReward: number
+		totalBudget?: number
+		normalValidatorCount?: number
+		detailedValidatorCount?: number
+		currentNormalCount?: number
+		currentDetailedCount?: number
+		normalReward?: number
+		detailedReward?: number
 		linkUrl?: string
 		validations: {
 			normal: Array<{
@@ -92,8 +92,8 @@ function LinkValidationComponent({ post, onUpdate }: LinkValidationProps) {
 	const iframeRef = useRef<HTMLIFrameElement>(null)
 
 	const daysLeft = Math.ceil((new Date(post.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
-	const normalProgress = (post.currentNormalCount / post.normalValidatorCount) * 100
-	const detailedProgress = (post.currentDetailedCount / post.detailedValidatorCount) * 100
+	const normalProgress = ((post.currentNormalCount || 0) / (post.normalValidatorCount || 1)) * 100
+	const detailedProgress = ((post.currentDetailedCount || 0) / (post.detailedValidatorCount || 1)) * 100
 
 	const usabilityChecklist = [
 		'Navigation is intuitive and easy to find',
@@ -140,6 +140,25 @@ function LinkValidationComponent({ post, onUpdate }: LinkValidationProps) {
 			setCurrentHistoryIndex(0)
 		}
 	}, [post.linkUrl, browserHistory])
+
+	const handleNormalValidation = async () => {
+		if (!normalVote) {
+			toast.error("Please select your validation")
+			return
+		}
+
+		setIsSubmitting(true)
+		try {
+			// Call validation API
+			toast.success("Link validation submitted successfully!")
+			onUpdate()
+		} catch (error) {
+			toast.error("Failed to submit validation")
+			console.log("Failed to submit validation: " + error);
+		} finally {
+			setIsSubmitting(false)
+		}
+	}
 
 	const handleDetailedValidation = async () => {
 			if (!detailedRating || !detailedFeedback.trim()) {

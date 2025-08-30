@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, PanInfo } from 'framer-motion'
-import { getPostsForValidation, getCategories } from '@/actions/post.actions'
+import { getPostsForValidation } from '@/actions/post.actions'
 import Link from 'next/link'
 
 interface Post {
@@ -24,28 +24,22 @@ interface Post {
 	fileUrl?: string | null
 	fileName?: string | null
 	linkUrl?: string | null
-	normalReward: number
-	detailedReward: number
-	currentNormalCount: number
-	currentDetailedCount: number
-	normalValidatorCount: number
-	detailedValidatorCount: number
+	normalReward?: number
+	detailedReward?: number
+	currentNormalCount?: number
+	currentDetailedCount?: number
+	normalValidatorCount?: number
+	detailedValidatorCount?: number
 	expiryDate: string
-	category: {
+	category?: {
 		name: string
-		icon?: string
+		icon?: string | null
 	}
-	author: {
+	author?: {
 		name: string
-		image?: string
-		reputationScore: number
+		image?: string | null
+		reputationScore?: number
 	}
-}
-
-interface Category {
-	id: string
-	name: string
-	icon?: string
 }
 
 export default function PostPage() {
@@ -65,11 +59,42 @@ export default function PostPage() {
 				selectedCategories.length > 0 ? selectedCategories : undefined
 			)
 			if (result.success && result.posts) {
-				const transformedPosts = result.posts.map((post: Post & { fileUrl?: string; fileName?: string }) => ({
-					...post,
+				const transformedPosts = result.posts.map((post: {
+					id: string;
+					title: string;
+					description: string;
+					fileUrl?: string | null;
+					fileName?: string | null;
+					linkUrl?: string | null;
+					normalReward?: number;
+					detailedReward?: number;
+					currentNormalCount?: number;
+					currentDetailedCount?: number;
+					normalValidatorCount?: number;
+					detailedValidatorCount?: number;
+					expiryDate: Date | string;
+					category?: { name: string; icon?: string | null };
+					author?: { name: string; image?: string | null; reputationScore?: number };
+				}) => ({
+					id: post.id,
+					title: post.title,
+					description: post.description,
 					fileUrl: post.fileUrl || undefined,
 					fileName: post.fileName || undefined,
-					expiryDate: post.expiryDate instanceof Date ? post.expiryDate.toISOString() : post.expiryDate
+					linkUrl: post.linkUrl || undefined,
+					normalReward: post.normalReward || 0,
+					detailedReward: post.detailedReward || 0,
+					currentNormalCount: post.currentNormalCount || 0,
+					currentDetailedCount: post.currentDetailedCount || 0,
+					normalValidatorCount: post.normalValidatorCount || 1,
+					detailedValidatorCount: post.detailedValidatorCount || 1,
+					expiryDate: post.expiryDate instanceof Date ? post.expiryDate.toISOString() : post.expiryDate,
+					category: post.category || { name: 'General', icon: '📄' },
+					author: {
+						name: post.author?.name || 'Anonymous',
+						image: post.author?.image || undefined,
+						reputationScore: post.author?.reputationScore || 0
+					}
 				}))
 				setPosts(transformedPosts)
 				setCurrentPostIndex(0)
@@ -83,20 +108,8 @@ export default function PostPage() {
 	}, [selectedCategories]);
 
 	useEffect(() => {
-		loadCategories()
 		loadPosts()
 	}, [selectedCategories, loadPosts])
-
-	const loadCategories = async () => {
-		try {
-			const result = await getCategories()
-			if (result.success && result.categories) {
-				setCategories(result.categories as Category[])
-			}
-		} catch (error) {
-			console.error('Failed to load categories', error)
-		}
-	}
 
 	const currentPost = posts[currentPostIndex]
 
@@ -295,7 +308,7 @@ export default function PostPage() {
 										<CardTitle className="text-2xl font-bold mb-3 leading-tight">{currentPost.title}</CardTitle>
 										<div className="flex items-center gap-3 mb-4">
 											<Badge variant="secondary" className="px-3 py-1 text-sm font-medium">
-												{currentPost.category.name}
+												{currentPost.category?.name || 'General'}
 											</Badge>
 											<Badge variant="outline" className="flex items-center gap-2 px-3 py-1">
 												<Clock className="h-4 w-4" />
@@ -305,14 +318,14 @@ export default function PostPage() {
 									</div>
 									<div className="flex items-center gap-3 ml-4">
 										<Avatar className="h-12 w-12 border-2 border-white shadow-lg">
-											<AvatarImage src={currentPost.author.image} />
-											<AvatarFallback className="font-bold">{currentPost.author.name[0]}</AvatarFallback>
+											<AvatarImage src={currentPost.author?.image || undefined} />
+											<AvatarFallback className="font-bold">{currentPost.author?.name?.[0] || 'U'}</AvatarFallback>
 										</Avatar>
 										<div>
-											<p className="font-semibold text-sm">{currentPost.author.name}</p>
+											<p className="font-semibold text-sm">{currentPost.author?.name || 'Anonymous'}</p>
 											<div className="flex items-center gap-1">
 												<Star className="h-3 w-3 text-yellow-500 fill-current" />
-												<p className="text-xs text-gray-500">{currentPost.author.reputationScore}</p>
+												<p className="text-xs text-gray-500">{currentPost.author?.reputationScore || 0}</p>
 											</div>
 										</div>
 									</div>
@@ -349,11 +362,11 @@ export default function PostPage() {
 								<div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
 									<div className="text-center">
 										<div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">
-											{formatCurrency(currentPost.detailedReward)}
+											{formatCurrency(currentPost.detailedReward || 0)}
 										</div>
 										<div className="text-sm font-medium text-gray-600 dark:text-gray-400">Validation Reward</div>
 										<div className="text-xs text-gray-500 mt-1">
-											{currentPost.currentDetailedCount}/{currentPost.detailedValidatorCount} validators
+											{currentPost.currentDetailedCount || 0}/{currentPost.detailedValidatorCount || 1} validators
 										</div>
 									</div>
 								</div>
@@ -433,7 +446,7 @@ export default function PostPage() {
 								</li>
 								<li className="flex items-center gap-2">
 									<div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-									Earn ₹{currentPost ? Number(currentPost.detailedReward).toFixed(2) : '0'} upon completion
+									Earn ₹{currentPost ? Number(currentPost.detailedReward || 0).toFixed(2) : '0'} upon completion
 								</li>
 							</ul>
 						</div>

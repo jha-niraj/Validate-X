@@ -20,7 +20,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
-import { Post, DynamicField } from "@/types"
+import { DynamicField } from "@/types"
 
 interface CustomValidationProps {
 	post: {
@@ -40,13 +40,13 @@ interface CustomValidationProps {
 		}
 		createdAt: string
 		expiryDate: string
-		totalBudget: number
-		normalValidatorCount: number
-		detailedValidatorCount: number
-		currentNormalCount: number
-		currentDetailedCount: number
-		normalReward: number
-		detailedReward: number
+		totalBudget?: number
+		normalValidatorCount?: number
+		detailedValidatorCount?: number
+		currentNormalCount?: number
+		currentDetailedCount?: number
+		normalReward?: number
+		detailedReward?: number
 		customInstructions?: string
 		fileUrl?: string
 		fileName?: string
@@ -78,14 +78,6 @@ interface CustomValidationProps {
 	onUpdate: () => void
 }
 
-interface CustomValidationProps {
-	post: Post & {
-		expiryDate: string
-		customFields?: DynamicField[]
-	}
-	onUpdate: () => void
-}
-
 function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 	const [validationMode, setValidationMode] = useState<'normal' | 'detailed'>('normal')
 	const [normalVote, setNormalVote] = useState<string>('')
@@ -93,12 +85,12 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 	const [detailedRating, setDetailedRating] = useState(0)
 	const [detailedFeedback, setDetailedFeedback] = useState('')
 	const [dynamicFields, setDynamicFields] = useState<DynamicField[]>([])
-	const [fieldResponses, setFieldResponses] = useState<Record<string, string | number | boolean>>({})
+	const [fieldResponses, setFieldResponses] = useState<Record<string, string | number | boolean | string[]>>({})
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const daysLeft = Math.ceil((new Date(post.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
-	const normalProgress = (post.currentNormalCount / post.normalValidatorCount) * 100
-	const detailedProgress = (post.currentDetailedCount / post.detailedValidatorCount) * 100
+	const normalProgress = ((post.currentNormalCount || 0) / (post.normalValidatorCount || 1)) * 100
+	const detailedProgress = ((post.currentDetailedCount || 0) / (post.detailedValidatorCount || 1)) * 100
 
 	const generateDynamicFields = useCallback(() => {
 		// This would parse the custom instructions and generate appropriate form fields
@@ -263,7 +255,7 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 		}
 	}
 
-	const updateFieldResponse = (fieldId: string, value: string | number | boolean) => {
+	const updateFieldResponse = (fieldId: string, value: string | number | boolean | string[]) => {
 		setFieldResponses(prev => ({
 			...prev,
 			[fieldId]: value
@@ -275,7 +267,7 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 			case 'text':
 				return (
 					<Input
-						value={fieldResponses[field.id] || ''}
+						value={String(fieldResponses[field.id] || '')}
 						onChange={(e) => updateFieldResponse(field.id, e.target.value)}
 						placeholder={`Enter ${field.label.toLowerCase()}`}
 					/>
@@ -284,16 +276,26 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 			case 'textarea':
 				return (
 					<Textarea
-						value={fieldResponses[field.id] || ''}
+						value={String(fieldResponses[field.id] || '')}
 						onChange={(e) => updateFieldResponse(field.id, e.target.value)}
 						placeholder={`Enter ${field.label.toLowerCase()}`}
 						rows={3}
 					/>
 				)
 
+			case 'number':
+				return (
+					<Input
+						type="number"
+						value={String(fieldResponses[field.id] || '')}
+						onChange={(e) => updateFieldResponse(field.id, Number(e.target.value))}
+						placeholder={`Enter ${field.label.toLowerCase()}`}
+					/>
+				)
+
 			case 'select':
 				return (
-					<Select value={fieldResponses[field.id] || ''} onValueChange={(value) => updateFieldResponse(field.id, value)}>
+					<Select value={String(fieldResponses[field.id] || '')} onValueChange={(value) => updateFieldResponse(field.id, value)}>
 						<SelectTrigger>
 							<SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
 						</SelectTrigger>
@@ -307,7 +309,7 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 
 			case 'radio':
 				return (
-					<RadioGroup value={fieldResponses[field.id] || ''} onValueChange={(value: string) => updateFieldResponse(field.id, value)}>
+					<RadioGroup value={String(fieldResponses[field.id] || '')} onValueChange={(value: string) => updateFieldResponse(field.id, value)}>
 						{field.options?.map((option) => (
 							<div key={option} className="flex items-center space-x-2">
 								<RadioGroupItem value={option} id={`${field.id}-${option}`} />
@@ -318,7 +320,9 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 				)
 
 			case 'checkbox':
-				const selectedOptions = fieldResponses[field.id] || []
+				const selectedOptions = Array.isArray(fieldResponses[field.id]) 
+					? fieldResponses[field.id] as string[]
+					: []
 				return (
 					<div className="space-y-2">
 						{field.options?.map((option) => (
@@ -339,8 +343,20 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 					</div>
 				)
 
+			case 'boolean':
+				return (
+					<div className="flex items-center space-x-2">
+						<Checkbox
+							id={field.id}
+							checked={Boolean(fieldResponses[field.id])}
+							onCheckedChange={(checked) => updateFieldResponse(field.id, checked)}
+						/>
+						<Label htmlFor={field.id}>{field.label}</Label>
+					</div>
+				)
+
 			case 'rating':
-				const rating = fieldResponses[field.id] || 0
+				const rating = Number(fieldResponses[field.id] || 0)
 				return (
 					<div className="flex gap-1">
 						{[1, 2, 3, 4, 5].map((star) => (
