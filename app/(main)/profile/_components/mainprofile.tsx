@@ -9,10 +9,11 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { User, Settings, Calendar, MapPin, Globe, Wallet, Trophy, MessageSquare, Lightbulb, Shield } from "lucide-react"
 import Link from "next/link"
+import { ProfileUser, ProfileStats } from "@/types"
 
 interface MainProfileProps {
-	user: any;
-	stats: any;
+	user: ProfileUser;
+	stats: ProfileStats;
 }
 
 export function MainProfile({ user, stats }: MainProfileProps) {

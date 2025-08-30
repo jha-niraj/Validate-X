@@ -11,21 +11,10 @@ import { Loader2, Upload, X, Plus } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { ProfileUser } from "@/types"
 
 interface ProfileFormProps {
-	user: {
-		id: string
-		name: string | null
-		email: string | null
-		bio: string | null
-		location: string | null
-		website: string | null
-		skills: string[]
-		interests: string[]
-		walletAddress: string | null
-		image: string | null
-		role: string
-	}
+	user: ProfileUser
 }
 
 export function ProfileForm({ user }: ProfileFormProps) {

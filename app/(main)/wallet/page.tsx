@@ -43,7 +43,7 @@ interface WalletData {
 		status: string;
 		createdAt: string;
 		paymentMethod: string;
-		details: any;
+		details: Record<string, unknown>;
 	}>;
 }
 
@@ -56,7 +56,6 @@ export default function WalletPage() {
 	const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'BLOCKCHAIN'>('UPI');
 	const [upiId, setUpiId] = useState('');
 	const [walletAddress, setWalletAddress] = useState('');
-	const [error, setError] = useState('');
 	const [showBalance, setShowBalance] = useState(true);
 	const [showPaymentSettings, setShowPaymentSettings] = useState(false);
 	const [savedUpiId, setSavedUpiId] = useState('');
@@ -82,7 +81,7 @@ export default function WalletPage() {
 			}
 		} catch (error) {
 			console.error('Error fetching wallet data:', error);
-			setError('Failed to load wallet data');
+			toast.error('Failed to load wallet data');
 		} finally {
 			setLoading(false);
 		}
@@ -115,7 +114,7 @@ export default function WalletPage() {
 		}
 
 		setWithdrawing(true);
-		setError('');
+		// Reset any errors
 
 		try {
 			await createWithdrawalRequest({

@@ -20,6 +20,7 @@ import { toast } from "sonner"
 import { motion } from "framer-motion"
 import { getCategories, createMediaPost } from "@/actions/post.actions"
 import Image from "next/image"
+import { MediaValidationSubtype } from "@prisma/client"
 
 interface Category {
 	id: string
@@ -171,7 +172,7 @@ export default function MediaValidationPage() {
 				title: formData.title,
 				description: formData.description,
 				categoryId: formData.categoryId,
-				postSubtype: subtype as any, // Convert subtype to proper enum
+				postSubtype: subtype as MediaValidationSubtype, // Convert subtype to proper enum
 				mediaFiles: selectedFiles,
 				normalValidatorCount: formData.normalValidatorCount,
 				detailedValidatorCount: formData.detailedValidatorCount,

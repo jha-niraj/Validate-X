@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { 
@@ -46,12 +46,7 @@ export default function OnboardingPage() {
 		watchedVideo: false
 	})
 
-	useEffect(() => {
-		checkOnboardingStatusAndRedirect()
-		fetchCategories()
-	}, [])
-
-	const checkOnboardingStatusAndRedirect = async () => {
+	const checkOnboardingStatusAndRedirect = useCallback(async () => {
 		try {
 			setCheckingStatus(true)
 			const result = await checkOnboardingStatus()
@@ -67,7 +62,12 @@ export default function OnboardingPage() {
 		} finally {
 			setCheckingStatus(false)
 		}
-	}
+	}, [router]);
+
+	useEffect(() => {
+		checkOnboardingStatusAndRedirect()
+		fetchCategories()
+	}, [checkOnboardingStatusAndRedirect])
 
 	const fetchCategories = async () => {
 		try {

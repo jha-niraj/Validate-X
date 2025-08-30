@@ -40,7 +40,7 @@ interface PostInfo {
 	description: string
 }
 
-export default function DetailedReviewPage(params: { params: Promise<{ slug: string }> }) {
+export default function DetailedReviewPage() {
 	const { slug } = useParams()
 	const router = useRouter()
 	const [reviews, setReviews] = useState<DetailedReview[]>([])
@@ -70,7 +70,7 @@ export default function DetailedReviewPage(params: { params: Promise<{ slug: str
 		} finally {
 			setLoading(false)
 		}
-	}, []);
+	}, [router, slug]);
 
 	useEffect(() => {
 		loadValidations()

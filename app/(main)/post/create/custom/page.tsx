@@ -13,6 +13,7 @@ import {
 import { Settings, DollarSign, Lightbulb } from 'lucide-react'
 import { createCustomPost } from '@/actions/post.actions'
 import { toast } from 'sonner'
+import { CustomValidationSubtype } from '@prisma/client'
 
 const customSubtypes = [
 	{ value: 'MIXED_CONTENT', label: 'Mixed Content', description: 'Combination of different content types' },
@@ -61,7 +62,7 @@ export default function CreateCustomPost() {
 				title: formData.title,
 				description: formData.description,
 				categoryId: '', // Will be auto-filled in the action
-				postSubtype: formData.subtype as any,
+				postSubtype: formData.subtype as CustomValidationSubtype,
 				customInstructions: formData.customInstructions,
 				customRequirements: JSON.stringify({
 					validationCriteria: formData.validationCriteria,

@@ -51,10 +51,9 @@ interface Category {
 export default function PostPage() {
 	// const { data: session } = useSession()
 	const [posts, setPosts] = useState<Post[]>([])
-	const [categories, setCategories] = useState<Category[]>([])
 	const [currentPostIndex, setCurrentPostIndex] = useState(0)
 	const [loading, setLoading] = useState(true)
-	const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+	const [selectedCategories] = useState<string[]>([])
 	const [normalVoteDialogOpen, setNormalVoteDialogOpen] = useState(false)
 	const [pendingVote, setPendingVote] = useState<'LIKE' | 'DISLIKE' | null>(null)
 	const [submitting, setSubmitting] = useState(false)
@@ -66,7 +65,7 @@ export default function PostPage() {
 				selectedCategories.length > 0 ? selectedCategories : undefined
 			)
 			if (result.success && result.posts) {
-				const transformedPosts = result.posts.map((post: any) => ({
+				const transformedPosts = result.posts.map((post: Post & { fileUrl?: string; fileName?: string }) => ({
 					...post,
 					fileUrl: post.fileUrl || undefined,
 					fileName: post.fileName || undefined,
@@ -81,12 +80,12 @@ export default function PostPage() {
 		} finally {
 			setLoading(false)
 		}
-	}, []);
+	}, [selectedCategories]);
 
 	useEffect(() => {
 		loadCategories()
 		loadPosts()
-	}, [selectedCategories])
+	}, [selectedCategories, loadPosts])
 
 	const loadCategories = async () => {
 		try {
@@ -152,7 +151,7 @@ export default function PostPage() {
 		}
 	}
 
-	const formatCurrency = (amount: any) => {
+	const formatCurrency = (amount: number) => {
 		return `₹${Number(amount).toFixed(2)}`
 	}
 

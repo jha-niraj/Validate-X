@@ -18,6 +18,7 @@ import {
 	LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
 	ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell 
 } from 'recharts'
+import { Category, DashboardPost, DashboardValidation, DashboardAnalytics } from "@/types"
 import { getSubmitterDashboard, getValidatorDashboard } from "@/actions/dashboard.actions"
 import Link from "next/link"
 
@@ -32,13 +33,17 @@ interface DashboardData {
 		totalIdeasSubmitted: number
 		totalValidations: number
 	}
-	posts?: any[]
-	validations?: any[]
-	availablePosts?: any[]
-	analytics?: any
-	recentValidations?: any[]
-	categories?: any[]
-	validatorData?: any
+	posts?: DashboardPost[]
+	validations?: DashboardValidation[]
+	availablePosts?: DashboardPost[]
+	analytics?: DashboardAnalytics
+	recentValidations?: DashboardValidation[]
+	categories?: Category[]
+	validatorData?: {
+		rating: number
+		completedValidations: number
+		earnings: number
+	}
 }
 
 export default function DashboardPage() {
@@ -85,7 +90,7 @@ export default function DashboardPage() {
 					userData = await getValidatorDashboard()
 				}
 
-				setDashboardData(userData)
+				setDashboardData(userData as unknown as DashboardData)
 			} catch (error) {
 				console.error("Error fetching dashboard data:", error)
 				toast.error("Failed to load dashboard data")
@@ -391,8 +396,8 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 			color: '#94a3b8' 
 		},
 		{ 
-			name: 'Pending', 
-			value: data.posts?.filter(p => p.status === 'PENDING').length || 0,
+			name: 'Draft', 
+			value: data.posts?.filter(p => p.status === 'DRAFT').length || 0,
 			color: '#f59e0b' 
 		}
 	]
@@ -404,7 +409,7 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 		// Show realistic demo distribution
 		postStatusData[0].value = 2 // Open posts
 		postStatusData[1].value = 1 // Closed posts
-		postStatusData[2].value = 1 // Pending posts
+		postStatusData[2].value = 1 // Draft posts
 	}
 
 	return (
@@ -532,7 +537,7 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 														<h4 className="font-medium line-clamp-1 mb-2">{post.title}</h4>
 														<div className="flex items-center gap-2">
 															<Badge variant="outline" className="text-xs">
-																{post.category}
+																{post.category || 'General'}
 															</Badge>
 															<Badge variant={
 																post.status === 'OPEN' ? 'default' :
@@ -550,7 +555,7 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 															<ArrowUpRight className="h-4 w-4 text-muted-foreground" />
 														</div>
 														<p className="text-xs text-muted-foreground">
-															₹{Number(post.totalBudget).toFixed(0)} budget
+															₹{Number(post.totalBudget || 0).toFixed(0)} budget
 														</p>
 													</div>
 												</div>
@@ -578,7 +583,7 @@ function SubmitterDashboard({ data }: { data: DashboardData }) {
 // Validator Dashboard Component  
 function ValidatorDashboard({ data }: { data: DashboardData }) {
 	// Generate earnings data from analytics or create realistic fallback
-	const earningsData = data.analytics?.earningsChart?.length > 0 ? 
+	const earningsData = data.analytics?.earningsChart && data.analytics.earningsChart.length > 0 ? 
 		data.analytics.earningsChart.map((item: { date: string, amount: number }) => ({
 			date: item.date,
 			earnings: item.amount || 0
@@ -715,16 +720,16 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 															<h4 className="font-medium line-clamp-1">{post.title}</h4>
 															<div className="flex items-center gap-2 mt-1">
 																<Badge variant="outline" className="text-xs">
-																	{post.category}
+																	{post.category || 'General'}
 																</Badge>
 																<p className="text-xs text-muted-foreground">
-																	by {post.authorName}
+																	by {post.authorName || 'Anonymous'}
 																</p>
 															</div>
 														</div>
 														<div className="text-right">
 															<p className="text-sm font-medium text-green-600">
-																₹{Number(post.normalReward).toFixed(0)} - ₹{Number(post.detailedReward).toFixed(0)}
+																₹{Number(post.normalReward || 0).toFixed(0)} - ₹{Number(post.detailedReward || 0).toFixed(0)}
 															</p>
 															<p className="text-xs text-muted-foreground">
 																{post.validationCount} validations
@@ -776,32 +781,31 @@ function ValidatorDashboard({ data }: { data: DashboardData }) {
 												initial={{ opacity: 0, y: 20 }}
 												animate={{ opacity: 1, y: 0 }}
 												transition={{ delay: index * 0.1 }}
-											>
-												<div className="flex items-center justify-between p-3 border rounded-lg">
-													<div className="flex-1">
-														<h4 className="font-medium line-clamp-1">{validation.postTitle}</h4>
-														<div className="flex items-center gap-2 mt-1">
-															<Badge variant="outline" className="text-xs">
-																{validation.postCategory}
-															</Badge>
-															<Badge variant={
-																validation.status === 'APPROVED' ? 'default' :
-																	validation.status === 'PENDING' ? 'secondary' :
-																		'destructive'
-															} className="text-xs">
-																{validation.status}
-															</Badge>
+											>													<div className="flex items-center justify-between p-3 border rounded-lg">
+														<div className="flex-1">
+															<h4 className="font-medium line-clamp-1">{validation.postTitle || 'Untitled Post'}</h4>
+															<div className="flex items-center gap-2 mt-1">
+																<Badge variant="outline" className="text-xs">
+																	{validation.postCategory || 'General'}
+																</Badge>
+																<Badge variant={
+																	validation.status === 'APPROVED' ? 'default' :
+																		validation.status === 'PENDING' ? 'secondary' :
+																			'destructive'
+																} className="text-xs">
+																	{validation.status || 'Unknown'}
+																</Badge>
+															</div>
+														</div>
+														<div className="text-right">
+															<p className="text-sm font-medium text-green-600">
+																₹{Number(validation.rewardAmount || 0).toFixed(2)}
+															</p>
+															<p className="text-xs text-muted-foreground">
+																{validation.type || 'Normal'}
+															</p>
 														</div>
 													</div>
-													<div className="text-right">
-														<p className="text-sm font-medium text-green-600">
-															₹{Number(validation.rewardAmount).toFixed(2)}
-														</p>
-														<p className="text-xs text-muted-foreground">
-															{validation.type}
-														</p>
-													</div>
-												</div>
 											</motion.div>
 										))
 									}

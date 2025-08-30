@@ -13,6 +13,7 @@ import {
 import { Link, ExternalLink, DollarSign, Globe } from 'lucide-react'
 import { createLinkPost } from '@/actions/post.actions'
 import { toast } from 'sonner'
+import { LinkValidationSubtype } from '@prisma/client'
 
 const linkSubtypes = [
 	{ value: 'WEBSITE_REVIEW', label: 'Website Review', description: 'Review websites, landing pages, apps' },
@@ -94,7 +95,7 @@ export default function CreateLinkPost() {
 				title: formData.title,
 				description: formData.description,
 				categoryId: '', // Will be auto-filled in the action
-				postSubtype: formData.subtype as any,
+				postSubtype: formData.subtype as LinkValidationSubtype,
 				linkUrl: formData.linkUrl,
 				normalValidatorCount: 3,
 				detailedValidatorCount: 1,

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -14,12 +14,13 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
 	Clock, ThumbsUp, ThumbsDown, MinusCircle, Star, Settings,
-	MessageSquare, FileText, Upload, Download, Eye,
-	Users, Calendar, DollarSign, CheckCircle, AlertCircle,
+	MessageSquare, FileText, Eye,
+	CheckCircle, AlertCircle,
 	Lightbulb, Zap, Target
 } from "lucide-react"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
+import { Post, DynamicField } from "@/types"
 
 interface CustomValidationProps {
 	post: {
@@ -77,13 +78,12 @@ interface CustomValidationProps {
 	onUpdate: () => void
 }
 
-interface DynamicField {
-	id: string
-	type: 'text' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'rating'
-	label: string
-	required: boolean
-	options?: string[]
-	value?: any
+interface CustomValidationProps {
+	post: Post & {
+		expiryDate: string
+		customFields?: DynamicField[]
+	}
+	onUpdate: () => void
 }
 
 function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
@@ -93,19 +93,14 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 	const [detailedRating, setDetailedRating] = useState(0)
 	const [detailedFeedback, setDetailedFeedback] = useState('')
 	const [dynamicFields, setDynamicFields] = useState<DynamicField[]>([])
-	const [fieldResponses, setFieldResponses] = useState<{[key: string]: any}>({})
+	const [fieldResponses, setFieldResponses] = useState<Record<string, string | number | boolean>>({})
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const daysLeft = Math.ceil((new Date(post.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
 	const normalProgress = (post.currentNormalCount / post.normalValidatorCount) * 100
 	const detailedProgress = (post.currentDetailedCount / post.detailedValidatorCount) * 100
 
-	// Parse custom instructions and generate dynamic form fields
-	useEffect(() => {
-		generateDynamicFields()
-	}, [post.customInstructions])
-
-	const generateDynamicFields = () => {
+	const generateDynamicFields = useCallback(() => {
 		// This would parse the custom instructions and generate appropriate form fields
 		// For demo purposes, we'll create some sample fields based on the subtype
 		const fields: DynamicField[] = []
@@ -115,19 +110,19 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 				fields.push(
 					{
 						id: 'market_potential',
-						type: 'rating',
+						type: 'number',
 						label: 'Market Potential (1-5)',
 						required: true
 					},
 					{
 						id: 'feasibility',
-						type: 'rating',
+						type: 'number',
 						label: 'Technical Feasibility (1-5)',
 						required: true
 					},
 					{
 						id: 'uniqueness',
-						type: 'rating',
+						type: 'number',
 						label: 'Uniqueness/Innovation (1-5)',
 						required: true
 					},
@@ -137,13 +132,6 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 						label: 'Primary Target Audience',
 						required: true,
 						options: ['B2B', 'B2C', 'Both', 'Government', 'Non-profit']
-					},
-					{
-						id: 'concerns',
-						type: 'checkbox',
-						label: 'Potential Concerns',
-						required: false,
-						options: ['High competition', 'Regulatory issues', 'Technical complexity', 'Market size', 'Monetization challenges']
 					}
 				)
 				break
@@ -152,13 +140,13 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 				fields.push(
 					{
 						id: 'business_model',
-						type: 'rating',
+						type: 'number',
 						label: 'Business Model Clarity (1-5)',
 						required: true
 					},
 					{
 						id: 'revenue_potential',
-						type: 'rating',
+						type: 'number',
 						label: 'Revenue Potential (1-5)',
 						required: true
 					},
@@ -182,13 +170,13 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 				fields.push(
 					{
 						id: 'content_quality',
-						type: 'rating',
+						type: 'number',
 						label: 'Overall Content Quality (1-5)',
 						required: true
 					},
 					{
 						id: 'content_type',
-						type: 'radio',
+						type: 'select',
 						label: 'Primary Content Type',
 						required: true,
 						options: ['Educational', 'Entertainment', 'Marketing', 'Technical', 'Creative']
@@ -198,13 +186,6 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 						type: 'textarea',
 						label: 'Suggested Improvements',
 						required: false
-					},
-					{
-						id: 'suitable_for',
-						type: 'checkbox',
-						label: 'Suitable For',
-						required: false,
-						options: ['Beginners', 'Intermediate', 'Advanced', 'General Public', 'Specialists']
 					}
 				)
 				break
@@ -214,7 +195,7 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 				fields.push(
 					{
 						id: 'overall_quality',
-						type: 'rating',
+						type: 'number',
 						label: 'Overall Quality (1-5)',
 						required: true
 					},
@@ -228,7 +209,12 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 		}
 
 		setDynamicFields(fields)
-	}
+	}, [post.customSubtype])
+
+	// Parse custom instructions and generate dynamic form fields
+	useEffect(() => {
+		generateDynamicFields()
+	}, [generateDynamicFields])
 
 	const handleNormalValidation = async () => {
 		if (!normalVote) {
@@ -277,7 +263,7 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 		}
 	}
 
-	const updateFieldResponse = (fieldId: string, value: any) => {
+	const updateFieldResponse = (fieldId: string, value: string | number | boolean) => {
 		setFieldResponses(prev => ({
 			...prev,
 			[fieldId]: value

@@ -9,6 +9,7 @@ import { TrendingUp, TrendingDown, DollarSign, FileText, Users, Calendar } from 
 import Link from 'next/link'
 import { getSubmitterSpending } from '@/actions/spending.actions'
 import { toast } from 'sonner'
+import { PostStatus } from '@prisma/client'
 
 interface SpendingData {
     overview: {
@@ -27,7 +28,7 @@ interface SpendingData {
             name: string
             icon: string | null
         }
-        status: any
+        status: PostStatus
         createdAt: Date
         validationCount: number
         totalSpent: number
@@ -60,6 +61,7 @@ export default function SpendingTrackingPage() {
                     toast.error(result.error || 'Failed to load spending data')
                 }
             } catch (err) {
+                console.log("Failed to load spending data: " + err);
                 setError('Failed to load spending data')
                 toast.error('Failed to load spending data')
             } finally {

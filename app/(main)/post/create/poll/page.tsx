@@ -13,6 +13,7 @@ import {
 import { Plus, X, DollarSign, BarChart3 } from 'lucide-react'
 import { createPollPost } from '@/actions/post.actions'
 import { toast } from 'sonner'
+import { PollValidationSubtype } from '@prisma/client'
 
 const pollSubtypes = [
     { value: 'PREFERENCE_RANKING', label: 'Preference Ranking', description: 'Rank options by preference or priority' },
@@ -86,7 +87,7 @@ export default function CreatePollPost() {
                 title: formData.title,
                 description: formData.description,
                 categoryId: '', // Will be auto-filled in the action
-                postSubtype: formData.subtype as any,
+                postSubtype: formData.subtype as PollValidationSubtype,
                 pollOptions: validOptions,
                 pollSettings: {
                     question: formData.pollQuestion,

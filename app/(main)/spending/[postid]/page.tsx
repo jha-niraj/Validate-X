@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeft, Users, DollarSign, TrendingUp, Eye, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { getPostSpendingDetails } from '@/actions/spending.actions'
+import { PostStatus, ValidationType } from '@prisma/client'
 import { toast } from 'sonner'
 import { notFound } from 'next/navigation'
 
@@ -18,7 +19,7 @@ interface PostSpendingData {
 		description: string
 		category: string
 		categoryIcon: string | null
-		status: any
+		status: PostStatus
 		createdAt: Date
 		expiryDate: Date
 	}
@@ -44,7 +45,7 @@ interface PostSpendingData {
 	}>
 	validations: Array<{
 		id: string
-		type: any
+		type: ValidationType
 		vote: string | null
 		validatorName: string
 		validatorReputation: number
@@ -54,7 +55,7 @@ interface PostSpendingData {
 	}>
 }
 
-export default function PostSpendingDetailsPage({ params }: { params: { postid: string } }) {
+export default function PostSpendingDetailsPage({ params }: { params: Promise<{ postid: string }> }) {
 	const [data, setData] = useState<PostSpendingData | null>(null)
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
@@ -63,7 +64,8 @@ export default function PostSpendingDetailsPage({ params }: { params: { postid: 
 		async function fetchData() {
 			try {
 				setLoading(true)
-				const result = await getPostSpendingDetails(params.postid)
+				const { postid } = await params
+				const result = await getPostSpendingDetails(postid)
 				
 				if (result.success && result.data) {
 					setData(result.data)
@@ -81,7 +83,7 @@ export default function PostSpendingDetailsPage({ params }: { params: { postid: 
 		}
 
 		fetchData()
-	}, [params.postid])
+	}, [params])
 
 	if (loading) {
 		return (
@@ -135,7 +137,7 @@ export default function PostSpendingDetailsPage({ params }: { params: { postid: 
 							</div>
 							<div className="flex gap-4">
 								<Badge variant="secondary">{post.category}</Badge>
-								<Badge variant={post.status === 'ACTIVE' ? 'default' : 'secondary'}>
+								<Badge variant={post.status === 'OPEN' ? 'default' : 'secondary'}>
 									{post.status}
 								</Badge>
 							</div>

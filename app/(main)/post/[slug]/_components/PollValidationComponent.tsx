@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { 
 	Card, CardContent, CardDescription, CardHeader, CardTitle 
 } from "@/components/ui/card"
@@ -82,17 +82,15 @@ function PollValidationComponent({ post, onUpdate }: PollValidationProps) {
 	const [normalComment, setNormalComment] = useState('')
 	const [detailedRating, setDetailedRating] = useState(0)
 	const [detailedFeedback, setDetailedFeedback] = useState('')
-	const [pollResponse, setPollResponse] = useState<{[key: string]: any}>({})
 	const [rankedOptions, setRankedOptions] = useState<string[]>([])
 	const [multipleChoices, setMultipleChoices] = useState<string[]>([])
-	const [pollExplanation, setPollExplanation] = useState('')
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const daysLeft = Math.ceil((new Date(post.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
 	const normalProgress = (post.currentNormalCount / post.normalValidatorCount) * 100
 	const detailedProgress = (post.currentDetailedCount / post.detailedValidatorCount) * 100
 
-	const pollOptions = post.pollOptions || ['Option A', 'Option B', 'Option C', 'Option D']
+	const pollOptions = useMemo(() => post.pollOptions || ['Option A', 'Option B', 'Option C', 'Option D'], [post.pollOptions])
 
 	useEffect(() => {
 		setRankedOptions([...pollOptions])
@@ -136,7 +134,7 @@ function PollValidationComponent({ post, onUpdate }: PollValidationProps) {
 		}
 	}
 
-	const handleDragEnd = (result: any) => {
+	const handleDragEnd = (result: { destination?: { index: number } | null; source: { index: number } }) => {
 		if (!result.destination) return
 
 		const items = Array.from(rankedOptions)

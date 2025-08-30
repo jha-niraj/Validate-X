@@ -16,6 +16,7 @@ import { Upload, FileText, X, DollarSign, ArrowLeft } from 'lucide-react'
 import { createDocumentPost, getCategories } from '@/actions/post.actions'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
+import { DocumentValidationSubtype } from '@prisma/client'
 
 const documentSubtypes = [
     { value: 'CONTRACT_REVIEW', label: 'Contract Review', description: 'Legal contracts, agreements, terms of service' },
@@ -137,7 +138,7 @@ export default function CreateDocumentPost() {
                 title: formData.title,
                 description: formData.description,
                 categoryId: formData.categoryId,
-                postSubtype: formData.subtype as any,
+                postSubtype: formData.subtype as DocumentValidationSubtype,
                 documentFile: documentFile,
                 normalValidatorCount: formData.normalValidatorCount,
                 detailedValidatorCount: formData.detailedValidatorCount,

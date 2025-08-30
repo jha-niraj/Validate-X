@@ -76,7 +76,7 @@ interface PostDetails {
 	}
 }
 
-export default function PostDetailsPage(params: { params: Promise<{ slug: string }> }) {
+export default function PostDetailsPage() {
 	const { slug } = useParams()
 	const router = useRouter()
 	const [post, setPost] = useState<PostDetails | null>(null)
@@ -88,7 +88,7 @@ export default function PostDetailsPage(params: { params: Promise<{ slug: string
 			const result = await getPostDetails(slug as string)
 			
 			if (result.success && result.post) {
-				setPost(result.post as any as PostDetails)
+				setPost(result.post as PostDetails)
 			} else {
 				toast.error(result.error || "Failed to load post details")
 				router.push('/dashboard')
@@ -100,7 +100,7 @@ export default function PostDetailsPage(params: { params: Promise<{ slug: string
 		} finally {
 			setLoading(false)
 		}
-	}, []);
+	}, [router, slug]);
 
 	useEffect(() => {
 		loadPostDetails()

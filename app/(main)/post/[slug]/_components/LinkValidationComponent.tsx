@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { 
-	Card, CardContent, CardDescription, CardHeader, CardTitle 
+import {
+	Card, CardContent, CardDescription, CardHeader, CardTitle
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -11,8 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
-import { 
-	Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger 
+import {
+	Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger
 } from "@/components/ui/dialog"
 import {
 	Clock, ThumbsUp, ThumbsDown, MinusCircle, Star, ExternalLink,
@@ -141,26 +141,7 @@ function LinkValidationComponent({ post, onUpdate }: LinkValidationProps) {
 		}
 	}, [post.linkUrl, browserHistory])
 
-	const handleNormalValidation = async () => {
-		if (!normalVote) {
-			toast.error("Please select your validation")
-			return
-		}
-
-		setIsSubmitting(true)
-		try {
-			// Call validation API
-			toast.success("Validation submitted successfully!")
-			onUpdate()
-		} catch (error) {
-			console.log("Failed tosubmit validation: " + error);
-			toast.error("Failed to submit validation")
-		} finally {
-			setIsSubmitting(false)
-		}
-
-
-		const handleDetailedValidation = async () => {
+	const handleDetailedValidation = async () => {
 			if (!detailedRating || !detailedFeedback.trim()) {
 				toast.error("Please provide rating and feedback")
 				return
@@ -736,4 +717,4 @@ function LinkValidationComponent({ post, onUpdate }: LinkValidationProps) {
 		)
 	}
 
-	export default LinkValidationComponent;
+export default LinkValidationComponent;
