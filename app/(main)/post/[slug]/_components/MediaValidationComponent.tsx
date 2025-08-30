@@ -1,20 +1,21 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { 
+	Card, CardContent, CardDescription, CardHeader, CardTitle 
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { 
+	Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger 
+} from "@/components/ui/dialog"
 import {
 	Clock, ThumbsUp, ThumbsDown, MinusCircle, Star, Image as ImageIcon,
-	MessageSquare, Eye, Upload, Download, ZoomIn, ZoomOut, RotateCw,
-	Grid3X3, Play, Pause, Volume2, VolumeX, Maximize, Users, TrendingUp,
-	Calendar, DollarSign, CheckCircle
+	MessageSquare, ZoomIn, ZoomOut,
+	Grid3X3, Maximize
 } from "lucide-react"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
@@ -113,6 +114,7 @@ function MediaValidationComponent({ post, onUpdate }: MediaValidationProps) {
 			toast.success("Validation submitted successfully!")
 			onUpdate()
 		} catch (error) {
+			console.log("Failed to submit validation: " + error);
 			toast.error("Failed to submit validation")
 		} finally {
 			setIsSubmitting(false)
@@ -131,6 +133,7 @@ function MediaValidationComponent({ post, onUpdate }: MediaValidationProps) {
 			toast.success("Detailed review submitted successfully!")
 			onUpdate()
 		} catch (error) {
+			console.log("Failed to submit detailed review: " + error);
 			toast.error("Failed to submit detailed review")
 		} finally {
 			setIsSubmitting(false)

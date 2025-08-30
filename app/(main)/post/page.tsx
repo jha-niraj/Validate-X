@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
+import { useState, useEffect, useCallback } from 'react'
+// import { useSession } from 'next-auth/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -49,7 +49,7 @@ interface Category {
 }
 
 export default function PostPage() {
-	const { data: session } = useSession()
+	// const { data: session } = useSession()
 	const [posts, setPosts] = useState<Post[]>([])
 	const [categories, setCategories] = useState<Category[]>([])
 	const [currentPostIndex, setCurrentPostIndex] = useState(0)
@@ -59,23 +59,7 @@ export default function PostPage() {
 	const [pendingVote, setPendingVote] = useState<'LIKE' | 'DISLIKE' | null>(null)
 	const [submitting, setSubmitting] = useState(false)
 
-	useEffect(() => {
-		loadCategories()
-		loadPosts()
-	}, [selectedCategories])
-
-	const loadCategories = async () => {
-		try {
-			const result = await getCategories()
-			if (result.success && result.categories) {
-				setCategories(result.categories as Category[])
-			}
-		} catch (error) {
-			console.error('Failed to load categories')
-		}
-	}
-
-	const loadPosts = async () => {
+	const loadPosts = useCallback(async () => {
 		try {
 			setLoading(true)
 			const result = await getPostsForValidation(
@@ -92,9 +76,26 @@ export default function PostPage() {
 				setCurrentPostIndex(0)
 			}
 		} catch (error) {
+			console.log("Error while loading posts:", error)
 			toast.error('Failed to load posts')
 		} finally {
 			setLoading(false)
+		}
+	}, []);
+
+	useEffect(() => {
+		loadCategories()
+		loadPosts()
+	}, [selectedCategories])
+
+	const loadCategories = async () => {
+		try {
+			const result = await getCategories()
+			if (result.success && result.categories) {
+				setCategories(result.categories as Category[])
+			}
+		} catch (error) {
+			console.error('Failed to load categories', error)
 		}
 	}
 
@@ -415,7 +416,7 @@ export default function PostPage() {
 							<div>
 								<p className="font-medium text-green-800">Post Validation Required</p>
 								<p className="text-sm text-green-700">
-									You'll be redirected to provide detailed feedback and earn rewards
+									You&apos;ll be redirected to provide detailed feedback and earn rewards
 								</p>
 							</div>
 						</div>

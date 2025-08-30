@@ -3,21 +3,21 @@
 import { useTheme } from "next-themes"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Moon, Sun, Home, User, LogOut, Shield, LogIn, DollarSign, Wallet, Settings, Eye } from "lucide-react"
+import { 
+    Moon, Sun, Home, User, LogOut, Shield, LogIn, DollarSign, Wallet 
+} from "lucide-react"
 import { Button } from "./ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
-    DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
+    DropdownMenu, DropdownMenuContent, DropdownMenuItem, 
+    DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
 } from "./ui/dropdown-menu"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
 import { motion } from "framer-motion"
 import { signOut, useSession } from "next-auth/react"
 import { toast } from "sonner"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
-import { getWalletInfo, updateUserPaymentSettings } from "@/actions/wallet.actions"
+import { getWalletInfo } from "@/actions/wallet.actions"
 
 const MainNavbar = ({ isCollapsed }: { isCollapsed: boolean }) => {
     const { data: session } = useSession();

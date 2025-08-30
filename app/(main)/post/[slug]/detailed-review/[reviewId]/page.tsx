@@ -1,21 +1,20 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { 
+	Card, CardContent, CardDescription, CardHeader, CardTitle 
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
-	ArrowLeft, Check, X, Star, User, Calendar, 
-	MessageSquare, FileText, ThumbsUp, ThumbsDown,
-	ChevronLeft, ChevronRight, RotateCcw
+	ArrowLeft, Check, X, Star, ChevronLeft, ChevronRight
 } from "lucide-react"
 import { toast } from "sonner"
 import { motion, AnimatePresence, PanInfo } from "framer-motion"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { getDetailedValidations } from "@/actions/post.actions"
 import { updateValidationStatus } from "@/actions/validation.actions"
 import { ValidationStatus } from "@prisma/client"
@@ -41,8 +40,8 @@ interface PostInfo {
 	description: string
 }
 
-export default function DetailedReviewPage() {
-	const params = useParams()
+export default function DetailedReviewPage(params: { params: Promise<{ slug: string }> }) {
+	const { slug } = useParams()
 	const router = useRouter()
 	const [reviews, setReviews] = useState<DetailedReview[]>([])
 	const [currentIndex, setCurrentIndex] = useState(0)
@@ -52,14 +51,10 @@ export default function DetailedReviewPage() {
 	const [rejectionReason, setRejectionReason] = useState("")
 	const [showRejectDialog, setShowRejectDialog] = useState(false)
 
-	useEffect(() => {
-		loadValidations()
-	}, [params.slug])
-
-	const loadValidations = async () => {
+	const loadValidations = useCallback(async () => {
 		try {
 			setLoading(true)
-			const result = await getDetailedValidations(params.slug as string)
+			const result = await getDetailedValidations(slug as string)
 			
 			if (result.success && result.validations && result.postInfo) {
 				setReviews(result.validations)
@@ -69,12 +64,17 @@ export default function DetailedReviewPage() {
 				router.push('/dashboard')
 			}
 		} catch (error) {
+			console.error("Error loading validations:", error)
 			toast.error("Failed to load validations")
 			router.push('/dashboard')
 		} finally {
 			setLoading(false)
 		}
-	}
+	}, []);
+
+	useEffect(() => {
+		loadValidations()
+	}, [slug, loadValidations])
 
 	const currentReview = reviews[currentIndex]
 
@@ -96,6 +96,7 @@ export default function DetailedReviewPage() {
 				toast.error(result.error || "Failed to approve review")
 			}
 		} catch (error) {
+			console.error("Error approving review:", error)
 			toast.error("Failed to approve review")
 		} finally {
 			setProcessing(false)
@@ -125,6 +126,7 @@ export default function DetailedReviewPage() {
 				toast.error(result.error || "Failed to reject review")
 			}
 		} catch (error) {
+			console.error("Error rejecting review:", error)
 			toast.error("Failed to reject review")
 		} finally {
 			setProcessing(false)
@@ -137,7 +139,7 @@ export default function DetailedReviewPage() {
 		} else {
 			// All reviews processed
 			toast.success("All reviews have been processed!")
-			router.push(`/validation/${params.slug}/details`)
+			router.push(`/post/${slug}/details`)
 		}
 	}
 
@@ -175,7 +177,7 @@ export default function DetailedReviewPage() {
 					<CardContent>
 						<h2 className="text-xl font-semibold mb-2">No reviews to process</h2>
 						<p className="text-muted-foreground mb-4">All detailed reviews have been processed.</p>
-						<Button onClick={() => router.push(`/validation/${params.slug}/details`)}>
+						<Button onClick={() => router.push(`/validation/${slug}/details`)}>
 							Back to Post Details
 						</Button>
 					</CardContent>

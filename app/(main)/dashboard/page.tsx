@@ -3,18 +3,21 @@
 import { useSession } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { 
+	Card, CardContent, CardDescription, CardHeader, CardTitle 
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-	Plus, Lightbulb, Star, MessageSquare, Eye, CheckCircle,
-	PenTool, DollarSign, Zap, BookOpen, TrendingUp, Users,
-	Calendar, Award, Clock, Target, BarChart3, ArrowUpRight, User
+	Plus, Lightbulb, Star, MessageSquare, Eye, CheckCircle, PenTool, DollarSign, 
+	Zap, BookOpen, TrendingUp, BarChart3, ArrowUpRight, User
 } from "lucide-react"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts'
+import { 
+	LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
+	ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell 
+} from 'recharts'
 import { getSubmitterDashboard, getValidatorDashboard } from "@/actions/dashboard.actions"
 import Link from "next/link"
 
@@ -204,7 +207,7 @@ export default function DashboardPage() {
 												transition={{ delay: 0.4 }}
 												className="text-green-700 dark:text-green-300"
 											>
-												Your idea is now live and ready for validation. You'll receive notifications as validators provide feedback.
+												Your idea is now live and ready for validation. You&apos;ll receive notifications as validators provide feedback.
 											</motion.p>
 											<motion.div
 												initial={{ opacity: 0, y: 20 }}

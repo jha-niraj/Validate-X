@@ -252,6 +252,7 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 			onUpdate()
 		} catch (error) {
 			toast.error("Failed to submit validation")
+			console.log("Failed to submit validation: " + error);
 		} finally {
 			setIsSubmitting(false)
 		}
@@ -269,6 +270,7 @@ function CustomValidationComponent({ post, onUpdate }: CustomValidationProps) {
 			toast.success("Detailed custom review submitted successfully!")
 			onUpdate()
 		} catch (error) {
+			console.log("Failed to submit detailed review: " + error);
 			toast.error("Failed to submit detailed review")
 		} finally {
 			setIsSubmitting(false)

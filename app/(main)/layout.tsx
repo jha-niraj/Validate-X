@@ -12,7 +12,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
 	const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
-	const { data: session, status } = useSession();
+	const { data: session } = useSession();
 
 	useEffect(() => {
 		const savedState = localStorage.getItem('mainSidebarCollapsed');

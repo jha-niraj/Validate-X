@@ -2,21 +2,24 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { 
+	Card, CardContent, CardDescription, CardHeader, CardTitle 
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
+import { 
+	Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+} from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import {
-	Upload, X, Image as ImageIcon, Play, Palette,
-	DollarSign, Target, ArrowLeft, CheckCircle
+	Upload, X, Image as ImageIcon, Play, Palette, Target, ArrowLeft, CheckCircle
 } from "lucide-react"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
 import { getCategories, createMediaPost } from "@/actions/post.actions"
+import Image from "next/image"
 
 interface Category {
 	id: string
@@ -93,6 +96,7 @@ export default function MediaValidationPage() {
 				setCategories(result.categories)
 			}
 		} catch (error) {
+			console.error("Error loading categories:", error)
 			toast.error("Failed to load categories")
 		}
 	}
@@ -186,9 +190,11 @@ export default function MediaValidationPage() {
 				toast.success("Media validation post created successfully!")
 				router.push('/dashboard?posted=true')
 			} else {
+				console.log("Error creating post:", result.error)
 				toast.error(result.error || "Failed to create post")
 			}
 		} catch (error) {
+			console.error("Error creating post:", error)
 			toast.error("Failed to create post")
 		} finally {
 			setLoading(false)
@@ -328,10 +334,12 @@ export default function MediaValidationPage() {
 												<div key={index} className="relative group">
 													<div className="aspect-square border rounded-lg overflow-hidden bg-gray-100">
 														{file.type.startsWith('image/') ? (
-															<img
+															<Image
 																src={previews[index]}
 																alt={`Preview ${index + 1}`}
 																className="w-full h-full object-cover"
+																height={200}
+																width={200}
 															/>
 														) : (
 															<div className="w-full h-full flex items-center justify-center">

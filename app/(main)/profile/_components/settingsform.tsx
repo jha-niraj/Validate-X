@@ -1,12 +1,17 @@
 "use client"
 
 import { useState } from "react"
-import { changePassword, deleteAccount, type DeleteAccountInput } from "@/actions/profile.action"
+import { changePassword, deleteAccount } from "@/actions/profile.action"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { 
+	Card, CardContent, CardDescription, CardHeader, CardTitle 
+} from "@/components/ui/card"
+import { 
+	Dialog, DialogContent, DialogDescription, DialogFooter, 
+	DialogHeader, DialogTitle, DialogTrigger 
+} from "@/components/ui/dialog"
 import { toast } from "sonner"
 import { Loader2, Shield, Eye, EyeOff, Trash2, AlertTriangle } from "lucide-react"
 import { signOut } from "next-auth/react"

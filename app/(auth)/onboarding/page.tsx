@@ -1,15 +1,18 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { 
+	Card, CardContent, CardDescription, CardHeader, CardTitle 
+} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { ArrowRight, ArrowLeft, CheckCircle, Users, Lightbulb, Loader2 } from "lucide-react"
+import { 
+	ArrowRight, ArrowLeft, CheckCircle, Users, Lightbulb, Loader2 
+} from "lucide-react"
 import { completeOnboarding, checkOnboardingStatus } from "@/actions/onboarding.actions"
 import { getCategories } from "@/actions/post.actions"
 
@@ -30,7 +33,6 @@ const FALLBACK_CATEGORIES = [
 ]
 
 export default function OnboardingPage() {
-	const { data: session } = useSession()
 	const router = useRouter()
 	const [currentStep, setCurrentStep] = useState(1)
 	const [isLoading, setIsLoading] = useState(false)
@@ -114,10 +116,6 @@ export default function OnboardingPage() {
 
 	const handlePrevious = () => {
 		setCurrentStep(prev => prev - 1)
-	}
-
-	const handleSkipVideo = () => {
-		setCurrentStep(4)
 	}
 
 	const handleCompleteOnboarding = async () => {

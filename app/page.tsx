@@ -103,7 +103,7 @@ function MainLandingPage() {
 									className="group px-12 py-6 text-xl font-semibold rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
 								>
 									<span className="mr-3">💡</span>
-									I'm a Submitter
+									I&apos;m a Submitter
 									<span className="ml-3 transition-transform group-hover:translate-x-1">→</span>
 								</Button>
 								<Button
@@ -111,7 +111,7 @@ function MainLandingPage() {
 									className="group px-12 py-6 text-xl font-semibold rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
 								>
 									<span className="mr-3">💰</span>
-									I'm a Validator
+									I&apos;m a Validator
 									<span className="ml-3 transition-transform group-hover:translate-x-1">→</span>
 								</Button>
 							</div>

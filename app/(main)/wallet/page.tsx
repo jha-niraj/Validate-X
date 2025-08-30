@@ -57,7 +57,6 @@ export default function WalletPage() {
 	const [upiId, setUpiId] = useState('');
 	const [walletAddress, setWalletAddress] = useState('');
 	const [error, setError] = useState('');
-	const [success, setSuccess] = useState('');
 	const [showBalance, setShowBalance] = useState(true);
 	const [showPaymentSettings, setShowPaymentSettings] = useState(false);
 	const [savedUpiId, setSavedUpiId] = useState('');

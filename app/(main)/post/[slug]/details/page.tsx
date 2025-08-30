@@ -1,16 +1,17 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { 
+	Card, CardContent, CardDescription, CardHeader, CardTitle 
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-	ArrowLeft, Users, CheckCircle, Clock, TrendingUp, 
-	MessageSquare, Star, ThumbsUp, ThumbsDown, MinusCircle,
-	FileText, ExternalLink, Calendar, DollarSign, Eye
+	ArrowLeft, Clock, MessageSquare, Star, ThumbsUp, ThumbsDown, MinusCircle,
+	FileText, ExternalLink, Eye
 } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
@@ -68,20 +69,16 @@ interface PostDetails {
 	}
 }
 
-export default function PostDetailsPage() {
-	const params = useParams()
+export default function PostDetailsPage(params: { params: Promise<{ slug: string }> }) {
+	const { slug } = useParams()
 	const router = useRouter()
 	const [post, setPost] = useState<PostDetails | null>(null)
 	const [loading, setLoading] = useState(true)
 
-	useEffect(() => {
-		loadPostDetails()
-	}, [params.slug])
-
-	const loadPostDetails = async () => {
+	const loadPostDetails = useCallback(async () => {
 		try {
 			setLoading(true)
-			const result = await getPostDetails(params.slug as string)
+			const result = await getPostDetails(slug as string)
 			
 			if (result.success && result.post) {
 				setPost(result.post as PostDetails)
@@ -90,12 +87,17 @@ export default function PostDetailsPage() {
 				router.push('/dashboard')
 			}
 		} catch (error) {
+			console.error("Error loading post details:", error)
 			toast.error("Failed to load post details")
 			router.push('/dashboard')
 		} finally {
 			setLoading(false)
 		}
-	}
+	}, [])
+
+	useEffect(() => {
+		loadPostDetails()
+	}, [slug, loadPostDetails])
 
 	if (loading) {
 		return (
@@ -114,7 +116,7 @@ export default function PostDetailsPage() {
 				<Card className="p-8 text-center max-w-md">
 					<CardContent>
 						<h2 className="text-xl font-semibold mb-2">Post not found</h2>
-						<p className="text-muted-foreground mb-4">The post you're looking for doesn't exist.</p>
+						<p className="text-muted-foreground mb-4">The post you&apos;re looking for doesn&apos;t exist.</p>
 						<Button onClick={() => router.back()}>Go Back</Button>
 					</CardContent>
 				</Card>
@@ -315,7 +317,7 @@ export default function PostDetailsPage() {
 														{validation.status}
 													</Badge>
 													{validation.status === 'PENDING' && (
-														<Link href={`/validation/${params.slug}/detailed-review/${validation.id}`}>
+														<Link href={`/post/${slug}/detailed-review/${validation.id}`}>
 															<Button size="sm">
 																<Eye className="h-4 w-4 mr-2" />
 																Review

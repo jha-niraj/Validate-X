@@ -6,9 +6,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
+import { 
+    Card, CardContent, CardHeader, CardTitle, CardDescription 
+} from '@/components/ui/card'
+import { 
+    Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+} from '@/components/ui/select'
 import { Upload, FileText, X, DollarSign, ArrowLeft } from 'lucide-react'
 import { createDocumentPost, getCategories } from '@/actions/post.actions'
 import { toast } from 'sonner'
@@ -65,6 +68,7 @@ export default function CreateDocumentPost() {
                 setCategories(result.categories)
             }
         } catch (error) {
+            console.error("Error loading categories:", error)
             toast.error("Failed to load categories")
         }
     }

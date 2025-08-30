@@ -2,17 +2,22 @@
 
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { 
+	Card, CardContent, CardDescription, CardHeader, CardTitle 
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
-	BarChart3, TrendingUp, DollarSign, Eye, Target, Calendar,
-	ArrowUpRight, ArrowDownRight, Activity, Users, Star,
-	FileText, Clock, ThumbsUp, ThumbsDown, MinusCircle
+	BarChart3, TrendingUp, DollarSign, Eye, Target,
+	ArrowUpRight, Activity, Star,
+	FileText, ThumbsUp, ThumbsDown, MinusCircle
 } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts'
+import { 
+	LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+	BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area 
+} from 'recharts'
 import { getSubmitterAnalytics } from '@/actions/analytics.actions'
 import { toast } from 'sonner'
 import Link from 'next/link'

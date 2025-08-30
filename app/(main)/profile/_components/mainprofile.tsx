@@ -40,7 +40,7 @@ export function MainProfile({ user, stats }: MainProfileProps) {
 								{
 									user.bio && (
 										<p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2 italic">
-											"{user.bio}"
+											&quot;{user.bio}&quot;
 										</p>
 									)
 								}

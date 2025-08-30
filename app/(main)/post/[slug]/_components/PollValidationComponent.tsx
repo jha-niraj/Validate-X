@@ -1,7 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { 
+	Card, CardContent, CardDescription, CardHeader, CardTitle 
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -11,13 +13,15 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import {
-	Clock, ThumbsUp, ThumbsDown, MinusCircle, Star, BarChart3,
-	MessageSquare, Users, TrendingUp, Vote, CheckCircle,
-	Calendar, DollarSign, ArrowUpDown, ListOrdered
+	Clock, Star, BarChart3,
+	MessageSquare, Vote, ArrowUpDown
 } from "lucide-react"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
-import { DragDropContext, Droppable, Draggable, DroppableProvided, DraggableProvided, DraggableStateSnapshot } from '@hello-pangea/dnd'
+import { 
+	DragDropContext, Droppable, Draggable, DroppableProvided, 
+	DraggableProvided, DraggableStateSnapshot 
+} from '@hello-pangea/dnd'
 
 interface PollValidationProps {
 	post: {
@@ -106,6 +110,7 @@ function PollValidationComponent({ post, onUpdate }: PollValidationProps) {
 			toast.success("Poll response submitted successfully!")
 			onUpdate()
 		} catch (error) {
+			console.log("Failed to submit poll response: " + error);
 			toast.error("Failed to submit poll response")
 		} finally {
 			setIsSubmitting(false)
@@ -124,6 +129,7 @@ function PollValidationComponent({ post, onUpdate }: PollValidationProps) {
 			toast.success("Detailed poll review submitted successfully!")
 			onUpdate()
 		} catch (error) {
+			console.log("Failed to submit the detailed review: " + error);
 			toast.error("Failed to submit detailed review")
 		} finally {
 			setIsSubmitting(false)

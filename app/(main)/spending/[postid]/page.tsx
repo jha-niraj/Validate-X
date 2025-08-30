@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Calendar, Users, DollarSign, TrendingUp, Eye, MessageSquare } from 'lucide-react'
+import { ArrowLeft, Users, DollarSign, TrendingUp, Eye, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { getPostSpendingDetails } from '@/actions/spending.actions'
 import { toast } from 'sonner'
@@ -72,6 +72,7 @@ export default function PostSpendingDetailsPage({ params }: { params: { postid: 
 					toast.error(result.error || 'Failed to load post details')
 				}
 			} catch (err) {
+				console.log("Error while loading post details:", err)
 				setError('Failed to load post details')
 				toast.error('Failed to load post details')
 			} finally {
@@ -99,7 +100,7 @@ export default function PostSpendingDetailsPage({ params }: { params: { postid: 
 		return notFound()
 	}
 
-	const { post, spending, progress, timeline, validations } = data
+	const { post, spending, progress, validations } = data
 
 	return (
 		<div className="max-w-4xl mx-auto p-6 space-y-8">
